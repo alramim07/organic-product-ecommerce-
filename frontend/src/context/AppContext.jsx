@@ -13,6 +13,15 @@ const initialCategories = [
   { _id: "c5", name_bn: "সরিষার তেল ও ঘি", slug: "oil-ghee", icon: "🫒" },
 ];
 
+// Helper to safely write to localStorage without crashing on quota exceeded
+const safeSetLocalStorage = (key, value) => {
+  try {
+    localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+  } catch (err) {
+    console.warn(`[Storage] Quota exceeded or storage disabled for ${key}:`, err.message);
+  }
+};
+
 export function AppProvider({ children }) {
   const [categories, setCategories] = useState(() => {
     try {
@@ -108,7 +117,7 @@ export function AppProvider({ children }) {
           { _id: "all", name_bn: "সবগুলো", slug: "all", icon: "✨" },
           ...catRes.data,
         ]);
-        localStorage.setItem("ammwala_categories", JSON.stringify(catRes.data));
+        safeSetLocalStorage("ammwala_categories", catRes.data);
       }
 
       // 2. Fetch Products
@@ -123,14 +132,14 @@ export function AppProvider({ children }) {
           regular_price_per_kg: p.regular_price_per_unit || p.regular_price_per_kg || 210,
         }));
         setProducts(formatted);
-        localStorage.setItem("ammwala_products", JSON.stringify(formatted));
+        safeSetLocalStorage("ammwala_products", formatted);
       }
 
       // 3. Fetch Settings
       const setRes = await api.settings.get();
       if (setRes.success && setRes.data) {
         setSettings(setRes.data);
-        localStorage.setItem("ammwala_settings", JSON.stringify(setRes.data));
+        safeSetLocalStorage("ammwala_settings", setRes.data);
       }
 
       // 4. If logged in, fetch orders
@@ -142,7 +151,7 @@ export function AppProvider({ children }) {
             id: o.orderId || o._id,
           }));
           setBookings(mappedOrders);
-          localStorage.setItem("ammwala_bookings", JSON.stringify(mappedOrders));
+          safeSetLocalStorage("ammwala_bookings", mappedOrders);
         }
       }
 
@@ -155,7 +164,7 @@ export function AppProvider({ children }) {
             totalVisitors: visRes.data.totalVisitors || 1,
           };
           setVisitorStats(stats);
-          localStorage.setItem("ammwala_visitor_stats", JSON.stringify(stats));
+          safeSetLocalStorage("ammwala_visitor_stats", stats);
         }
       } catch (err) {
         // keep existing visitor stats
@@ -171,17 +180,17 @@ export function AppProvider({ children }) {
     refreshData();
   }, [refreshData]);
 
-  // Sync to LocalStorage on updates
+  // Sync to LocalStorage on updates safely
   useEffect(() => {
-    localStorage.setItem("ammwala_products", JSON.stringify(products));
+    safeSetLocalStorage("ammwala_products", products);
   }, [products]);
 
   useEffect(() => {
-    localStorage.setItem("ammwala_bookings", JSON.stringify(bookings));
+    safeSetLocalStorage("ammwala_bookings", bookings);
   }, [bookings]);
 
   useEffect(() => {
-    localStorage.setItem("ammwala_settings", JSON.stringify(settings));
+    safeSetLocalStorage("ammwala_settings", settings);
   }, [settings]);
 
   // Product Operations
