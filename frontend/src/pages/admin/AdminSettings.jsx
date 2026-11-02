@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   FaCog,
   FaSave,
@@ -144,8 +145,53 @@ const SECONDARY_BTN_SOLID_PRESETS = [
 export default function AdminSettings() {
   const { settings, updateSettings, adminToken } = useApp();
 
-  // Active Tab state: "dashboard" or "website"
-  const [activeTab, setActiveTab] = useState("dashboard");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabQuery = searchParams.get("tab");
+
+  // Active Tab state: "dashboard" or "website" (persisted via query param & localStorage)
+  const [activeTab, setActiveTab] = useState(() => {
+    if (tabQuery === "website" || tabQuery === "dashboard") {
+      return tabQuery;
+    }
+    const saved = localStorage.getItem("ammwala_admin_settings_tab");
+    if (saved === "website" || saved === "dashboard") {
+      return saved;
+    }
+    return "dashboard";
+  });
+
+  const handleTabChange = (newTab) => {
+    setActiveTab(newTab);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set("tab", newTab);
+        return next;
+      },
+      { replace: true }
+    );
+    try {
+      localStorage.setItem("ammwala_admin_settings_tab", newTab);
+    } catch {
+      // ignore localStorage quota errors
+    }
+  };
+
+  // Sync activeTab if query param changes externally (e.g. back/forward button)
+  useEffect(() => {
+    if (tabQuery && (tabQuery === "website" || tabQuery === "dashboard") && tabQuery !== activeTab) {
+      setActiveTab(tabQuery);
+    } else if (!tabQuery) {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("tab", activeTab);
+          return next;
+        },
+        { replace: true }
+      );
+    }
+  }, [tabQuery]);
 
   // Dashboard Settings state
   const [favicon, setFavicon] = useState(settings.favicon || "");
@@ -739,7 +785,7 @@ export default function AdminSettings() {
       <div className="bg-white p-2 rounded-2xl shadow-sm border border-gray-200 flex items-center gap-2">
         <button
           type="button"
-          onClick={() => setActiveTab("dashboard")}
+          onClick={() => handleTabChange("dashboard")}
           className={`flex-1 sm:flex-initial px-5 py-3 rounded-xl font-black text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2 ${
             activeTab === "dashboard"
               ? "admin-btn-primary shadow-md"
@@ -752,7 +798,7 @@ export default function AdminSettings() {
 
         <button
           type="button"
-          onClick={() => setActiveTab("website")}
+          onClick={() => handleTabChange("website")}
           className={`flex-1 sm:flex-initial px-5 py-3 rounded-xl font-black text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2 ${
             activeTab === "website"
               ? "admin-btn-primary shadow-md"
