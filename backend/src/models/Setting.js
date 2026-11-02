@@ -256,6 +256,75 @@ const settingSchema = new mongoose.Schema(
       type: String,
       default: "Collapse Products",
     },
+    // About Section Settings
+    aboutFounderImg: {
+      type: String,
+      default:
+        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop",
+    },
+    aboutTitle: {
+      type: String,
+      default: "আমওয়ালা ভাইয়ার গল্প",
+    },
+    aboutDescription: {
+      type: String,
+      default:
+        "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি কেমিক্যাল-মুক্ত এবং পাকুতে দেওয়া প্রাকৃতিক আম। আমাদের লক্ষ্য বিদেশি আমের সাথে দেশি আমের জয়গান করা। প্রতিটি অর্ডারে থাকে তাজা গন্ধ ও সতেজতা।",
+    },
+    // Stat 1: Total Orders
+    aboutStat1Title: {
+      type: String,
+      default: "মোট অর্ডার",
+    },
+    aboutStat1ValueMode: {
+      type: String,
+      enum: ["real", "custom"],
+      default: "custom",
+    },
+    aboutStat1CustomValue: {
+      type: String,
+      default: "৫০০+",
+    },
+    aboutStat1Subtitle: {
+      type: String,
+      default: "গত সিজন",
+    },
+    // Stat 2: Mango Varieties
+    aboutStat2Title: {
+      type: String,
+      default: "আমের জাত",
+    },
+    aboutStat2ValueMode: {
+      type: String,
+      enum: ["real", "custom"],
+      default: "custom",
+    },
+    aboutStat2CustomValue: {
+      type: String,
+      default: "১১+",
+    },
+    aboutStat2Subtitle: {
+      type: String,
+      default: "সরাসরি বাগান থেকে",
+    },
+    // Stat 3: Customer Satisfaction
+    aboutStat3Title: {
+      type: String,
+      default: "গ্রাহক সন্তুষ্টি",
+    },
+    aboutStat3ValueMode: {
+      type: String,
+      enum: ["real", "custom"],
+      default: "custom",
+    },
+    aboutStat3CustomValue: {
+      type: String,
+      default: "৯৮%",
+    },
+    aboutStat3Subtitle: {
+      type: String,
+      default: "⭐ রিভিউ এর ভিত্তিতে",
+    },
   },
   { timestamps: true, versionKey: false }
 );

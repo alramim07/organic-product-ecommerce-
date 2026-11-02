@@ -171,6 +171,24 @@ export function AppProvider({ children }) {
             productCustomIds: [],
             productShowMoreBtnText: "Show More Products",
             productCollapseBtnText: "Collapse Products",
+            // About Section Settings
+            aboutFounderImg:
+              "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop",
+            aboutTitle: "আমওয়ালা ভাইয়ার গল্প",
+            aboutDescription:
+              "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি কেমিক্যাল-মুক্ত এবং পাকুতে দেওয়া প্রাকৃতিক আম। আমাদের লক্ষ্য বিদেশি আমের সাথে দেশি আমের জয়গান করা। প্রতিটি অর্ডারে থাকে তাজা গন্ধ ও সতেজতা।",
+            aboutStat1Title: "মোট অর্ডার",
+            aboutStat1ValueMode: "custom",
+            aboutStat1CustomValue: "৫০০+",
+            aboutStat1Subtitle: "গত সিজন",
+            aboutStat2Title: "আমের জাত",
+            aboutStat2ValueMode: "custom",
+            aboutStat2CustomValue: "১১+",
+            aboutStat2Subtitle: "সরাসরি বাগান থেকে",
+            aboutStat3Title: "গ্রাহক সন্তুষ্টি",
+            aboutStat3ValueMode: "custom",
+            aboutStat3CustomValue: "৯৮%",
+            aboutStat3Subtitle: "⭐ রিভিউ এর ভিত্তিতে",
           };
     } catch {
       return {};

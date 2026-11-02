@@ -17,6 +17,7 @@ import {
   FaImage,
   FaBuilding,
   FaUserTie,
+  FaBookOpen,
   FaKey,
   FaLock,
   FaEye,
@@ -50,6 +51,7 @@ import {
   FaChevronUp,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { toBengaliNumber } from "../../components/About";
 import { useApp } from "../../context/AppContext";
 import { api } from "../../services/api";
 
@@ -410,6 +412,63 @@ export default function AdminSettings() {
   const [productSearchQuery, setProductSearchQuery] = useState("");
   const [productPreviewDevice, setProductPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
 
+  // About Section Settings state
+  const [aboutFounderImg, setAboutFounderImg] = useState(
+    settings.aboutFounderImg ||
+      "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
+  );
+  const [aboutTitle, setAboutTitle] = useState(
+    settings.aboutTitle || "আমওয়ালা ভাইয়ার গল্প"
+  );
+  const [aboutDescription, setAboutDescription] = useState(
+    settings.aboutDescription ||
+      "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি কেমিক্যাল-মুক্ত এবং পাকুতে দেওয়া প্রাকৃতিক আম। আমাদের লক্ষ্য বিদেশি আমের সাথে দেশি আমের জয়গান করা। প্রতিটি অর্ডারে থাকে তাজা গন্ধ ও সতেজতা।"
+  );
+
+  // Stat 1 (Total Orders)
+  const [aboutStat1Title, setAboutStat1Title] = useState(
+    settings.aboutStat1Title || "মোট অর্ডার"
+  );
+  const [aboutStat1ValueMode, setAboutStat1ValueMode] = useState(
+    settings.aboutStat1ValueMode || "custom"
+  ); // "real" | "custom"
+  const [aboutStat1CustomValue, setAboutStat1CustomValue] = useState(
+    settings.aboutStat1CustomValue || "৫০০+"
+  );
+  const [aboutStat1Subtitle, setAboutStat1Subtitle] = useState(
+    settings.aboutStat1Subtitle || "গত সিজন"
+  );
+
+  // Stat 2 (Mango Varieties)
+  const [aboutStat2Title, setAboutStat2Title] = useState(
+    settings.aboutStat2Title || "আমের জাত"
+  );
+  const [aboutStat2ValueMode, setAboutStat2ValueMode] = useState(
+    settings.aboutStat2ValueMode || "custom"
+  ); // "real" | "custom"
+  const [aboutStat2CustomValue, setAboutStat2CustomValue] = useState(
+    settings.aboutStat2CustomValue || "১১+"
+  );
+  const [aboutStat2Subtitle, setAboutStat2Subtitle] = useState(
+    settings.aboutStat2Subtitle || "সরাসরি বাগান থেকে"
+  );
+
+  // Stat 3 (Customer Satisfaction)
+  const [aboutStat3Title, setAboutStat3Title] = useState(
+    settings.aboutStat3Title || "গ্রাহক সন্তুষ্টি"
+  );
+  const [aboutStat3ValueMode, setAboutStat3ValueMode] = useState(
+    settings.aboutStat3ValueMode || "custom"
+  ); // "real" | "custom"
+  const [aboutStat3CustomValue, setAboutStat3CustomValue] = useState(
+    settings.aboutStat3CustomValue || "৯৮%"
+  );
+  const [aboutStat3Subtitle, setAboutStat3Subtitle] = useState(
+    settings.aboutStat3Subtitle || "⭐ রিভিউ এর ভিত্তিতে"
+  );
+
+  const [aboutPreviewDevice, setAboutPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
+
   // Sync state if settings update from backend or initial load
   useEffect(() => {
     if (settings) {
@@ -478,6 +537,21 @@ export default function AdminSettings() {
       }
       if (settings.productShowMoreBtnText !== undefined) setProductShowMoreBtnText(settings.productShowMoreBtnText);
       if (settings.productCollapseBtnText !== undefined) setProductCollapseBtnText(settings.productCollapseBtnText);
+      if (settings.aboutFounderImg !== undefined) setAboutFounderImg(settings.aboutFounderImg);
+      if (settings.aboutTitle !== undefined) setAboutTitle(settings.aboutTitle);
+      if (settings.aboutDescription !== undefined) setAboutDescription(settings.aboutDescription);
+      if (settings.aboutStat1Title !== undefined) setAboutStat1Title(settings.aboutStat1Title);
+      if (settings.aboutStat1ValueMode !== undefined) setAboutStat1ValueMode(settings.aboutStat1ValueMode);
+      if (settings.aboutStat1CustomValue !== undefined) setAboutStat1CustomValue(settings.aboutStat1CustomValue);
+      if (settings.aboutStat1Subtitle !== undefined) setAboutStat1Subtitle(settings.aboutStat1Subtitle);
+      if (settings.aboutStat2Title !== undefined) setAboutStat2Title(settings.aboutStat2Title);
+      if (settings.aboutStat2ValueMode !== undefined) setAboutStat2ValueMode(settings.aboutStat2ValueMode);
+      if (settings.aboutStat2CustomValue !== undefined) setAboutStat2CustomValue(settings.aboutStat2CustomValue);
+      if (settings.aboutStat2Subtitle !== undefined) setAboutStat2Subtitle(settings.aboutStat2Subtitle);
+      if (settings.aboutStat3Title !== undefined) setAboutStat3Title(settings.aboutStat3Title);
+      if (settings.aboutStat3ValueMode !== undefined) setAboutStat3ValueMode(settings.aboutStat3ValueMode);
+      if (settings.aboutStat3CustomValue !== undefined) setAboutStat3CustomValue(settings.aboutStat3CustomValue);
+      if (settings.aboutStat3Subtitle !== undefined) setAboutStat3Subtitle(settings.aboutStat3Subtitle);
     }
   }, [settings]);
 
@@ -659,6 +733,18 @@ export default function AdminSettings() {
       const compressed = await compressImage(file, 1600, 900, 0.82);
       setHeroSingleImage(compressed);
       updateSettings({ heroSingleImage: compressed });
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleAboutFounderImgUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 400, 400, 0.88);
+      setAboutFounderImg(compressed);
+      updateSettings({ aboutFounderImg: compressed });
     } catch {
       // fallback
     }
@@ -1132,6 +1218,21 @@ export default function AdminSettings() {
       productCustomIds,
       productShowMoreBtnText,
       productCollapseBtnText,
+      aboutFounderImg,
+      aboutTitle,
+      aboutDescription,
+      aboutStat1Title,
+      aboutStat1ValueMode,
+      aboutStat1CustomValue,
+      aboutStat1Subtitle,
+      aboutStat2Title,
+      aboutStat2ValueMode,
+      aboutStat2CustomValue,
+      aboutStat2Subtitle,
+      aboutStat3Title,
+      aboutStat3ValueMode,
+      aboutStat3CustomValue,
+      aboutStat3Subtitle,
     });
 
     Swal.fire({
@@ -5091,6 +5192,637 @@ export default function AdminSettings() {
               )}
             </div>
           </div>
+
+        
+          {/* ========================================================================= */}
+          {/* Section 4: About Section Settings (আমওয়ালা ভাইয়ার গল্প ও পরিচিতি) */}
+          {/* ========================================================================= */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-8">
+            {/* Header Title Bar */}
+            <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
+                  <FaBookOpen className="text-green-600" /> 4. About Section Settings (আমওয়ালা ভাইয়ার গল্প ও পরিচিতি)
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  প্রতিষ্ঠাতার ছবি, গল্পের বিবরণ এবং ৩টি ডাইনামিক কাউন্টার কার্ড (রিয়েল ডেটাবেজ সংখ্যা অথবা কাস্টম ইনপুট) পরিচালনা করুন।
+                </p>
+              </div>
+
+              <span className="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 self-start sm:self-auto">
+                Homepage Story & Stats
+              </span>
+            </div>
+
+            {/* Part 1: Founder Avatar Image */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-600" />
+                <h4 className="text-sm font-extrabold text-green-950">
+                  প্রতিষ্ঠাতার ছবি (Founder Avatar Image)
+                </h4>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-6 p-5 rounded-2xl bg-amber-50/40 border border-amber-200/60">
+                {/* Rounded Avatar Preview with ring */}
+                <div className="relative group shrink-0">
+                  <div className="w-28 h-28 rounded-full ring ring-yellow-500 ring-offset-4 overflow-hidden shadow-xl bg-amber-100 flex items-center justify-center">
+                    {aboutFounderImg ? (
+                      <img
+                        src={aboutFounderImg}
+                        alt="Founder Preview"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop";
+                        }}
+                      />
+                    ) : (
+                      <FaUserTie className="text-4xl text-amber-400" />
+                    )}
+                  </div>
+                </div>
+
+                {/* Upload & Controls */}
+                <div className="space-y-3 flex-1 text-center sm:text-left">
+                  <div className="flex flex-wrap items-center gap-2.5 justify-center sm:justify-start">
+                    <label className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5 shadow">
+                      <FaUpload />
+                      <span>ছবি আপলোড করুন (Upload Photo)</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleAboutFounderImgUpload}
+                        className="hidden"
+                      />
+                    </label>
+
+                    {aboutFounderImg && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const defImg = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop";
+                          setAboutFounderImg(defImg);
+                          updateSettings({ aboutFounderImg: defImg });
+                        }}
+                        className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer"
+                      >
+                        <FaUndoAlt className="text-xs" />
+                        <span>ডিফল্ট ছবি রাখুন</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-600 mb-1">
+                      অথবা সরাসরি ছবির লিংক দিন (Image URL):
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutFounderImg}
+                      onChange={(e) => setAboutFounderImg(e.target.value)}
+                      placeholder="https://example.com/photo.jpg"
+                      className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-medium text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  <p className="text-[11px] text-gray-400">
+                    সুপারিশ: স্কয়ার (1:1) সাইজের ছবি (যেমন 400x400 px) ব্যবহার করলে সবথেকে ভালো দেখাবে।
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 2: Section Title & Founder Story Description */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-600" />
+                <h4 className="text-sm font-extrabold text-green-950">
+                  শিরোনাম ও বিস্তারিত বিবরণ (Title & Story Narrative)
+                </h4>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-extrabold text-green-950 mb-1">
+                    সেকশন শিরোনাম (Section Title)
+                  </label>
+                  <input
+                    type="text"
+                    value={aboutTitle}
+                    onChange={(e) => setAboutTitle(e.target.value)}
+                    placeholder="আমওয়ালা ভাইয়ার গল্প"
+                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-extrabold text-green-950 mb-1">
+                    প্রতিষ্ঠাতার গল্প ও বায়ো (Founder Story / Description Text)
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={aboutDescription}
+                    onChange={(e) => setAboutDescription(e.target.value)}
+                    placeholder="প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু..."
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-medium text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    ইউজার হোমপেজে এই লিখাটি সুন্দর প্যারাগ্রাফ আকারে দেখতে পাবে।
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 3: 3 Dynamic Stats Cards (Real DB vs Custom Input) */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-600" />
+                  <h4 className="text-sm font-extrabold text-green-950">
+                    ৩টি কাউন্টার ও পরিসংখ্যান কার্ড (3 Dynamic Stats Cards)
+                  </h4>
+                </div>
+                <span className="text-xs font-bold text-gray-400 hidden sm:inline">
+                  রিয়েল ডেটাবেজ সংখ্যা অথবা কাস্টম ইনপুট
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                {/* Stat 1: মোট অর্ডার */}
+                <div className="p-4 rounded-2xl border-2 border-amber-200 bg-amber-50/30 space-y-3.5">
+                  <div className="flex items-center justify-between border-b border-amber-200/80 pb-2">
+                    <span className="text-xs font-black text-green-950 flex items-center gap-1.5">
+                      <span>📦 কার্ড ১: অর্ডার কাউন্টার</span>
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
+                      {aboutStat1ValueMode === "real" ? "রিয়েল ডেটা" : "কাস্টম"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      কার্ডের শিরোনাম (Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutStat1Title}
+                      onChange={(e) => setAboutStat1Title(e.target.value)}
+                      placeholder="মোট অর্ডার"
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+
+                  {/* Mode Switcher */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      মান প্রদর্শন মোড (Value Mode)
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => setAboutStat1ValueMode("real")}
+                        className={`py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                          aboutStat1ValueMode === "real"
+                            ? "bg-green-600 text-white shadow"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        ⚡ রিয়েল ডেটা
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAboutStat1ValueMode("custom")}
+                        className={`py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                          aboutStat1ValueMode === "custom"
+                            ? "bg-green-600 text-white shadow"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        ✍️ কাস্টম সংখ্যা
+                      </button>
+                    </div>
+                  </div>
+
+                  {aboutStat1ValueMode === "real" ? (
+                    <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
+                      <span className="text-[11px] text-green-700 font-bold block">
+                        ডেটাবেজের মোট অর্ডার থেকে অটোমেটিক আসবে:
+                      </span>
+                      <span className="text-xl font-black text-green-900">
+                        {toBengaliNumber(settings?.realStats?.totalOrders ?? 0)}+
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                        কাস্টম মান (Custom Value)
+                      </label>
+                      <input
+                        type="text"
+                        value={aboutStat1CustomValue}
+                        onChange={(e) => setAboutStat1CustomValue(e.target.value)}
+                        placeholder="৫০০+"
+                        className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-black text-amber-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      নিচের সাবটাইটেল (Subtitle)
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutStat1Subtitle}
+                      onChange={(e) => setAboutStat1Subtitle(e.target.value)}
+                      placeholder="গত সিজন"
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Stat 2: আমের জাত */}
+                <div className="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/30 space-y-3.5">
+                  <div className="flex items-center justify-between border-b border-emerald-200/80 pb-2">
+                    <span className="text-xs font-black text-green-950 flex items-center gap-1.5">
+                      <span>🥭 কার্ড ২: জাত কাউন্টার</span>
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900">
+                      {aboutStat2ValueMode === "real" ? "রিয়েল ডেটা" : "কাস্টম"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      কার্ডের শিরোনাম (Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutStat2Title}
+                      onChange={(e) => setAboutStat2Title(e.target.value)}
+                      placeholder="আমের জাত"
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+
+                  {/* Mode Switcher */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      মান প্রদর্শন মোড (Value Mode)
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => setAboutStat2ValueMode("real")}
+                        className={`py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                          aboutStat2ValueMode === "real"
+                            ? "bg-green-600 text-white shadow"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        ⚡ রিয়েল ডেটা
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAboutStat2ValueMode("custom")}
+                        className={`py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                          aboutStat2ValueMode === "custom"
+                            ? "bg-green-600 text-white shadow"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        ✍️ কাস্টম সংখ্যা
+                      </button>
+                    </div>
+                  </div>
+
+                  {aboutStat2ValueMode === "real" ? (
+                    <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
+                      <span className="text-[11px] text-green-700 font-bold block">
+                        স্টোরের অ্যাক্টিভ জাতের সংখ্যা থেকে আসবে:
+                      </span>
+                      <span className="text-xl font-black text-green-900">
+                        {toBengaliNumber(settings?.realStats?.totalProducts ?? 11)}+
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                        কাস্টম মান (Custom Value)
+                      </label>
+                      <input
+                        type="text"
+                        value={aboutStat2CustomValue}
+                        onChange={(e) => setAboutStat2CustomValue(e.target.value)}
+                        placeholder="১১+"
+                        className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      নিচের সাবটাইটেল (Subtitle)
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutStat2Subtitle}
+                      onChange={(e) => setAboutStat2Subtitle(e.target.value)}
+                      placeholder="সরাসরি বাগান থেকে"
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Stat 3: গ্রাহক সন্তুষ্টি */}
+                <div className="p-4 rounded-2xl border-2 border-yellow-200 bg-yellow-50/30 space-y-3.5">
+                  <div className="flex items-center justify-between border-b border-yellow-200/80 pb-2">
+                    <span className="text-xs font-black text-green-950 flex items-center gap-1.5">
+                      <span>⭐ কার্ড ৩: সন্তুষ্টি রেটিং</span>
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-900">
+                      {aboutStat3ValueMode === "real" ? "রিয়েল ডেটা" : "কাস্টম"}
+                    </span>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      কার্ডের শিরোনাম (Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutStat3Title}
+                      onChange={(e) => setAboutStat3Title(e.target.value)}
+                      placeholder="গ্রাহক সন্তুষ্টি"
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+
+                  {/* Mode Switcher */}
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      মান প্রদর্শন মোড (Value Mode)
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
+                      <button
+                        type="button"
+                        onClick={() => setAboutStat3ValueMode("real")}
+                        className={`py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                          aboutStat3ValueMode === "real"
+                            ? "bg-green-600 text-white shadow"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        ⚡ রিয়েল ডেটা
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAboutStat3ValueMode("custom")}
+                        className={`py-1.5 rounded-lg text-[11px] font-bold transition cursor-pointer ${
+                          aboutStat3ValueMode === "custom"
+                            ? "bg-green-600 text-white shadow"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        ✍️ কাস্টম সংখ্যা
+                      </button>
+                    </div>
+                  </div>
+
+                  {aboutStat3ValueMode === "real" ? (
+                    <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
+                      <span className="text-[11px] text-green-700 font-bold block">
+                        গড় গ্রাহক রিভিউ ও রেটিং থেকে আসবে:
+                      </span>
+                      <span className="text-xl font-black text-yellow-600">
+                        {toBengaliNumber(settings?.realStats?.satisfactionRate ?? 98)}%
+                      </span>
+                    </div>
+                  ) : (
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                        কাস্টম মান (Custom Value)
+                      </label>
+                      <input
+                        type="text"
+                        value={aboutStat3CustomValue}
+                        onChange={(e) => setAboutStat3CustomValue(e.target.value)}
+                        placeholder="৯৮%"
+                        className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-black text-yellow-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      নিচের সাবটাইটেল (Subtitle)
+                    </label>
+                    <input
+                      type="text"
+                      value={aboutStat3Subtitle}
+                      onChange={(e) => setAboutStat3Subtitle(e.target.value)}
+                      placeholder="⭐ রিভিউ এর ভিত্তিতে"
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 4: Live Interactive About Section Preview */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+                  <div>
+                    <h4 className="text-sm font-black text-white">
+                      Live About Section Preview
+                    </h4>
+                    <p className="text-xs text-gray-400">
+                      Real-time interactive rendering of homepage about story & stats
+                    </p>
+                  </div>
+                </div>
+
+                {/* Device Switcher (Desktop & Mobile) */}
+                <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setAboutPreviewDevice("desktop")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      aboutPreviewDevice === "desktop"
+                        ? "bg-green-600 text-white shadow font-black"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaDesktop /> <span>Desktop</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAboutPreviewDevice("mobile")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      aboutPreviewDevice === "mobile"
+                        ? "bg-green-600 text-white shadow font-black"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaMobileAlt /> <span>Mobile</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Rendered Live Preview */}
+              {aboutPreviewDevice === "desktop" ? (
+                /* DESKTOP VIEW */
+                <div className="rounded-2xl border border-gray-800 bg-gradient-to-r from-amber-100 to-lime-100 p-8 text-center text-gray-800 shadow-inner">
+                  {/* Avatar */}
+                  <div className="w-24 h-24 rounded-full ring-4 ring-yellow-500 ring-offset-2 overflow-hidden shadow-lg mx-auto bg-amber-50 mb-4">
+                    <img
+                      src={aboutFounderImg}
+                      alt="Founder"
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop";
+                      }}
+                    />
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-2xl sm:text-3xl font-extrabold text-green-900">
+                    {aboutTitle || "আমওয়ালা ভাইয়ার গল্প"}
+                  </h3>
+
+                  <div className="w-20 mx-auto my-3 border-t-4 border-yellow-500 rounded-full" />
+
+                  {/* Description */}
+                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed max-w-2xl mx-auto">
+                    {aboutDescription ||
+                      "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম।"}
+                  </p>
+
+                  {/* Stats Bar */}
+                  <div className="grid grid-cols-3 max-w-xl mx-auto mt-6 bg-white/90 backdrop-blur-sm border border-yellow-300 rounded-2xl shadow-md overflow-hidden divide-x divide-yellow-200">
+                    <div className="py-4 px-3 text-center">
+                      <div className="text-[11px] text-green-800 font-bold">{aboutStat1Title || "মোট অর্ডার"}</div>
+                      <div className="text-2xl font-black text-yellow-600 mt-0.5">
+                        {aboutStat1ValueMode === "real"
+                          ? `${toBengaliNumber(settings?.realStats?.totalOrders ?? 0)}+`
+                          : aboutStat1CustomValue || "৫০০+"}
+                      </div>
+                      <div className="text-[10px] text-gray-500 font-medium">{aboutStat1Subtitle || "গত সিজন"}</div>
+                    </div>
+
+                    <div className="py-4 px-3 text-center">
+                      <div className="text-[11px] text-green-800 font-bold">{aboutStat2Title || "আমের জাত"}</div>
+                      <div className="text-2xl font-black text-green-700 mt-0.5">
+                        {aboutStat2ValueMode === "real"
+                          ? `${toBengaliNumber(settings?.realStats?.totalProducts ?? 11)}+`
+                          : aboutStat2CustomValue || "১১+"}
+                      </div>
+                      <div className="text-[10px] text-gray-500 font-medium">{aboutStat2Subtitle || "সরাসরি বাগান থেকে"}</div>
+                    </div>
+
+                    <div className="py-4 px-3 text-center">
+                      <div className="text-[11px] text-green-800 font-bold">{aboutStat3Title || "গ্রাহক সন্তুষ্টি"}</div>
+                      <div className="text-2xl font-black text-yellow-600 mt-0.5">
+                        {aboutStat3ValueMode === "real"
+                          ? `${toBengaliNumber(settings?.realStats?.satisfactionRate ?? 98)}%`
+                          : aboutStat3CustomValue || "৯৮%"}
+                      </div>
+                      <div className="text-[10px] text-gray-500 font-medium">{aboutStat3Subtitle || "⭐ রিভিউ এর ভিত্তিতে"}</div>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* SMARTPHONE FRAME MOCKUP (MOBILE PREVIEW) */
+                <div className="flex justify-center py-2">
+                  <div className="w-full max-w-[340px] rounded-[38px] border-[6px] border-gray-700 bg-gray-950 shadow-2xl overflow-hidden relative">
+                    {/* Notch */}
+                    <div className="h-6 bg-gray-950 flex justify-center items-center">
+                      <div className="w-20 h-3.5 bg-gray-900 rounded-full flex items-center justify-end pr-2 border border-gray-800">
+                        <div className="w-2 h-2 rounded-full bg-blue-900/60" />
+                      </div>
+                    </div>
+
+                    {/* Mobile Content Screen */}
+                    <div className="bg-gradient-to-r from-amber-100 to-lime-100 p-4 text-center text-gray-800 space-y-3.5 max-h-[550px] overflow-y-auto">
+                      {/* Avatar */}
+                      <div className="w-20 h-20 rounded-full ring-4 ring-yellow-500 ring-offset-2 overflow-hidden shadow mx-auto bg-amber-50">
+                        <img
+                          src={aboutFounderImg}
+                          alt="Founder"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop";
+                          }}
+                        />
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="text-lg font-black text-green-900">
+                        {aboutTitle || "আমওয়ালা ভাইয়ার গল্প"}
+                      </h3>
+
+                      <div className="w-16 mx-auto my-1 border-t-2 border-yellow-500 rounded-full" />
+
+                      {/* Description */}
+                      <p className="text-[11px] text-gray-700 leading-relaxed px-1">
+                        {aboutDescription ||
+                          "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম।"}
+                      </p>
+
+                      {/* Mobile Stats (Stacked cards) */}
+                      <div className="bg-white/90 backdrop-blur-sm border border-yellow-300 rounded-2xl shadow-sm divide-y divide-yellow-100 overflow-hidden text-center">
+                        <div className="py-2.5 px-3">
+                          <div className="text-[10px] text-green-800 font-bold">{aboutStat1Title || "মোট অর্ডার"}</div>
+                          <div className="text-xl font-black text-yellow-600">
+                            {aboutStat1ValueMode === "real"
+                              ? `${toBengaliNumber(settings?.realStats?.totalOrders ?? 0)}+`
+                              : aboutStat1CustomValue || "৫০০+"}
+                          </div>
+                          <div className="text-[9px] text-gray-500 font-medium">{aboutStat1Subtitle || "গত সিজন"}</div>
+                        </div>
+
+                        <div className="py-2.5 px-3">
+                          <div className="text-[10px] text-green-800 font-bold">{aboutStat2Title || "আমের জাত"}</div>
+                          <div className="text-xl font-black text-green-700">
+                            {aboutStat2ValueMode === "real"
+                              ? `${toBengaliNumber(settings?.realStats?.totalProducts ?? 11)}+`
+                              : aboutStat2CustomValue || "১১+"}
+                          </div>
+                          <div className="text-[9px] text-gray-500 font-medium">{aboutStat2Subtitle || "সরাসরি বাগান থেকে"}</div>
+                        </div>
+
+                        <div className="py-2.5 px-3">
+                          <div className="text-[10px] text-green-800 font-bold">{aboutStat3Title || "গ্রাহক সন্তুষ্টি"}</div>
+                          <div className="text-xl font-black text-yellow-600">
+                            {aboutStat3ValueMode === "real"
+                              ? `${toBengaliNumber(settings?.realStats?.satisfactionRate ?? 98)}%`
+                              : aboutStat3CustomValue || "৯৮%"}
+                          </div>
+                          <div className="text-[9px] text-gray-500 font-medium">{aboutStat3Subtitle || "⭐ রিভিউ এর ভিত্তিতে"}</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Sticky/Bottom Save Settings Button */}
+            <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
+              <button
+                type="submit"
+                className="px-6 py-3 bg-gradient-to-r from-green-700 via-green-600 to-amber-600 hover:from-green-800 hover:to-amber-700 text-white font-extrabold rounded-2xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer text-sm"
+              >
+                <FaSave />
+                <span>Save All Settings</span>
+              </button>
+            </div>
+          </div>
+
 
         </form>
       )}
