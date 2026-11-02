@@ -408,6 +408,7 @@ export default function AdminSettings() {
   );
   const [productIconPickerOpen, setProductIconPickerOpen] = useState(false);
   const [productSearchQuery, setProductSearchQuery] = useState("");
+  const [productPreviewDevice, setProductPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
 
   // Sync state if settings update from backend or initial load
   useEffect(() => {
@@ -4734,7 +4735,7 @@ export default function AdminSettings() {
 
             {/* Part 5: Live Product Section Preview */}
             <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
-              <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
                 <div className="flex items-center gap-2.5">
                   <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
                   <div>
@@ -4746,34 +4747,64 @@ export default function AdminSettings() {
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-bold px-2.5 py-1 bg-green-900/60 text-green-300 rounded-lg border border-green-700/50">
-                  Preset: {productCardPreset.toUpperCase()}
-                </span>
+
+                <div className="flex items-center gap-2.5 self-start sm:self-auto flex-wrap">
+                  <span className="text-xs font-bold px-2.5 py-1 bg-green-900/60 text-green-300 rounded-lg border border-green-700/50">
+                    Preset: {productCardPreset.toUpperCase()}
+                  </span>
+
+                  {/* Device Switcher (Desktop & Mobile View) */}
+                  <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-xl text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setProductPreviewDevice("desktop")}
+                      className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                        productPreviewDevice === "desktop"
+                          ? "bg-green-600 text-white shadow font-black"
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      <FaDesktop /> <span>Desktop</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setProductPreviewDevice("mobile")}
+                      className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                        productPreviewDevice === "mobile"
+                          ? "bg-green-600 text-white shadow font-black"
+                          : "text-gray-400 hover:text-white"
+                      }`}
+                    >
+                      <FaMobileAlt /> <span>Mobile</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* Rendered Preview Box */}
-              <div className="rounded-2xl border border-gray-800 bg-amber-50/10 p-5 space-y-6">
-                {/* Header Preview */}
-                <div className="text-center space-y-2">
-                  <h3 className="text-2xl sm:text-3xl font-black text-white inline-flex items-center justify-center gap-2 border-b-4 border-yellow-400 pb-1 px-3">
-                    <span>{productSectionTitleIcon || "🥭"}</span>
-                    <span>{productSectionTitle || "আমের জাত ও মূল্য"}</span>
-                  </h3>
-                  <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
-                    {productSectionSubtitle ||
-                      "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"}
-                  </p>
-                </div>
+              {/* Rendered Live Product Preview based on productPreviewDevice */}
+              {productPreviewDevice === "desktop" ? (
+                /* DESKTOP PREVIEW BOX */
+                <div className="rounded-2xl border border-gray-800 bg-amber-50/10 p-5 space-y-6">
+                  {/* Header Preview */}
+                  <div className="text-center space-y-2">
+                    <h3 className="text-2xl sm:text-3xl font-black text-white inline-flex items-center justify-center gap-2 border-b-4 border-yellow-400 pb-1 px-3">
+                      <span>{productSectionTitleIcon || "🥭"}</span>
+                      <span>{productSectionTitle || "আমের জাত ও মূল্য"}</span>
+                    </h3>
+                    <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                      {productSectionSubtitle ||
+                        "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"}
+                    </p>
+                  </div>
 
-                {/* Sample Card Preview Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                  {[
-                    { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
-                    { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
-                    { name: "ল্যাংড়া", price: "৳ ১৬০/কেজি", dates: "চুয়াডাঙ্গা: ২৮ মে, নওগাঁ: ১০ জুন" },
-                    { name: "আম্রপালি", price: "৳ ১৯০/কেজি", dates: "চুয়াডাঙ্গা: ৫ জুন, রাজশাহী: ১৫ জুন" },
-                  ].map((item, idx) => {
-                    return (
+                  {/* Sample Card Preview Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+                    {[
+                      { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
+                      { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
+                      { name: "ল্যাংড়া", price: "৳ ১৬০/কেজি", dates: "চুয়াডাঙ্গা: ২৮ মে, নওগাঁ: ১০ জুন" },
+                      { name: "আম্রপালি", price: "৳ ১৯০/কেজি", dates: "চুয়াডাঙ্গা: ৫ জুন, রাজশাহী: ১৫ জুন" },
+                    ].map((item, idx) => (
                       <div key={idx} className="h-full flex flex-col">
                         {/* Preset 1: Classic Warm */}
                         {productCardPreset === "classic" && (
@@ -4888,18 +4919,176 @@ export default function AdminSettings() {
                           </div>
                         )}
                       </div>
-                    );
-                  })}
-                </div>
-                
-                {/* Live Preview Button */}
-                <div className="pt-2 flex justify-center">
-                  <div className="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-green-600 to-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg flex items-center gap-2">
-                    <span>{productShowMoreBtnText || "Show More Products"}</span>
-                    <FaChevronDown className="text-[10px]" />
+                    ))}
+                  </div>
+
+                  {/* Live Preview Button */}
+                  <div className="pt-2 flex justify-center">
+                    <div className="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-green-600 to-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg flex items-center gap-2">
+                      <span>{productShowMoreBtnText || "Show More Products"}</span>
+                      <FaChevronDown className="text-[10px]" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : (
+                /* SMARTPHONE FRAME MOCKUP (MOBILE PREVIEW) */
+                <div className="flex justify-center py-2">
+                  <div className="w-full max-w-[340px] rounded-[38px] border-[6px] border-gray-700 bg-gray-950 shadow-2xl overflow-hidden relative">
+                    {/* Phone Camera / Speaker Notch */}
+                    <div className="h-6 bg-gray-950 flex justify-center items-center">
+                      <div className="w-20 h-3.5 bg-gray-900 rounded-full flex items-center justify-end pr-2 border border-gray-800">
+                        <div className="w-2 h-2 rounded-full bg-blue-900/60" />
+                      </div>
+                    </div>
+
+                    {/* Mobile Content Screen */}
+                    <div className="bg-gradient-to-b from-gray-900 via-gray-950 to-black p-3.5 space-y-4 max-h-[550px] overflow-y-auto">
+                      {/* Mobile Header Preview */}
+                      <div className="text-center space-y-1.5 pt-1">
+                        <h3 className="text-lg font-black text-white inline-flex items-center justify-center gap-1.5 border-b-2 border-yellow-400 pb-0.5 px-2">
+                          <span>{productSectionTitleIcon || "🥭"}</span>
+                          <span>{productSectionTitle || "আমের জাত ও মূল্য"}</span>
+                        </h3>
+                        <p className="text-[11px] text-gray-300 leading-relaxed px-1">
+                          {productSectionSubtitle ||
+                            "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"}
+                        </p>
+                      </div>
+
+                      {/* Mobile Cards (Vertical Stack of 2 items in mobile screen) */}
+                      <div className="space-y-3.5">
+                        {[
+                          { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
+                          { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
+                        ].map((item, idx) => (
+                          <div key={idx} className="flex flex-col">
+                            {/* Preset 1: Classic Warm */}
+                            {productCardPreset === "classic" && (
+                              <div className="flex flex-col rounded-3xl bg-amber-50/90 border-2 border-amber-300 shadow-md text-gray-800 overflow-hidden">
+                                <div className="p-2 pb-0">
+                                  <div className="h-28 bg-amber-100 rounded-2xl relative flex items-center justify-center text-amber-900 font-bold overflow-hidden shadow-inner">
+                                    <span className="text-xs">🥭 Inset Image</span>
+                                    <span className="absolute top-2 left-2 bg-yellow-400 text-green-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
+                                      বাগান ফ্রেশ
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="p-3 flex flex-col justify-between space-y-2">
+                                  <div>
+                                    <h5 className="font-black text-sm text-green-950 truncate">{item.name}</h5>
+                                    <div className="mt-1">
+                                      <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-xs border border-amber-200">
+                                        {item.price}
+                                      </span>
+                                    </div>
+                                    <p className="text-[10px] text-gray-500 mt-1 truncate">{item.dates}</p>
+                                  </div>
+                                  <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-xs">
+                                    <span className="text-[10px] text-green-800 font-bold">বিস্তারিত</span>
+                                    <span className="px-3 py-1 text-[10px] text-white font-black rounded-full bg-gradient-to-r from-amber-500 to-green-600 shadow">
+                                      প্রি-অর্ডার
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Preset 2: Modern Minimal */}
+                            {productCardPreset === "modern" && (
+                              <div className="flex flex-col rounded-xl bg-white border border-slate-200 shadow-sm text-gray-900 overflow-hidden">
+                                <div className="h-28 bg-slate-100 relative flex items-center justify-center text-slate-500 font-bold">
+                                  <span className="text-xs">Flush Image</span>
+                                  <span className="absolute top-2 right-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow">
+                                    ইন স্টক
+                                  </span>
+                                </div>
+                                <div className="p-3 flex flex-col justify-between space-y-2">
+                                  <div>
+                                    <h5 className="font-bold text-sm text-slate-900 truncate">{item.name}</h5>
+                                    <p className="text-sm font-black text-slate-950 mt-0.5">{item.price}</p>
+                                    <p className="text-[10px] text-slate-400 mt-1 truncate">{item.dates}</p>
+                                  </div>
+                                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                    <span className="text-[10px] text-slate-600 font-semibold">দেখুন</span>
+                                    <span className="px-3 py-1 text-[10px] text-white font-bold rounded-lg bg-emerald-600">
+                                      প্রি-অর্ডার
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Preset 3: Royal Dark Luxury */}
+                            {productCardPreset === "elevated" && (
+                              <div className="flex flex-col rounded-2xl bg-gradient-to-b from-gray-950 to-slate-950 border border-amber-500/60 shadow-xl text-white overflow-hidden">
+                                <div className="h-1 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500" />
+                                <div className="h-28 bg-gray-900 relative flex items-center justify-center text-amber-300 font-bold">
+                                  <span className="text-xs">Dark Image</span>
+                                  <span className="absolute top-2 left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
+                                    👑 প্রিমিয়াম
+                                  </span>
+                                </div>
+                                <div className="p-3 flex flex-col justify-between space-y-2">
+                                  <div>
+                                    <h5 className="font-black text-sm text-white truncate">{item.name}</h5>
+                                    <p className="text-sm font-black text-yellow-400 mt-0.5 drop-shadow">{item.price}</p>
+                                    <p className="text-[10px] text-gray-400 mt-1 truncate">{item.dates}</p>
+                                  </div>
+                                  <div className="pt-2 border-t border-gray-800 flex items-center justify-between text-xs">
+                                    <span className="text-[10px] text-yellow-400 font-bold">বিস্তারিত</span>
+                                    <span className="px-3 py-1 text-[10px] text-gray-950 font-black rounded-lg bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 shadow">
+                                      প্রি-অর্ডার
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Preset 4: Eco Organic */}
+                            {productCardPreset === "bordered" && (
+                              <div className="flex flex-col rounded-[24px] bg-emerald-50 border-2 border-dashed border-emerald-400 shadow-sm text-emerald-950 overflow-hidden">
+                                <div className="p-2 pb-0">
+                                  <div className="h-28 bg-emerald-100/70 rounded-xl relative flex items-center justify-center text-emerald-900 font-bold">
+                                    <span className="text-xs">🌿 Eco Frame</span>
+                                    <span className="absolute top-2 left-2 bg-emerald-700 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">
+                                      ১০০% অর্গানিক
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="p-3 flex flex-col justify-between space-y-2">
+                                  <div>
+                                    <h5 className="font-black text-sm text-emerald-950 truncate">{item.name}</h5>
+                                    <div className="mt-1">
+                                      <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-bold text-xs border border-emerald-300">
+                                        {item.price}
+                                      </span>
+                                    </div>
+                                    <p className="text-[10px] text-emerald-800 mt-1 truncate">{item.dates}</p>
+                                  </div>
+                                  <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between text-xs">
+                                    <span className="text-[10px] text-emerald-700 font-bold">বিস্তারিত</span>
+                                    <span className="px-3 py-1 text-[10px] text-white font-black rounded-xl bg-emerald-700 border-b-2 border-emerald-950 shadow">
+                                      প্রি-অর্ডার
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Mobile Show More Button */}
+                      <div className="pt-1 flex justify-center pb-1">
+                        <div className="w-full py-2 bg-gradient-to-r from-amber-500 via-green-600 to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-lg flex items-center justify-center gap-1.5">
+                          <span>{productShowMoreBtnText || "Show More Products"}</span>
+                          <FaChevronDown className="text-[9px]" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
