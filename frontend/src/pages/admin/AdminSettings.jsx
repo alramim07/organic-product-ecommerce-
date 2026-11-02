@@ -4327,26 +4327,26 @@ export default function AdminSettings() {
                   <FaPalette className="text-green-600" /> Product Card Design Presets
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  আপনার পছন্দের কার্ড ডিজাইন স্টাইল নির্বাচন করুন। কার্ডের সাইজ সবসময় সমান থাকবে এবং যেকোনো ছবির সাইজ কার্ডের সাথে মানানসইভাবে ফিট হবে।
+                  নিচের ৪টি ভিন্নধর্মী ডিজাইন থেকে আপনার পছন্দের স্টাইল বেছে নিন। প্রতিটি কার্ড স্বকীয় রঙ, বর্ডার, ব্যাজ ও বাটন ডিজাইনে তৈরি।
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {/* Preset 1: Classic */}
+                {/* Preset 1: Classic Warm (Warm Amber & Gold) */}
                 <div
                   onClick={() => {
                     setProductCardPreset("classic");
                     updateSettings({ productCardPreset: "classic" });
                   }}
-                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                  className={`p-4 rounded-3xl border-2 cursor-pointer transition flex flex-col justify-between ${
                     productCardPreset === "classic"
-                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-amber-500 bg-amber-50/90 shadow-lg ring-2 ring-amber-400/30"
+                      : "border-gray-200 bg-white hover:border-amber-300"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-gray-900">Classic Mango</span>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-xs font-black text-amber-950">1. Classic Warm</span>
                       <input
                         type="radio"
                         name="productCardPreset"
@@ -4355,41 +4355,48 @@ export default function AdminSettings() {
                           setProductCardPreset("classic");
                           updateSettings({ productCardPreset: "classic" });
                         }}
-                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                        className="text-amber-600 focus:ring-amber-500 cursor-pointer"
                       />
                     </div>
                     {/* Mini Visual Preview */}
-                    <div className="p-2.5 rounded-xl bg-amber-50/90 border border-yellow-200 space-y-1.5 shadow-sm text-[10px]">
-                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-                        Image (Fill)
+                    <div className="p-2.5 rounded-2xl bg-amber-50/90 border-2 border-amber-300 space-y-2 shadow-sm text-[10px]">
+                      <div className="h-12 bg-amber-200/70 rounded-xl relative flex items-center justify-center text-amber-900 font-bold overflow-hidden">
+                        <span className="text-[9px]">Inset Image</span>
+                        <span className="absolute top-1 left-1 bg-yellow-400 text-green-950 font-black text-[8px] px-1.5 py-0.2 rounded-full">
+                          🥭 ফ্রেশ
+                        </span>
                       </div>
-                      <div className="font-bold text-green-900 truncate">আমের নাম...</div>
-                      <div className="text-amber-700 font-bold">৳ ১৮০/কেজি</div>
-                      <div className="h-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full text-white text-[9px] flex items-center justify-center">
+                      <div className="font-bold text-green-950 truncate">আমের নাম...</div>
+                      <div>
+                        <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-[9px] border border-amber-200">
+                          ৳ ১৮০/কেজি
+                        </span>
+                      </div>
+                      <div className="h-5 bg-gradient-to-r from-amber-500 to-green-600 rounded-full text-white text-[9px] font-black flex items-center justify-center shadow">
                         প্রি-অর্ডার
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-2">
-                    ক্লাসিক ওয়ার্ম অ্যাম্বার লুক ও রাউন্ডেড বাটন
+                  <p className="text-[11px] text-amber-900 font-medium mt-2.5">
+                    ওয়ার্ম অ্যাম্বার কার্ড, ইনসেট ইমেজ ও গোল্ডেন পিল বাটন
                   </p>
                 </div>
 
-                {/* Preset 2: Modern */}
+                {/* Preset 2: Modern Minimal (Clean Retail) */}
                 <div
                   onClick={() => {
                     setProductCardPreset("modern");
                     updateSettings({ productCardPreset: "modern" });
                   }}
-                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                  className={`p-4 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between ${
                     productCardPreset === "modern"
-                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-emerald-600 bg-slate-50 shadow-lg ring-2 ring-emerald-500/20"
+                      : "border-gray-200 bg-white hover:border-slate-400"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-gray-900">Modern Minimal</span>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-xs font-black text-slate-900">2. Modern Minimal</span>
                       <input
                         type="radio"
                         name="productCardPreset"
@@ -4398,27 +4405,30 @@ export default function AdminSettings() {
                           setProductCardPreset("modern");
                           updateSettings({ productCardPreset: "modern" });
                         }}
-                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                        className="text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                       />
                     </div>
                     {/* Mini Visual Preview */}
-                    <div className="p-2.5 rounded-xl bg-white border border-gray-200 space-y-1.5 shadow-sm text-[10px]">
-                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-                        Image (Fill)
+                    <div className="rounded-lg bg-white border border-slate-300 space-y-1.5 shadow-sm text-[10px] overflow-hidden p-2">
+                      <div className="h-12 bg-slate-100 -mx-2 -mt-2 relative flex items-center justify-center text-slate-500 font-bold">
+                        <span className="text-[9px]">Flush Image</span>
+                        <span className="absolute top-1 right-1 bg-slate-900/80 text-white font-bold text-[8px] px-1 rounded">
+                          ইন স্টক
+                        </span>
                       </div>
-                      <div className="font-bold text-gray-900 truncate">আমের নাম...</div>
-                      <div className="text-emerald-700 font-bold">৳ ১৮০/কেজি</div>
-                      <div className="h-4 bg-emerald-600 rounded-lg text-white text-[9px] flex items-center justify-center">
+                      <div className="font-bold text-slate-900 truncate pt-1">আমের নাম...</div>
+                      <div className="text-slate-950 font-black text-[11px]">৳ ১৮০/কেজি</div>
+                      <div className="h-5 bg-emerald-600 rounded-md text-white text-[9px] font-bold flex items-center justify-center">
                         প্রি-অর্ডার
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-2">
-                    ক্লিন হোয়াইট ব্যাকগ্রাউন্ড ও স্লিক ডিজাইন
+                  <p className="text-[11px] text-slate-600 font-medium mt-2.5">
+                    স্টুডিও হোয়াইট রিটেল কার্ড, ফ্ল্যাশ ইমেজ ও স্লিক বাটন
                   </p>
                 </div>
 
-                {/* Preset 3: Elevated */}
+                {/* Preset 3: Royal Dark Luxury (Black & Gold) */}
                 <div
                   onClick={() => {
                     setProductCardPreset("elevated");
@@ -4426,13 +4436,13 @@ export default function AdminSettings() {
                   }}
                   className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
                     productCardPreset === "elevated"
-                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-amber-400 bg-gray-900 text-white shadow-xl ring-2 ring-yellow-400/30"
+                      : "border-gray-700 bg-gray-900 text-white hover:border-amber-500"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-gray-900">Elevated Luxury</span>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-xs font-black text-amber-300">3. Royal Dark Luxury</span>
                       <input
                         type="radio"
                         name="productCardPreset"
@@ -4441,41 +4451,44 @@ export default function AdminSettings() {
                           setProductCardPreset("elevated");
                           updateSettings({ productCardPreset: "elevated" });
                         }}
-                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                        className="text-amber-400 focus:ring-amber-400 cursor-pointer"
                       />
                     </div>
                     {/* Mini Visual Preview */}
-                    <div className="p-2.5 rounded-xl bg-gradient-to-b from-white to-emerald-50 border-2 border-emerald-400/30 space-y-1.5 shadow-md text-[10px]">
-                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-                        Image (Fill)
+                    <div className="p-2.5 rounded-xl bg-gradient-to-b from-gray-950 to-slate-950 border border-amber-500/60 space-y-2 shadow-md text-[10px] text-white">
+                      <div className="h-12 bg-gray-800 rounded-lg relative flex items-center justify-center text-amber-300 font-bold border border-amber-500/30">
+                        <span className="text-[9px]">Dark Image</span>
+                        <span className="absolute top-1 left-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 font-black text-[8px] px-1.5 py-0.2 rounded-full">
+                          👑 প্রিমিয়াম
+                        </span>
                       </div>
-                      <div className="font-bold text-green-950 truncate">আমের নাম...</div>
-                      <div className="text-amber-600 font-black">৳ ১৮০/কেজি</div>
-                      <div className="h-4 bg-gradient-to-r from-amber-500 to-green-600 rounded-full text-white text-[9px] flex items-center justify-center font-bold">
+                      <div className="font-bold text-white truncate">আমের নাম...</div>
+                      <div className="text-yellow-400 font-black text-[11px]">৳ ১৮০/কেজি</div>
+                      <div className="h-5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-gray-950 font-black rounded-lg text-[9px] flex items-center justify-center shadow">
                         প্রি-অর্ডার
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-2">
-                    ডিপ শ্যাডো, প্রিমিয়াম ফিল ও গ্রেডিয়েন্ট বাটন
+                  <p className="text-[11px] text-amber-300/80 font-medium mt-2.5">
+                    রয়্যাল ব্ল্যাক ও গ্লিটারিং গোল্ডেন এক্সক্লুসিভ লাক্সারি
                   </p>
                 </div>
 
-                {/* Preset 4: Bordered */}
+                {/* Preset 4: Eco Organic (Sage Pastel & Dashed) */}
                 <div
                   onClick={() => {
                     setProductCardPreset("bordered");
                     updateSettings({ productCardPreset: "bordered" });
                   }}
-                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                  className={`p-4 rounded-[26px] border-2 cursor-pointer transition flex flex-col justify-between ${
                     productCardPreset === "bordered"
-                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
-                      : "border-gray-200 bg-white hover:border-gray-300"
+                      ? "border-emerald-500 bg-emerald-50 shadow-lg ring-2 ring-emerald-500/20"
+                      : "border-gray-200 bg-white hover:border-emerald-400"
                   }`}
                 >
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-black text-gray-900">Bordered Compact</span>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <span className="text-xs font-black text-emerald-950">4. Eco Organic</span>
                       <input
                         type="radio"
                         name="productCardPreset"
@@ -4484,23 +4497,30 @@ export default function AdminSettings() {
                           setProductCardPreset("bordered");
                           updateSettings({ productCardPreset: "bordered" });
                         }}
-                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                        className="text-emerald-600 focus:ring-emerald-500 cursor-pointer"
                       />
                     </div>
                     {/* Mini Visual Preview */}
-                    <div className="p-2.5 rounded-xl bg-white border-2 border-emerald-300 space-y-1.5 shadow-sm text-[10px]">
-                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
-                        Image (Fill)
+                    <div className="p-2.5 rounded-2xl bg-emerald-50 border-2 border-dashed border-emerald-400 space-y-2 text-[10px]">
+                      <div className="h-12 bg-emerald-200/60 rounded-xl relative flex items-center justify-center text-emerald-900 font-bold">
+                        <span className="text-[9px]">Eco Frame</span>
+                        <span className="absolute top-1 left-1 bg-emerald-700 text-white font-bold text-[8px] px-1.5 py-0.2 rounded-full">
+                          🌿 অর্গানিক
+                        </span>
                       </div>
                       <div className="font-bold text-emerald-950 truncate">আমের নাম...</div>
-                      <div className="text-amber-700 font-bold">৳ ১৮০/কেজি</div>
-                      <div className="h-4 bg-emerald-700 rounded-lg text-white text-[9px] flex items-center justify-center">
+                      <div>
+                        <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-bold text-[9px] border border-emerald-300">
+                          ৳ ১৮০/কেজি
+                        </span>
+                      </div>
+                      <div className="h-5 bg-emerald-700 rounded-xl text-white text-[9px] font-black border-b-2 border-emerald-950 flex items-center justify-center shadow">
                         প্রি-অর্ডার
                       </div>
                     </div>
                   </div>
-                  <p className="text-[11px] text-gray-500 mt-2">
-                    ডিস্টিঙ্কট এমারেল্ড আউটলাইন ও কম্প্যাক্ট স্টাইল
+                  <p className="text-[11px] text-emerald-900 font-medium mt-2.5">
+                    ন্যাচারাল সেজ গ্রিন, ড্যাশড বর্ডার ও ৩D লিফ বাটন
                   </p>
                 </div>
               </div>
@@ -4746,62 +4766,132 @@ export default function AdminSettings() {
                 </div>
 
                 {/* Sample Card Preview Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                   {[
                     { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
                     { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
                     { name: "ল্যাংড়া", price: "৳ ১৬০/কেজি", dates: "চুয়াডাঙ্গা: ২৮ মে, নওগাঁ: ১০ জুন" },
                     { name: "আম্রপালি", price: "৳ ১৯০/কেজি", dates: "চুয়াডাঙ্গা: ৫ জুন, রাজশাহী: ১৫ জুন" },
-                  ].map((item, idx) => (
-                    <div
-                      key={idx}
-                      className={`flex flex-col rounded-2xl overflow-hidden shadow-md text-gray-800 ${
-                        productCardPreset === "modern"
-                          ? "bg-white border border-gray-200"
-                          : productCardPreset === "elevated"
-                          ? "bg-gradient-to-b from-white to-emerald-50 border-2 border-emerald-400/40 shadow-xl"
-                          : productCardPreset === "bordered"
-                          ? "bg-white border-2 border-emerald-300"
-                          : "bg-white/95 border border-yellow-200"
-                      }`}
-                    >
-                      <div className="h-32 bg-gray-200 relative overflow-hidden flex items-center justify-center text-gray-400 text-xs font-bold">
-                        <span>🥭 Product Image (Fill)</span>
-                        <span className="absolute top-2 right-2 bg-green-700 text-white text-[9px] px-1.5 py-0.5 rounded-full">
-                          ইন স্টক
-                        </span>
-                      </div>
-                      <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
-                        <div>
-                          <h5 className="font-bold text-sm text-green-950 truncate line-clamp-1">
-                            {item.name}
-                          </h5>
-                          <p className="text-xs font-black text-amber-700 mt-0.5">{item.price}</p>
-                          <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{item.dates}</p>
-                        </div>
-                        <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs">
-                          <span className="text-[11px] text-green-800 font-bold flex items-center gap-1">
-                            <FaEye className="text-[10px]" /> বিস্তারিত
-                          </span>
-                          <span
-                            className={`px-3 py-1 text-[11px] text-white font-bold rounded-lg shadow-sm ${
-                              productCardPreset === "modern"
-                                ? "bg-emerald-600 rounded-lg"
-                                : productCardPreset === "elevated"
-                                ? "bg-gradient-to-r from-amber-500 to-green-600 rounded-full"
-                                : productCardPreset === "bordered"
-                                ? "bg-emerald-700 rounded-md"
-                                : "bg-gradient-to-r from-green-600 to-emerald-600 rounded-full"
-                            }`}
-                          >
-                            প্রি-অর্ডার
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                  ].map((item, idx) => {
+                    return (
+                      <div key={idx} className="h-full flex flex-col">
+                        {/* Preset 1: Classic Warm */}
+                        {productCardPreset === "classic" && (
+                          <div className="flex flex-col h-full rounded-3xl bg-amber-50/90 border-2 border-amber-300 shadow-md text-gray-800 overflow-hidden">
+                            <div className="p-2.5 pb-0">
+                              <div className="h-32 bg-amber-100 rounded-2xl relative flex items-center justify-center text-amber-900 font-bold overflow-hidden shadow-inner">
+                                <span>🥭 Inset Image</span>
+                                <span className="absolute top-2 left-2 bg-yellow-400 text-green-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
+                                  বাগান ফ্রেশ
+                                </span>
+                              </div>
+                            </div>
+                            <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
+                              <div>
+                                <h5 className="font-black text-sm text-green-950 truncate">{item.name}</h5>
+                                <div className="mt-1">
+                                  <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-xs border border-amber-200">
+                                    {item.price}
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{item.dates}</p>
+                              </div>
+                              <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-xs">
+                                <span className="text-[11px] text-green-800 font-bold">বিস্তারিত</span>
+                                <span className="px-3.5 py-1 text-[11px] text-white font-black rounded-full bg-gradient-to-r from-amber-500 to-green-600 shadow">
+                                  প্রি-অর্ডার
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
 
+                        {/* Preset 2: Modern Minimal */}
+                        {productCardPreset === "modern" && (
+                          <div className="flex flex-col h-full rounded-xl bg-white border border-slate-200 shadow-sm text-gray-900 overflow-hidden">
+                            <div className="h-32 bg-slate-100 relative flex items-center justify-center text-slate-500 font-bold">
+                              <span>Flush Image</span>
+                              <span className="absolute top-2 right-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow">
+                                ইন স্টক
+                              </span>
+                            </div>
+                            <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
+                              <div>
+                                <h5 className="font-bold text-sm text-slate-900 truncate">{item.name}</h5>
+                                <p className="text-sm font-black text-slate-950 mt-0.5">{item.price}</p>
+                                <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">{item.dates}</p>
+                              </div>
+                              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                                <span className="text-[11px] text-slate-600 font-semibold">দেখুন</span>
+                                <span className="px-3.5 py-1 text-[11px] text-white font-bold rounded-lg bg-emerald-600">
+                                  প্রি-অর্ডার
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Preset 3: Royal Dark Luxury */}
+                        {productCardPreset === "elevated" && (
+                          <div className="flex flex-col h-full rounded-2xl bg-gradient-to-b from-gray-950 to-slate-950 border border-amber-500/60 shadow-xl text-white overflow-hidden">
+                            <div className="h-1 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500" />
+                            <div className="h-32 bg-gray-900 relative flex items-center justify-center text-amber-300 font-bold">
+                              <span>Dark Image</span>
+                              <span className="absolute top-2 left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
+                                👑 প্রিমিয়াম
+                              </span>
+                            </div>
+                            <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
+                              <div>
+                                <h5 className="font-black text-sm text-white truncate">{item.name}</h5>
+                                <p className="text-sm font-black text-yellow-400 mt-0.5 drop-shadow">{item.price}</p>
+                                <p className="text-[10px] text-gray-400 mt-1 line-clamp-1">{item.dates}</p>
+                              </div>
+                              <div className="pt-2 border-t border-gray-800 flex items-center justify-between text-xs">
+                                <span className="text-[11px] text-yellow-400 font-bold">বিস্তারিত</span>
+                                <span className="px-3.5 py-1 text-[11px] text-gray-950 font-black rounded-lg bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 shadow">
+                                  প্রি-অর্ডার
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Preset 4: Eco Organic */}
+                        {productCardPreset === "bordered" && (
+                          <div className="flex flex-col h-full rounded-[26px] bg-emerald-50 border-2 border-dashed border-emerald-400 shadow-sm text-emerald-950 overflow-hidden">
+                            <div className="p-2.5 pb-0">
+                              <div className="h-32 bg-emerald-100/70 rounded-xl relative flex items-center justify-center text-emerald-900 font-bold">
+                                <span>🌿 Eco Frame</span>
+                                <span className="absolute top-2 left-2 bg-emerald-700 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">
+                                  ১০০% অর্গানিক
+                                </span>
+                              </div>
+                            </div>
+                            <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
+                              <div>
+                                <h5 className="font-black text-sm text-emerald-950 truncate">{item.name}</h5>
+                                <div className="mt-1">
+                                  <span className="px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-bold text-xs border border-emerald-300">
+                                    {item.price}
+                                  </span>
+                                </div>
+                                <p className="text-[10px] text-emerald-800 mt-1 line-clamp-1">{item.dates}</p>
+                              </div>
+                              <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between text-xs">
+                                <span className="text-[11px] text-emerald-700 font-bold">বিস্তারিত</span>
+                                <span className="px-3.5 py-1 text-[11px] text-white font-black rounded-xl bg-emerald-700 border-b-2 border-emerald-950 shadow">
+                                  প্রি-অর্ডার
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+                
                 {/* Live Preview Button */}
                 <div className="pt-2 flex justify-center">
                   <div className="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-green-600 to-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg flex items-center gap-2">

@@ -171,59 +171,6 @@ export default function MangoVarieties({ onSelectMango }) {
     }
   };
 
-  // Card Preset Styling Classes
-  const getPresetStyles = (preset) => {
-    switch (preset) {
-      case "modern":
-        return {
-          card: "bg-white border border-gray-200 shadow-sm hover:shadow-xl rounded-2xl",
-          body: "bg-white",
-          title: "text-gray-900 group-hover/title:text-emerald-700",
-          price: "text-emerald-700",
-          borderDivider: "border-gray-100",
-          orderBtn:
-            "bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-none font-bold",
-          detailBtn: "text-gray-600 hover:text-emerald-700",
-        };
-      case "elevated":
-        return {
-          card: "bg-white border-2 border-emerald-500/20 shadow-xl hover:shadow-2xl rounded-3xl",
-          body: "bg-gradient-to-b from-white to-emerald-50/50",
-          title: "text-green-950 group-hover/title:text-green-700",
-          price: "text-amber-600 font-black",
-          borderDivider: "border-emerald-100",
-          orderBtn:
-            "bg-gradient-to-r from-amber-500 to-green-600 hover:from-amber-600 hover:to-green-700 text-white rounded-full shadow-md font-black",
-          detailBtn: "text-emerald-800 hover:text-emerald-950",
-        };
-      case "bordered":
-        return {
-          card: "bg-amber-50/30 border-2 border-emerald-300 hover:border-emerald-500 shadow-sm rounded-2xl",
-          body: "bg-white/90 backdrop-blur-sm",
-          title: "text-emerald-950 group-hover/title:text-emerald-700",
-          price: "text-amber-700",
-          borderDivider: "border-emerald-200/60",
-          orderBtn:
-            "bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg shadow font-bold",
-          detailBtn: "text-emerald-700 hover:text-emerald-900",
-        };
-      case "classic":
-      default:
-        return {
-          card: "bg-white/95 border border-yellow-200 shadow-md hover:shadow-2xl rounded-2xl",
-          body: "bg-gradient-to-br from-amber-50/90 via-white to-green-50/60",
-          title: "text-green-900 group-hover/title:text-green-700",
-          price: "text-yellow-700",
-          borderDivider: "border-yellow-200/60",
-          orderBtn:
-            "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-full shadow px-4 py-1.5 font-bold",
-          detailBtn: "text-green-800 hover:text-green-950",
-        };
-    }
-  };
-
-  const presetStyle = getPresetStyles(cardPreset);
-
   return (
     <section id="varieties" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-t from-yellow-50 via-white to-amber-50">
       <div className="max-w-7xl mx-auto">
@@ -261,88 +208,258 @@ export default function MangoVarieties({ onSelectMango }) {
                 viewport={{ once: true }}
                 className="h-full flex flex-col"
               >
-                <div
-                  className={`flex flex-col h-full overflow-hidden transition-all duration-300 hover:-translate-y-1.5 ${presetStyle.card}`}
-                >
-                  {/* Card Image Container - Fixed height & object-cover prevents size deformation */}
-                  <Link
-                    to={`/product/${productId}`}
-                    className="relative w-full h-52 shrink-0 bg-gray-100 overflow-hidden group block"
-                  >
-                    <img
-                      src={mango.image || "/assets/mangoes/m1.jpg"}
-                      alt={mango.name_bn || mango.name || "Product"}
-                      className="w-full h-full object-cover object-center transition duration-500 group-hover:scale-105"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "/assets/mangoes/m1.jpg";
-                      }}
-                    />
-
-                    {/* Badge if stock status exists */}
-                    {mango.stock_status && (
-                      <span className="absolute top-2.5 right-2.5 bg-green-700/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
-                        {mango.stock_status}
-                      </span>
-                    )}
-
-                    {/* Hover Overlay with Eye */}
-                    <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <span className="bg-white/95 text-green-950 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                        <FaEye /> বিস্তারিত দেখুন
-                      </span>
-                    </div>
-                  </Link>
-
-                  {/* Card Body - Equal height & Flex layout */}
-                  <div className={`p-5 flex flex-col flex-1 justify-between min-h-[200px] ${presetStyle.body}`}>
-                    <div>
-                      {/* Product Title - Clickable, truncated with ellipsis (...) on overflow */}
+                {/* PRESET 1: CLASSIC MANGO (Warm Amber Inset Card) */}
+                {cardPreset === "classic" && (
+                  <div className="flex flex-col h-full rounded-3xl bg-amber-50/50 border-2 border-amber-300 shadow-md hover:shadow-2xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
+                    {/* Inset Image Box */}
+                    <div className="p-3 pb-0">
                       <Link
                         to={`/product/${productId}`}
-                        className="block group/title"
-                        title={mango.name_bn || mango.name}
+                        className="relative w-full h-52 shrink-0 bg-amber-100/50 rounded-2xl overflow-hidden group block shadow-inner"
                       >
-                        <h3
-                          className={`text-lg sm:text-xl font-bold truncate line-clamp-1 overflow-hidden text-ellipsis whitespace-nowrap leading-tight transition ${presetStyle.title}`}
+                        <img
+                          src={mango.image || "/assets/mangoes/m1.jpg"}
+                          alt={mango.name_bn || mango.name || "Product"}
+                          className="w-full h-full object-cover object-center transition duration-500 group-hover:scale-105"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/assets/mangoes/m1.jpg";
+                          }}
+                        />
+                        <span className="absolute top-2.5 left-2.5 bg-yellow-400 text-green-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1">
+                          🥭 বাগান ফ্রেশ
+                        </span>
+                        <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="bg-white/95 text-green-950 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5">
+                            <FaEye /> বিস্তারিত দেখুন
+                          </span>
+                        </div>
+                      </Link>
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="p-5 flex flex-col flex-1 justify-between min-h-[190px]">
+                      <div>
+                        <Link to={`/product/${productId}`} className="block group/title" title={mango.name_bn || mango.name}>
+                          <h3 className="text-lg sm:text-xl font-black text-green-950 group-hover/title:text-green-700 truncate line-clamp-1 overflow-hidden text-ellipsis whitespace-nowrap leading-tight">
+                            {mango.name_bn || mango.name}
+                          </h3>
+                        </Link>
+                        <div className="mt-2">
+                          <span className="inline-flex px-3 py-1 rounded-full bg-amber-100/90 text-amber-900 font-black text-base border border-amber-200 shadow-sm">
+                            {priceText}
+                          </span>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-2.5 flex items-start gap-1.5 min-h-[36px] max-h-[36px] overflow-hidden leading-snug line-clamp-2 text-ellipsis">
+                          <FaCalendarAlt className="mt-0.5 text-amber-700 shrink-0 text-xs" />
+                          <span className="line-clamp-2">{scheduleText}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-amber-200/60">
+                        <Link to={`/product/${productId}`} className="text-xs font-bold text-green-800 hover:text-green-950 flex items-center gap-1">
+                          <FaEye className="text-[11px]" /> <span>বিস্তারিত</span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handlePreOrder(mango)}
+                          className="text-xs px-4 py-2 bg-gradient-to-r from-amber-500 to-green-600 hover:from-amber-600 hover:to-green-700 text-white font-black rounded-full shadow-md transition cursor-pointer"
                         >
-                          {mango.name_bn || mango.name}
-                        </h3>
-                      </Link>
-
-                      {/* Price Display */}
-                      <p className={`text-lg sm:text-xl font-black mt-1.5 ${presetStyle.price}`}>
-                        {priceText}
-                      </p>
-
-                      {/* Region Dates / Subtitle - Clamped to 2 lines with fixed height */}
-                      <p className="text-xs sm:text-sm text-gray-600 mt-2 flex items-start gap-1.5 min-h-[36px] max-h-[36px] overflow-hidden leading-snug line-clamp-2 text-ellipsis">
-                        <FaCalendarAlt className="mt-0.5 text-green-700 shrink-0 text-xs" />
-                        <span className="line-clamp-2">{scheduleText}</span>
-                      </p>
-                    </div>
-
-                    {/* Bottom Action Buttons Row */}
-                    <div
-                      className={`flex items-center justify-between gap-2 mt-4 pt-3 border-t ${presetStyle.borderDivider}`}
-                    >
-                      <Link
-                        to={`/product/${productId}`}
-                        className={`text-xs font-bold flex items-center gap-1 transition ${presetStyle.detailBtn}`}
-                      >
-                        <FaEye className="text-[11px]" /> <span>বিস্তারিত</span>
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => handlePreOrder(mango)}
-                        className={`text-xs px-3.5 py-1.5 transition cursor-pointer flex items-center justify-center ${presetStyle.orderBtn}`}
-                      >
-                        প্রি-অর্ডার করুন
-                      </button>
+                          প্রি-অর্ডার করুন
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
+
+                {/* PRESET 2: MODERN MINIMAL (Clean White Retail Flush Image) */}
+                {cardPreset === "modern" && (
+                  <div className="flex flex-col h-full rounded-xl bg-white border border-slate-200 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
+                    {/* Full-bleed Top Image */}
+                    <Link
+                      to={`/product/${productId}`}
+                      className="relative w-full h-52 shrink-0 bg-gray-100 overflow-hidden group block"
+                    >
+                      <img
+                        src={mango.image || "/assets/mangoes/m1.jpg"}
+                        alt={mango.name_bn || mango.name || "Product"}
+                        className="w-full h-full object-cover object-center transition duration-500 group-hover:scale-105"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/assets/mangoes/m1.jpg";
+                        }}
+                      />
+                      <span className="absolute top-2.5 right-2.5 bg-slate-900/85 backdrop-blur text-white text-[10px] font-bold px-2.5 py-0.5 rounded shadow">
+                        {mango.stock_status || "ইন স্টক"}
+                      </span>
+                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="bg-white/95 text-slate-900 font-bold text-xs py-1 px-3 rounded shadow flex items-center gap-1">
+                          <FaEye /> বিস্তারিত
+                        </span>
+                      </div>
+                    </Link>
+
+                    {/* Card Body */}
+                    <div className="p-4 sm:p-5 flex flex-col flex-1 justify-between min-h-[190px] bg-white">
+                      <div>
+                        <Link to={`/product/${productId}`} className="block group/title" title={mango.name_bn || mango.name}>
+                          <h3 className="text-base sm:text-lg font-bold text-slate-900 group-hover/title:text-emerald-700 truncate line-clamp-1 overflow-hidden text-ellipsis whitespace-nowrap leading-tight">
+                            {mango.name_bn || mango.name}
+                          </h3>
+                        </Link>
+                        <p className="text-xl font-extrabold text-slate-950 mt-1 tracking-tight">
+                          {priceText}
+                        </p>
+                        <p className="text-xs text-slate-500 mt-2 flex items-start gap-1.5 min-h-[36px] max-h-[36px] overflow-hidden leading-snug line-clamp-2 text-ellipsis">
+                          <FaCalendarAlt className="mt-0.5 text-slate-400 shrink-0 text-xs" />
+                          <span className="line-clamp-2">{scheduleText}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
+                        <Link to={`/product/${productId}`} className="text-xs font-semibold text-slate-600 hover:text-emerald-700 flex items-center gap-1">
+                          <FaEye className="text-[11px]" /> <span>দেখুন</span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handlePreOrder(mango)}
+                          className="text-xs px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition cursor-pointer shadow-none"
+                        >
+                          প্রি-অর্ডার
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PRESET 3: ROYAL DARK LUXURY (Black & Radiant Gold) */}
+                {cardPreset === "elevated" && (
+                  <div className="flex flex-col h-full rounded-2xl bg-gradient-to-b from-gray-900 via-gray-900 to-slate-950 border border-amber-500/50 hover:border-amber-400 shadow-2xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden text-white">
+                    {/* Top Gold Accent Rim & Image */}
+                    <div className="h-1 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500" />
+                    <Link
+                      to={`/product/${productId}`}
+                      className="relative w-full h-52 shrink-0 bg-gray-950 overflow-hidden group block"
+                    >
+                      <img
+                        src={mango.image || "/assets/mangoes/m1.jpg"}
+                        alt={mango.name_bn || mango.name || "Product"}
+                        className="w-full h-full object-cover object-center transition duration-500 group-hover:scale-105 opacity-90 group-hover:opacity-100"
+                        loading="lazy"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/assets/mangoes/m1.jpg";
+                        }}
+                      />
+                      <span className="absolute top-2.5 left-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1">
+                        👑 প্রিমিয়াম
+                      </span>
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <span className="bg-gray-950 text-amber-300 border border-amber-400 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5">
+                          <FaEye /> বিস্তারিত দেখুন
+                        </span>
+                      </div>
+                    </Link>
+
+                    {/* Card Body */}
+                    <div className="p-5 flex flex-col flex-1 justify-between min-h-[190px]">
+                      <div>
+                        <Link to={`/product/${productId}`} className="block group/title" title={mango.name_bn || mango.name}>
+                          <h3 className="text-lg sm:text-xl font-black text-white group-hover/title:text-amber-300 truncate line-clamp-1 overflow-hidden text-ellipsis whitespace-nowrap leading-tight transition">
+                            {mango.name_bn || mango.name}
+                          </h3>
+                        </Link>
+                        <p className="text-xl font-black text-yellow-400 mt-1.5 drop-shadow">
+                          {priceText}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-2 flex items-start gap-1.5 min-h-[36px] max-h-[36px] overflow-hidden leading-snug line-clamp-2 text-ellipsis">
+                          <FaCalendarAlt className="mt-0.5 text-amber-400 shrink-0 text-xs" />
+                          <span className="line-clamp-2">{scheduleText}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-gray-800">
+                        <Link to={`/product/${productId}`} className="text-xs font-bold text-yellow-400 hover:text-yellow-300 flex items-center gap-1 transition">
+                          <FaEye className="text-[11px]" /> <span>বিস্তারিত</span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handlePreOrder(mango)}
+                          className="text-xs px-4 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-500 hover:to-amber-500 text-gray-950 font-black rounded-xl shadow-lg transition cursor-pointer"
+                        >
+                          প্রি-অর্ডার করুন
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* PRESET 4: ECO ORGANIC (Natural Sage Pastel with Dashed Forest Border) */}
+                {cardPreset === "bordered" && (
+                  <div className="flex flex-col h-full rounded-[28px] bg-emerald-50/70 border-2 border-dashed border-emerald-400 hover:border-emerald-600 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 overflow-hidden">
+                    {/* Eco Frame with Image */}
+                    <div className="p-3 pb-0">
+                      <Link
+                        to={`/product/${productId}`}
+                        className="relative w-full h-52 shrink-0 bg-emerald-100/60 rounded-[22px] overflow-hidden group block"
+                      >
+                        <img
+                          src={mango.image || "/assets/mangoes/m1.jpg"}
+                          alt={mango.name_bn || mango.name || "Product"}
+                          className="w-full h-full object-cover object-center transition duration-500 group-hover:scale-105"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "/assets/mangoes/m1.jpg";
+                          }}
+                        />
+                        <span className="absolute top-2.5 left-2.5 bg-emerald-700 text-white font-black text-[10px] px-3 py-0.5 rounded-full shadow flex items-center gap-1">
+                          🌿 ১০০% অর্গানিক
+                        </span>
+                        <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <span className="bg-white/95 text-emerald-900 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5">
+                            <FaEye /> বিস্তারিত
+                          </span>
+                        </div>
+                      </Link>
+                    </div>
+
+                    {/* Card Body */}
+                    <div className="p-5 flex flex-col flex-1 justify-between min-h-[190px]">
+                      <div>
+                        <Link to={`/product/${productId}`} className="block group/title" title={mango.name_bn || mango.name}>
+                          <h3 className="text-lg sm:text-xl font-black text-emerald-950 group-hover/title:text-emerald-700 truncate line-clamp-1 overflow-hidden text-ellipsis whitespace-nowrap leading-tight">
+                            {mango.name_bn || mango.name}
+                          </h3>
+                        </Link>
+                        <div className="mt-2">
+                          <span className="inline-flex px-3 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-black text-base border border-emerald-300 shadow-sm">
+                            {priceText}
+                          </span>
+                        </div>
+                        <p className="text-xs text-emerald-800 mt-2.5 flex items-start gap-1.5 min-h-[36px] max-h-[36px] overflow-hidden leading-snug line-clamp-2 text-ellipsis">
+                          <FaCalendarAlt className="mt-0.5 text-emerald-600 shrink-0 text-xs" />
+                          <span className="line-clamp-2">{scheduleText}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-center justify-between gap-2 mt-4 pt-3 border-t border-emerald-200/80">
+                        <Link to={`/product/${productId}`} className="text-xs font-bold text-emerald-700 hover:text-emerald-950 flex items-center gap-1">
+                          <FaEye className="text-[11px]" /> <span>বিস্তারিত</span>
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => handlePreOrder(mango)}
+                          className="text-xs px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl shadow-md border-b-4 border-emerald-950 active:border-b-0 transition cursor-pointer"
+                        >
+                          প্রি-অর্ডার করুন
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </motion.div>
             );
           })}
