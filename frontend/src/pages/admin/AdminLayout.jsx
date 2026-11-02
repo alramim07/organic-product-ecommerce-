@@ -144,10 +144,10 @@ export default function AdminLayout() {
             >
               {/* Brand Icon or Uploaded Logo / Favicon */}
               <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 rounded-xl flex items-center justify-center shadow-lg shrink-0 overflow-hidden">
-                {settings?.favicon ? (
-                  <img src={settings.favicon} alt="Favicon" className="w-full h-full object-cover" />
-                ) : settings?.logo ? (
+                {settings?.logo ? (
                   <img src={settings.logo} alt="Logo" className="w-full h-full object-cover" />
+                ) : settings?.favicon ? (
+                  <img src={settings.favicon} alt="Favicon" className="w-full h-full object-cover" />
                 ) : (
                   <FaLeaf className="text-white text-xl" />
                 )}

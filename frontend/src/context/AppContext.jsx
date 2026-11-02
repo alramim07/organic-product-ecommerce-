@@ -364,12 +364,21 @@ export function AppProvider({ children }) {
 
   // Settings Operation
   const updateSettings = async (newSettings) => {
+    setSettings((prev) => {
+      const merged = { ...prev, ...newSettings };
+      try {
+        localStorage.setItem("ammwala_settings", JSON.stringify(merged));
+      } catch (err) {
+        console.warn("Storage quota warning:", err);
+      }
+      return merged;
+    });
+
     try {
       await api.settings.update(newSettings, adminToken);
-    } catch {
-      // Local fallback
+    } catch (e) {
+      console.warn("Backend settings update error:", e);
     }
-    setSettings((prev) => ({ ...prev, ...newSettings }));
   };
 
   // Auth Operations

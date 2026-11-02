@@ -102,65 +102,79 @@ export default function AdminSettings() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  // File upload handlers (converts to base64 for persistent storage)
-  const handleFaviconUpload = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // Helper to downscale & compress image to lightweight WebP/JPEG (prevents quota issues & speeds up sync)
+  const compressImage = (file, maxWidth, maxHeight, quality = 0.85) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
 
-    if (file.size > 2 * 1024 * 1024) {
-      Swal.fire({
-        icon: "error",
-        title: "File Too Large",
-        text: "Favicon image size should be under 2MB.",
-      });
-      return;
-    }
+          if (width > maxWidth || height > maxHeight) {
+            if (width / height > maxWidth / maxHeight) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setFavicon(reader.result);
-    };
-    reader.readAsDataURL(file);
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.onerror = () => resolve(event.target.result);
+      };
+      reader.onerror = () => resolve("");
+    });
   };
 
-  const handleLogoUpload = (e) => {
+  // File upload handlers (compress & sync directly to context)
+  const handleFaviconUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      Swal.fire({
-        icon: "error",
-        title: "File Too Large",
-        text: "Logo image size should be under 5MB.",
-      });
-      return;
+    try {
+      const compressed = await compressImage(file, 96, 96, 0.9);
+      setFavicon(compressed);
+      updateSettings({ favicon: compressed });
+    } catch {
+      // fallback
     }
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setLogo(reader.result);
-    };
-    reader.readAsDataURL(file);
   };
 
-  const handleProfilePicUpload = (e) => {
+  const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      Swal.fire({
-        icon: "error",
-        title: "File Too Large",
-        text: "Profile picture size should be under 5MB.",
-      });
-      return;
+    try {
+      const compressed = await compressImage(file, 480, 140, 0.9);
+      setLogo(compressed);
+      updateSettings({ logo: compressed });
+    } catch {
+      // fallback
     }
+  };
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setProfilePic(reader.result);
-    };
-    reader.readAsDataURL(file);
+  const handleProfilePicUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const compressed = await compressImage(file, 256, 256, 0.88);
+      setProfilePic(compressed);
+      updateSettings({ profilePic: compressed });
+    } catch {
+      // fallback
+    }
   };
 
   // Password rules validation logic
@@ -414,7 +428,10 @@ export default function AdminSettings() {
                   {favicon && (
                     <button
                       type="button"
-                      onClick={() => setFavicon("")}
+                      onClick={() => {
+                        setFavicon("");
+                        updateSettings({ favicon: "" });
+                      }}
                       className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-bold cursor-pointer"
                     >
                       <FaTrash className="text-[10px]" /> Remove
@@ -465,7 +482,10 @@ export default function AdminSettings() {
                   {logo && (
                     <button
                       type="button"
-                      onClick={() => setLogo("")}
+                      onClick={() => {
+                        setLogo("");
+                        updateSettings({ logo: "" });
+                      }}
                       className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-bold cursor-pointer"
                     >
                       <FaTrash className="text-[10px]" /> Remove
@@ -515,7 +535,10 @@ export default function AdminSettings() {
                   {profilePic && (
                     <button
                       type="button"
-                      onClick={() => setProfilePic("")}
+                      onClick={() => {
+                        setProfilePic("");
+                        updateSettings({ profilePic: "" });
+                      }}
                       className="text-xs text-red-600 hover:text-red-700 flex items-center gap-1 font-bold cursor-pointer"
                     >
                       <FaTrash className="text-[10px]" /> Remove
