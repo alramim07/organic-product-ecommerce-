@@ -53,7 +53,7 @@ export default function Hero({ onBookingSubmit }) {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
 
-  // Background Settings
+  // Background & Text Slide Settings
   const bgMode = settings?.heroBgMode || "carousel"; // "carousel" | "single"
   const textMode = settings?.heroTextMode || "single"; // "single" | "multi"
   const singleImage = settings?.heroSingleImage || "/assets/one.avif";
@@ -61,6 +61,37 @@ export default function Hero({ onBookingSubmit }) {
     settings?.heroSlides && settings.heroSlides.length > 0
       ? settings.heroSlides
       : DEFAULT_SLIDES;
+
+  const textSlides =
+    settings?.heroTextSlides && settings.heroTextSlides.length > 0
+      ? settings.heroTextSlides
+      : [
+          {
+            topBadgeText: settings?.heroTopBadgeText || "সরাসরি বাগান থেকে",
+            topBadgeIcon: settings?.heroTopBadgeIcon || "🍃",
+            mainTitlePart1: settings?.heroMainTitlePart1 || "আমওয়ালা",
+            mainTitlePart2: settings?.heroMainTitlePart2 || "ভাইয়া",
+            subtitleText: settings?.heroSubtitleText || "তাজা ও রসালো আম",
+            descriptionText:
+              settings?.heroDescriptionText ||
+              "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।",
+          },
+        ];
+
+  const currentTextSlide =
+    textMode === "multi"
+      ? textSlides[currentSlide % textSlides.length] || textSlides[0]
+      : {
+          topBadgeText: settings?.heroTopBadgeText || textSlides[0]?.topBadgeText || "কেমিক্যাল মুক্ত",
+          topBadgeIcon: settings?.heroTopBadgeIcon || textSlides[0]?.topBadgeIcon || "🍃",
+          mainTitlePart1: settings?.heroMainTitlePart1 || textSlides[0]?.mainTitlePart1 || "আমওয়ালা",
+          mainTitlePart2: settings?.heroMainTitlePart2 || textSlides[0]?.mainTitlePart2 || "ভাইয়া",
+          subtitleText: settings?.heroSubtitleText || textSlides[0]?.subtitleText || "প্রিমিয়াম কোয়ালিটি",
+          descriptionText:
+            settings?.heroDescriptionText ||
+            textSlides[0]?.descriptionText ||
+            "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।",
+        };
 
   useEffect(() => {
     if (bgMode === "single") return;
@@ -253,49 +284,45 @@ export default function Hero({ onBookingSubmit }) {
             className="text-center lg:text-left text-white"
           >
             <motion.div
-              key={textMode === "multi" ? `title-${currentSlide}` : "single-title"}
+              key={textMode === "multi" ? `text-slide-${currentSlide}` : "single-title"}
               initial={textMode === "multi" ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="mb-4"
             >
-              {/* Top Badge: "কেমিক্যাল মুক্ত" */}
+              {/* Top Badge */}
               <div className="inline-flex items-center bg-yellow-500/90 backdrop-blur-sm rounded-full px-4 py-1.5 text-xs sm:text-sm font-black text-green-950 mb-3.5 shadow-md">
-                {settings?.heroTopBadgeIcon?.startsWith("data:") ||
-                settings?.heroTopBadgeIcon?.startsWith("http") ||
-                settings?.heroTopBadgeIcon?.startsWith("/") ? (
+                {currentTextSlide.topBadgeIcon?.startsWith("data:") ||
+                currentTextSlide.topBadgeIcon?.startsWith("http") ||
+                currentTextSlide.topBadgeIcon?.startsWith("/") ? (
                   <img
-                    src={settings.heroTopBadgeIcon}
+                    src={currentTextSlide.topBadgeIcon}
                     alt=""
                     className="w-4 h-4 object-contain inline mr-1.5"
                   />
                 ) : (
                   <span className="mr-1.5 text-green-900">
-                    {settings?.heroTopBadgeIcon || "🍃"}
+                    {currentTextSlide.topBadgeIcon || "🍃"}
                   </span>
                 )}
                 <span>
-                  {textMode === "multi"
-                    ? activeSlides[currentSlide]?.subtitle || "কেমিক্যাল মুক্ত"
-                    : settings?.heroTopBadgeText || "কেমিক্যাল মুক্ত"}
+                  {currentTextSlide.topBadgeText || "কেমিক্যাল মুক্ত"}
                 </span>
               </div>
 
-              {/* Hero Main Title: "আমওয়ালা ভাইয়া" */}
+              {/* Hero Main Title */}
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-none">
                 <span className="text-yellow-400">
-                  {settings?.heroMainTitlePart1 || "আমওয়ালা"}
+                  {currentTextSlide.mainTitlePart1 || "আমওয়ালা"}
                 </span>{" "}
                 <span className="text-white">
-                  {settings?.heroMainTitlePart2 || "ভাইয়া"}
+                  {currentTextSlide.mainTitlePart2 || "ভাইয়া"}
                 </span>
               </h1>
 
-              {/* Hero Subtitle / Quality Highlight: "প্রিমিয়াম কোয়ালিটি" */}
+              {/* Hero Subtitle / Quality Highlight */}
               <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-yellow-300 mt-3 drop-shadow">
-                {textMode === "multi"
-                  ? activeSlides[currentSlide]?.title || "প্রিমিয়াম কোয়ালিটি"
-                  : settings?.heroSubtitleText || "প্রিমিয়াম কোয়ালিটি"}
+                {currentTextSlide.subtitleText || "প্রিমিয়াম কোয়ালিটি"}
               </p>
             </motion.div>
 
@@ -303,7 +330,7 @@ export default function Hero({ onBookingSubmit }) {
 
             {/* Hero Description Paragraph */}
             <p className="text-gray-200 text-sm sm:text-base md:text-lg leading-relaxed max-w-xl mx-auto lg:mx-0">
-              {settings?.heroDescriptionText ||
+              {currentTextSlide.descriptionText ||
                 "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।"}
             </p>
 

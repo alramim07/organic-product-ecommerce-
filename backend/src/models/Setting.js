@@ -89,6 +89,60 @@ const settingSchema = new mongoose.Schema(
       enum: ["single", "multi"],
       default: "single",
     },
+    heroTextSlides: {
+      type: [
+        {
+          topBadgeText: { type: String, default: "কেমিক্যাল মুক্ত" },
+          topBadgeIcon: { type: String, default: "🍃" },
+          mainTitlePart1: { type: String, default: "আমওয়ালা" },
+          mainTitlePart2: { type: String, default: "ভাইয়া" },
+          subtitleText: { type: String, default: "প্রিমিয়াম কোয়ালিটি" },
+          descriptionText: {
+            type: String,
+            default:
+              "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।",
+          },
+        },
+      ],
+      default: [
+        {
+          topBadgeText: "সরাসরি বাগান থেকে",
+          topBadgeIcon: "🍃",
+          mainTitlePart1: "আমওয়ালা",
+          mainTitlePart2: "ভাইয়া",
+          subtitleText: "তাজা ও রসালো আম",
+          descriptionText:
+            "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।",
+        },
+        {
+          topBadgeText: "কেমিক্যাল মুক্ত",
+          topBadgeIcon: "🌿",
+          mainTitlePart1: "আমওয়ালা",
+          mainTitlePart2: "ভাইয়া",
+          subtitleText: "প্রিমিয়াম কোয়ালিটি",
+          descriptionText:
+            "কোনো প্রকার কেমিক্যাল বা ক্ষতিকর প্রিজারভেটিভ ছাড়া শতভাগ খাঁটি ও ফ্রেশ আম সরাসরি আপনার ঘরে।",
+        },
+        {
+          topBadgeText: "দ্রুত ও নিরাপদ",
+          topBadgeIcon: "🚚",
+          mainTitlePart1: "আমওয়ালা",
+          mainTitlePart2: "ভাইয়া",
+          subtitleText: "সারা দেশ ডেলিভারি",
+          descriptionText:
+            "সারাদেশে দ্রুততম সময়ে বিশেষ প্যাকেজিংয়ে একদম ফ্রেশ আম পৌঁছে দিচ্ছি বিশ্বস্ততার সাথে।",
+        },
+        {
+          topBadgeText: "বাছাই করুন আপনার পছন্দ",
+          topBadgeIcon: "🥭",
+          mainTitlePart1: "আমওয়ালা",
+          mainTitlePart2: "ভাইয়া",
+          subtitleText: "১১+ জাতের আম",
+          descriptionText:
+            "হিমসাগর, গোপালভোগ, ল্যাংড়া, আম্রপালি সহ সেরা সব জাত এখন এক জায়গায় অর্ডার করুন।",
+        },
+      ],
+    },
     heroHotlinePhone: {
       type: String,
       default: "০১৭৪৯-৭৭৫০৩০",
