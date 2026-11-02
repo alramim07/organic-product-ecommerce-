@@ -23,48 +23,66 @@ const persistSettingsToDisk = (data) => {
 // @route   GET /api/settings
 // @access  Public
 export const getSettings = async (req, res) => {
-  let setting = await Setting.findOne().lean();
+  try {
+    let setting = await Setting.findOne().lean();
 
-  if (!setting) {
-    let initialData = {};
-    if (fs.existsSync(settingsFile)) {
-      try {
-        const raw = fs.readFileSync(settingsFile, "utf-8");
-        initialData = JSON.parse(raw);
-        delete initialData._id;
-        delete initialData.__v;
-      } catch (e) {
-        // fallback
+    if (!setting) {
+      let initialData = {};
+      if (fs.existsSync(settingsFile)) {
+        try {
+          const raw = fs.readFileSync(settingsFile, "utf-8");
+          initialData = JSON.parse(raw);
+          delete initialData._id;
+          delete initialData.__v;
+        } catch (e) {
+          // fallback
+        }
       }
+      setting = await Setting.create(initialData);
     }
-    setting = await Setting.create(initialData);
-  }
 
-  res.json({
-    success: true,
-    data: setting,
-  });
+    res.json({
+      success: true,
+      data: setting,
+    });
+  } catch (error) {
+    console.error("Error fetching settings:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to fetch settings",
+    });
+  }
 };
 
 // @desc    Update website settings
 // @route   PUT /api/settings
 // @access  Private (Admin)
 export const updateSettings = async (req, res) => {
-  let setting = await Setting.findOne();
+  try {
+    const payload = { ...req.body };
+    delete payload._id;
+    delete payload.__v;
 
-  if (!setting) {
-    setting = await Setting.create(req.body);
-  } else {
-    Object.assign(setting, req.body);
-    await setting.save();
+    // Use findOneAndUpdate to avoid Mongoose VersionError on concurrent requests
+    const setting = await Setting.findOneAndUpdate(
+      {},
+      { $set: payload },
+      { new: true, upsert: true, runValidators: true }
+    );
+
+    // Persist to local disk so restarts never lose custom settings/media
+    persistSettingsToDisk(setting);
+
+    res.json({
+      success: true,
+      message: "Settings successfully updated!",
+      data: setting,
+    });
+  } catch (error) {
+    console.error("Error updating settings:", error.message);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to update settings",
+    });
   }
-
-  // Persist to local disk so restarts never lose custom settings/media
-  persistSettingsToDisk(setting);
-
-  res.json({
-    success: true,
-    message: "Settings successfully updated!",
-    data: setting,
-  });
 };

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from "react";
 import { api } from "../services/api";
 import { productsData as initialProducts } from "../data/products";
 import { initialOrders } from "../data/orders";
@@ -391,7 +391,10 @@ export function AppProvider({ children }) {
     setCategories((prev) => prev.filter((c) => c._id !== id && c.slug !== id));
   };
 
-  // Settings Operation
+  // Settings Operation with Instant React State & Debounced Backend Sync
+  const pendingSettingsUpdate = useRef({});
+  const updateSettingsTimer = useRef(null);
+
   const updateSettings = async (newSettings) => {
     setSettings((prev) => {
       const merged = { ...prev, ...newSettings };
@@ -403,11 +406,24 @@ export function AppProvider({ children }) {
       return merged;
     });
 
-    try {
-      await api.settings.update(newSettings, adminToken);
-    } catch (e) {
-      console.warn("Backend settings update error:", e);
+    pendingSettingsUpdate.current = {
+      ...pendingSettingsUpdate.current,
+      ...newSettings,
+    };
+
+    if (updateSettingsTimer.current) {
+      clearTimeout(updateSettingsTimer.current);
     }
+
+    updateSettingsTimer.current = setTimeout(async () => {
+      const payload = { ...pendingSettingsUpdate.current };
+      pendingSettingsUpdate.current = {};
+      try {
+        await api.settings.update(payload, adminToken);
+      } catch (e) {
+        console.warn("Backend settings update error:", e);
+      }
+    }, 300);
   };
 
   // Auth Operations
