@@ -438,6 +438,17 @@ export default function AdminSettings() {
     updateSettings({ headerNavLinks: updated });
   };
 
+  const handleMenuIconUpload = async (index, file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 64, 64, 0.9);
+      handleUpdateMenuItem(index, "icon", compressed);
+      setActiveIconPickerIndex(null);
+    } catch {
+      // fallback
+    }
+  };
+
   // Password rules validation logic
   const passwordRules = [
     {
@@ -2180,12 +2191,12 @@ export default function AdminSettings() {
                             activeIconPickerIndex === index ? null : index
                           )
                         }
-                        className="w-10 h-10 rounded-xl bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-lg shadow-inner cursor-pointer transition"
-                        title="Click to select or change icon"
+                        className="w-10 h-10 rounded-xl bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-lg shadow-inner cursor-pointer transition overflow-hidden"
+                        title="Click to select or upload icon"
                       >
                         {item.icon ? (
-                          item.icon.startsWith("data:") || item.icon.startsWith("http") ? (
-                            <img src={item.icon} alt="" className="w-5 h-5 object-contain" />
+                          item.icon.startsWith("data:") || item.icon.startsWith("http") || item.icon.startsWith("/") ? (
+                            <img src={item.icon} alt="" className="w-6 h-6 object-contain" />
                           ) : (
                             <span>{item.icon}</span>
                           )
@@ -2225,7 +2236,7 @@ export default function AdminSettings() {
                           <div className="pt-2 border-t border-gray-100 flex items-center gap-1.5">
                             <input
                               type="text"
-                              value={item.icon}
+                              value={item.icon?.startsWith("data:") ? "" : item.icon}
                               onChange={(e) =>
                                 handleUpdateMenuItem(index, "icon", e.target.value)
                               }
@@ -2241,6 +2252,23 @@ export default function AdminSettings() {
                                 Clear
                               </button>
                             )}
+                          </div>
+
+                          {/* Upload Custom Icon Image Button */}
+                          <div className="pt-1.5 border-t border-gray-100">
+                            <label className="flex items-center justify-center gap-2 w-full py-2 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 hover:border-green-500 rounded-xl text-xs font-black transition cursor-pointer shadow-sm">
+                              <FaUpload className="text-xs" />
+                              <span>Upload Icon Image</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleMenuIconUpload(index, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
                           </div>
                         </div>
                       )}
@@ -2427,18 +2455,6 @@ export default function AdminSettings() {
                     Generates link: <span className="font-mono text-green-700">https://wa.me/{headerWhatsappNumber.replace(/[^0-9]/g, "")}</span>
                   </p>
                 </div>
-
-                <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-2 text-xs">
-                  <span className="text-gray-500 font-medium">Aligned Header Buttons:</span>
-                  <div className="flex items-center gap-2 pointer-events-none">
-                    <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow text-xl">
-                      <FaWhatsapp />
-                    </div>
-                    <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center shadow text-base">
-                      <FaShoppingCart />
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -2561,11 +2577,6 @@ export default function AdminSettings() {
                           <FaWhatsapp />
                         </div>
                       )}
-                      {headerCartShow && (
-                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center shadow text-base">
-                          <FaShoppingCart />
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
@@ -2605,11 +2616,6 @@ export default function AdminSettings() {
                         {headerWhatsappShow && (
                           <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm shadow">
                             <FaWhatsapp />
-                          </div>
-                        )}
-                        {headerCartShow && (
-                          <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center text-xs shadow">
-                            <FaShoppingCart />
                           </div>
                         )}
                         <button

@@ -202,27 +202,6 @@ export default function Navbar() {
                 </motion.a>
               )}
 
-              {/* Cart Button (Always Kept in Header as Requested) */}
-              {settings?.headerCartShow !== false && (
-                <motion.div
-                  whileHover={{ scale: 1.08 }}
-                  whileTap={{ scale: 0.92 }}
-                  onClick={(e) => handleNavClick(e, "#order")}
-                  className="relative cursor-pointer"
-                  aria-label="Cart"
-                  title="View Cart / Orders"
-                >
-                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
-                    <FaShoppingCart className="text-white text-base" />
-                  </div>
-                  {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white font-black text-xs rounded-full flex items-center justify-center shadow-sm animate-bounce">
-                      {cartCount}
-                    </span>
-                  )}
-                </motion.div>
-              )}
-
               {/* Mobile Menu Toggle Button */}
               <motion.button
                 whileTap={{ scale: 0.92 }}
