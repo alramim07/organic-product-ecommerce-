@@ -92,7 +92,17 @@ export default function Testimonials() {
         {/* Section Header */}
         <div className="text-center mb-12 space-y-2">
           <div className="inline-flex items-center justify-center gap-2.5">
-            <span className="text-3xl sm:text-4xl">{icon}</span>
+            {icon?.startsWith("data:") ||
+            icon?.startsWith("http") ||
+            icon?.startsWith("/") ? (
+              <img
+                src={icon}
+                alt=""
+                className="w-9 h-9 sm:w-10 sm:h-10 object-contain inline-block shrink-0"
+              />
+            ) : (
+              <span className="text-3xl sm:text-4xl">{icon}</span>
+            )}
             <h2 className="text-3xl sm:text-4xl font-black text-green-900 tracking-tight">
               {title}
             </h2>

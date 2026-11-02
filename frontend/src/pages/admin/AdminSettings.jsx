@@ -517,6 +517,15 @@ export default function AdminSettings() {
   );
   const [testimonialPreviewDevice, setTestimonialPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
   const [testimonialPreviewIndex, setTestimonialPreviewIndex] = useState(0);
+  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const [testimonialIconPickerOpen, setTestimonialIconPickerOpen] = useState(false);
+  const [isAddReviewModalOpen, setIsAddReviewModalOpen] = useState(false);
+  // Add Review Modal Form state
+  const [newRevName, setNewRevName] = useState("");
+  const [newRevLocation, setNewRevLocation] = useState("");
+  const [newRevRating, setNewRevRating] = useState(5);
+  const [newRevAvatar, setNewRevAvatar] = useState("😊");
+  const [newRevComment, setNewRevComment] = useState("");
 
   // Sync state if settings update from backend or initial load
   useEffect(() => {
@@ -796,6 +805,89 @@ export default function AdminSettings() {
   };
 
   // Testimonials Action Handlers
+  const handlePrevReview = () => {
+    setCurrentReviewIndex((prev) => (prev <= 0 ? testimonialItems.length - 1 : prev - 1));
+  };
+
+  const handleNextReview = () => {
+    setCurrentReviewIndex((prev) => (prev + 1) % testimonialItems.length);
+  };
+
+  const handleDeleteCurrentReview = () => {
+    if (testimonialItems.length <= 1) {
+      Swal.fire({
+        icon: "warning",
+        title: "কমপক্ষে ১টি রিভিউ থাকতে হবে",
+        text: "তালিকা থেকে সব রিভিউ একসাথে ডিলিট করা সম্ভব নয়।",
+      });
+      return;
+    }
+    const updated = testimonialItems.filter((_, i) => i !== currentReviewIndex);
+    setTestimonialItems(updated);
+    setCurrentReviewIndex((prev) => Math.max(0, Math.min(prev, updated.length - 1)));
+    Swal.fire({
+      icon: "success",
+      title: "রিভিউ ডিলিট হয়েছে",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
+  const handleCreateReviewSubmit = (e) => {
+    e?.preventDefault();
+    if (!newRevName.trim() || !newRevComment.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "নাম ও বক্তব্য আবশ্যক",
+        text: "দয়া করে গ্রাহকের নাম ও রিভিউ বক্তব্য পূরণ করুন।",
+      });
+      return;
+    }
+    const newReview = {
+      name: newRevName.trim(),
+      location: newRevLocation.trim() || "বাংলাদেশ",
+      comment: newRevComment.trim(),
+      rating: Number(newRevRating) || 5,
+      avatar: newRevAvatar || "😊",
+    };
+    const updated = [...testimonialItems, newReview];
+    setTestimonialItems(updated);
+    setCurrentReviewIndex(updated.length - 1);
+    setIsAddReviewModalOpen(false);
+    setNewRevName("");
+    setNewRevLocation("");
+    setNewRevRating(5);
+    setNewRevAvatar("😊");
+    setNewRevComment("");
+    Swal.fire({
+      icon: "success",
+      title: "নতুন রিভিউ যুক্ত হয়েছে!",
+      text: `রিভিউ #${updated.length} সফলভাবে তালিকায় যোগ করা হয়েছে।`,
+      timer: 1800,
+      showConfirmButton: false,
+    });
+  };
+
+  const handleTestimonialSectionIconUpload = async (file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 64, 64, 0.9);
+      setTestimonialSectionIcon(compressed);
+      setTestimonialIconPickerOpen(false);
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleModalAvatarUpload = async (file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 200, 200, 0.88);
+      setNewRevAvatar(compressed);
+    } catch {
+      // fallback
+    }
+  };
   const handleAddTestimonial = () => {
     setTestimonialItems((prev) => [
       ...prev,
@@ -5947,7 +6039,7 @@ export default function AdminSettings() {
                   <FaStar className="text-amber-500" /> 5. Testimonials & Reviews Settings (গ্রাহকদের মতামত)
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  হোমপেজের রিভিউ ক্যারোসেল নিয়ন্ত্রণ করুন। যতখুশি রিভিউ যোগ করুন, অটো-ক্যারোসেল স্পিড নির্ধারণ করুন এবং রিয়েল রিভিউ অপশন বেছে নিন।
+                  হোমপেজের রিভিউ ক্যারোসেল নিয়ন্ত্রণ করুন। স্লাইডার অ্যারো দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, নতুন রিভিউ যোগ করুন এবং রিয়েল রিভিউ অপশন বেছে নিন।
                 </p>
               </div>
 
@@ -5958,7 +6050,7 @@ export default function AdminSettings() {
 
             {/* Part 1: Section Header & Display Mode */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 rounded-2xl bg-amber-50/40 border border-amber-200/60">
-              {/* Title & Icon */}
+              {/* Title & Icon with Upload and Palette Selection */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
@@ -5967,46 +6059,111 @@ export default function AdminSettings() {
                   </h4>
                 </div>
 
-                <div className="grid grid-cols-4 gap-2">
-                  <div className="col-span-1">
-                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      আইকন
+                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end">
+                  {/* Icon Selector Button with Popover */}
+                  <div className="sm:col-span-5 relative">
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                      সেকশন আইকন (Icon / Image)
                     </label>
-                    <input
-                      type="text"
-                      value={testimonialSectionIcon}
-                      onChange={(e) => setTestimonialSectionIcon(e.target.value)}
-                      placeholder="🍃"
-                      className="w-full text-center px-2 py-2 bg-white border border-gray-300 rounded-xl text-base font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
+                    <button
+                      type="button"
+                      onClick={() => setTestimonialIconPickerOpen(!testimonialIconPickerOpen)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 hover:border-green-500 rounded-xl text-xs font-black flex items-center justify-between cursor-pointer transition shadow-2xs"
+                    >
+                      <span className="flex items-center gap-2 truncate">
+                        {testimonialSectionIcon?.startsWith("data:") ||
+                        testimonialSectionIcon?.startsWith("http") ||
+                        testimonialSectionIcon?.startsWith("/") ? (
+                          <img
+                            src={testimonialSectionIcon}
+                            alt="Section Icon"
+                            className="w-5 h-5 object-contain rounded"
+                          />
+                        ) : (
+                          <span className="text-base">{testimonialSectionIcon || "🍃"}</span>
+                        )}
+                        <span className="text-gray-700 font-bold text-[11px]">আইকন সিলেক্ট</span>
+                      </span>
+                      <FaSlidersH className="text-gray-400 text-xs shrink-0" />
+                    </button>
+
+                    {/* Icon Selection Palette Popover */}
+                    {testimonialIconPickerOpen && (
+                      <div className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl shadow-2xl border border-gray-300 p-3.5 w-68 space-y-3">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                          <span className="text-[11px] font-black text-gray-800">
+                            সেকশন আইকন পছন্দ করুন
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setTestimonialIconPickerOpen(false)}
+                            className="text-gray-400 hover:text-gray-600 text-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+
+                        {/* Popular Emojis Grid */}
+                        <div className="grid grid-cols-5 gap-1.5">
+                          {["🍃", "⭐", "💬", "❤️", "🥭", "🌿", "🏆", "👑", "✨", "🔥", "👍", "🥇", "🌱", "📦", "💯"].map(
+                            (ic) => (
+                              <button
+                                key={ic}
+                                type="button"
+                                onClick={() => {
+                                  setTestimonialSectionIcon(ic);
+                                  setTestimonialIconPickerOpen(false);
+                                }}
+                                className="w-9 h-9 rounded-xl hover:bg-yellow-100 text-lg flex items-center justify-center transition cursor-pointer border border-transparent hover:border-yellow-300"
+                              >
+                                {ic}
+                              </button>
+                            )
+                          )}
+                        </div>
+
+                        {/* Direct Text/Emoji input */}
+                        <div className="pt-2 border-t border-gray-100 flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={testimonialSectionIcon}
+                            onChange={(e) => setTestimonialSectionIcon(e.target.value)}
+                            placeholder="যেমন: 🍃"
+                            className="w-full px-2.5 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-center font-bold"
+                          />
+                        </div>
+
+                        {/* Upload Custom Icon */}
+                        <div className="pt-1 border-t border-gray-100">
+                          <label className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-yellow-100 text-gray-700 text-[11px] font-bold rounded-lg cursor-pointer transition">
+                            <FaUpload className="text-[10px]" /> <span>ছবি আপলোড করুন (Icon)</span>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) =>
+                                handleTestimonialSectionIconUpload(e.target.files?.[0])
+                              }
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="col-span-3">
-                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      শিরোনাম (Title)
+                  {/* Section Title Input */}
+                  <div className="sm:col-span-7">
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                      সেকশন শিরোনাম (Title)
                     </label>
                     <input
                       type="text"
                       value={testimonialSectionTitle}
                       onChange={(e) => setTestimonialSectionTitle(e.target.value)}
                       placeholder="গ্রাহকদের মতামত"
-                      className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                     />
                   </div>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap">
-                  <span className="text-[11px] text-gray-500 font-bold">জনপ্রিয় আইকন:</span>
-                  {["🍃", "⭐", "💬", "❤️", "🥭", "🌿", "🏆"].map((ic) => (
-                    <button
-                      key={ic}
-                      type="button"
-                      onClick={() => setTestimonialSectionIcon(ic)}
-                      className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-sm hover:bg-green-100 transition cursor-pointer flex items-center justify-center shadow-xs"
-                    >
-                      {ic}
-                    </button>
-                  ))}
                 </div>
               </div>
 
@@ -6053,7 +6210,7 @@ export default function AdminSettings() {
                   </div>
                 ) : (
                   <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-[11px] text-green-900 leading-relaxed">
-                    <span className="font-bold">✅ সক্রিয় মোড:</span> নিচের তালিকা থেকে আপনি যত খুশি রিভিউ যোগ/এডিট/ডিলিট করতে পারবেন, যা অটোমেটিক হোমপেজে ক্যারোসেল আকারে ঘুরবে।
+                    <span className="font-bold">✅ সক্রিয় মোড:</span> নিচের তীর বাটন দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, আর নতুন রিভিউ যোগ করতে "+ নতুন রিভিউ যোগ করুন" বাটনে ক্লিক করুন।
                   </div>
                 )}
               </div>
@@ -6112,134 +6269,174 @@ export default function AdminSettings() {
               </div>
             </div>
 
-            {/* Part 3: Custom Reviews Manager */}
+            {/* Part 3: Custom Reviews Manager with Left & Right Arrow Navigation (Hero Style) */}
             <div className="space-y-4">
+              {/* Header with Counter, Add Modal trigger, and Delete Current */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-sm font-extrabold text-green-950">
                     কাস্টম রিভিউ তালিকা (Custom Reviews - মোট {testimonialItems.length}টি)
                   </h4>
+                  <span className="px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 font-black text-xs border border-green-200">
+                    রিভিউ {currentReviewIndex + 1} / {testimonialItems.length}
+                  </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleAddTestimonial}
-                  className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer self-start sm:self-auto"
-                >
-                  <FaPlus /> <span>নতুন রিভিউ যোগ করুন</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddReviewModalOpen(true)}
+                    className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer"
+                  >
+                    <FaPlus /> <span>নতুন রিভিউ যোগ করুন</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleDeleteCurrentReview}
+                    disabled={testimonialItems.length <= 1}
+                    title="এই রিভিউটি ডিলিট করুন"
+                    className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 border cursor-pointer ${
+                      testimonialItems.length <= 1
+                        ? "border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed"
+                        : "border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+                    }`}
+                  >
+                    <FaTrash className="text-[11px]" />
+                    <span>ডিলিট</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Review Cards Grid / List */}
-              <div className="space-y-4">
-                {testimonialItems.map((rev, index) => {
+              {/* Review Card with Side Arrows (Hero Section style) */}
+              <div className="relative">
+                {testimonialItems.length > 1 && (
+                  <>
+                    {/* Left Navigation Arrow */}
+                    <button
+                      type="button"
+                      onClick={handlePrevReview}
+                      title="Previous Review"
+                      className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-green-600 text-gray-700 hover:text-white border-2 border-gray-300 hover:border-green-600 shadow-xl flex items-center justify-center transition cursor-pointer group"
+                    >
+                      <FaChevronLeft className="text-sm group-hover:scale-125 transition" />
+                    </button>
+
+                    {/* Right Navigation Arrow */}
+                    <button
+                      type="button"
+                      onClick={handleNextReview}
+                      title="Next Review"
+                      className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white hover:bg-green-600 text-gray-700 hover:text-white border-2 border-gray-300 hover:border-green-600 shadow-xl flex items-center justify-center transition cursor-pointer group"
+                    >
+                      <FaChevronRight className="text-sm group-hover:scale-125 transition" />
+                    </button>
+                  </>
+                )}
+
+                {/* Active Review Form Card */}
+                {(() => {
+                  const activeRev =
+                    testimonialItems[currentReviewIndex] || testimonialItems[0] || {};
                   const isImage =
-                    rev.avatar &&
-                    (rev.avatar.startsWith("data:") ||
-                      rev.avatar.startsWith("http") ||
-                      rev.avatar.startsWith("/"));
+                    activeRev.avatar &&
+                    (activeRev.avatar.startsWith("data:") ||
+                      activeRev.avatar.startsWith("http") ||
+                      activeRev.avatar.startsWith("/"));
 
                   return (
-                    <div
-                      key={index}
-                      className="p-5 rounded-2xl bg-yellow-50/50 border-2 border-yellow-200 space-y-4 relative group"
-                    >
-                      {/* Top Bar with ordering and delete */}
-                      <div className="flex items-center justify-between border-b border-yellow-200/80 pb-3">
+                    <div className="p-5 sm:p-6 rounded-3xl bg-yellow-50/70 border-2 border-yellow-300 shadow-sm space-y-4">
+                      {/* Top Bar showing which review is being edited */}
+                      <div className="flex items-center justify-between border-b border-yellow-200 pb-3">
                         <div className="flex items-center gap-2">
-                          <span className="w-6 h-6 rounded-full bg-green-700 text-white font-black text-xs flex items-center justify-center">
-                            {index + 1}
+                          <span className="w-7 h-7 rounded-full bg-green-700 text-white font-black text-xs flex items-center justify-center shadow">
+                            {currentReviewIndex + 1}
                           </span>
-                          <span className="text-xs font-bold text-green-950">
-                            রিভিউ #{index + 1} — {rev.name || "অজানা গ্রাহক"}
+                          <span className="text-xs font-black text-green-950">
+                            রিভিউ #{currentReviewIndex + 1} এডিট করছেন — {activeRev.name || "গ্রাহক"}
                           </span>
                         </div>
 
+                        {/* Review Slide Indicators */}
                         <div className="flex items-center gap-1.5">
-                          <button
-                            type="button"
-                            disabled={index === 0}
-                            onClick={() => handleMoveTestimonial(index, "up")}
-                            title="উপরে নিন"
-                            className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-green-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center justify-center text-xs cursor-pointer"
-                          >
-                            <FaArrowUp />
-                          </button>
-                          <button
-                            type="button"
-                            disabled={index === testimonialItems.length - 1}
-                            onClick={() => handleMoveTestimonial(index, "down")}
-                            title="নিচে নিন"
-                            className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-green-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center justify-center text-xs cursor-pointer"
-                          >
-                            <FaArrowDown />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleRemoveTestimonial(index)}
-                            title="ডিলিট করুন"
-                            className="w-7 h-7 rounded-lg bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-xs cursor-pointer ml-1"
-                          >
-                            <FaTrash />
-                          </button>
+                          {testimonialItems.map((_, dotIdx) => (
+                            <button
+                              key={dotIdx}
+                              type="button"
+                              onClick={() => setCurrentReviewIndex(dotIdx)}
+                              className={`h-2 rounded-full transition-all cursor-pointer ${
+                                currentReviewIndex === dotIdx
+                                  ? "w-6 bg-green-700 shadow"
+                                  : "w-2 bg-gray-300 hover:bg-gray-400"
+                              }`}
+                              title={`রিভিউ #${dotIdx + 1}`}
+                            />
+                          ))}
                         </div>
                       </div>
 
                       {/* Fields Grid */}
-                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start">
-                        {/* Avatar */}
-                        <div className="sm:col-span-3 space-y-2 text-center sm:text-left">
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-start">
+                        {/* Avatar Column */}
+                        <div className="sm:col-span-3 space-y-2.5 text-center sm:text-left">
                           <label className="block text-[11px] font-bold text-gray-700">
                             অবতার / ছবি
                           </label>
                           <div className="flex items-center gap-2 justify-center sm:justify-start">
-                            <div className="w-12 h-12 rounded-full bg-emerald-200 flex items-center justify-center text-2xl shadow-inner shrink-0 overflow-hidden border border-emerald-300">
+                            <div className="w-14 h-14 rounded-full bg-emerald-200 flex items-center justify-center text-2xl shadow-inner shrink-0 overflow-hidden border-2 border-emerald-300">
                               {isImage ? (
                                 <img
-                                  src={rev.avatar}
-                                  alt={rev.name}
+                                  src={activeRev.avatar}
+                                  alt={activeRev.name}
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
-                                <span>{rev.avatar || "😊"}</span>
+                                <span>{activeRev.avatar || "😊"}</span>
                               )}
                             </div>
 
-                            <label className="px-2.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-[10px] font-bold cursor-pointer transition flex items-center gap-1 shadow-2xs">
-                              <FaUpload />
-                              <span>ছবি</span>
+                            <label className="px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5 shadow-xs">
+                              <FaUpload className="text-[10px]" />
+                              <span>ছবি আপলোড</span>
                               <input
                                 type="file"
                                 accept="image/*"
                                 onChange={(e) =>
-                                  handleTestimonialAvatarUpload(index, e.target.files?.[0])
+                                  handleTestimonialAvatarUpload(
+                                    currentReviewIndex,
+                                    e.target.files?.[0]
+                                  )
                                 }
                                 className="hidden"
                               />
                             </label>
                           </div>
 
-                          <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start pt-1">
-                            {["😊", "🥭", "🌿", "🌟", "👑", "💚", "🍃", "👍"].map((em) => (
-                              <button
-                                key={em}
-                                type="button"
-                                onClick={() => handleUpdateTestimonial(index, "avatar", em)}
-                                className={`w-6 h-6 rounded-md text-xs transition cursor-pointer flex items-center justify-center ${
-                                  rev.avatar === em
-                                    ? "bg-green-600 text-white shadow-xs"
-                                    : "bg-white border border-gray-200 hover:bg-green-50"
-                                }`}
-                              >
-                                {em}
-                              </button>
-                            ))}
+                          <div className="flex items-center gap-1.5 flex-wrap justify-center sm:justify-start pt-1">
+                            {["😊", "🥭", "🌿", "🌟", "👑", "💚", "🍃", "👍", "❤️", "🏆"].map(
+                              (em) => (
+                                <button
+                                  key={em}
+                                  type="button"
+                                  onClick={() =>
+                                    handleUpdateTestimonial(currentReviewIndex, "avatar", em)
+                                  }
+                                  className={`w-7 h-7 rounded-lg text-sm transition cursor-pointer flex items-center justify-center ${
+                                    activeRev.avatar === em
+                                      ? "bg-green-600 text-white shadow"
+                                      : "bg-white border border-gray-200 hover:bg-green-50"
+                                  }`}
+                                >
+                                  {em}
+                                </button>
+                              )
+                            )}
                           </div>
                         </div>
 
-                        {/* Name & Location & Rating */}
-                        <div className="sm:col-span-9 space-y-3">
+                        {/* Name, Location, Rating, Comment Column */}
+                        <div className="sm:col-span-9 space-y-3.5">
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                               <label className="block text-[11px] font-bold text-gray-700 mb-1">
@@ -6247,12 +6444,16 @@ export default function AdminSettings() {
                               </label>
                               <input
                                 type="text"
-                                value={rev.name}
+                                value={activeRev.name}
                                 onChange={(e) =>
-                                  handleUpdateTestimonial(index, "name", e.target.value)
+                                  handleUpdateTestimonial(
+                                    currentReviewIndex,
+                                    "name",
+                                    e.target.value
+                                  )
                                 }
                                 placeholder="যেমন: মিজানুর রহমান"
-                                className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                               />
                             </div>
 
@@ -6262,38 +6463,44 @@ export default function AdminSettings() {
                               </label>
                               <input
                                 type="text"
-                                value={rev.location}
+                                value={activeRev.location}
                                 onChange={(e) =>
-                                  handleUpdateTestimonial(index, "location", e.target.value)
+                                  handleUpdateTestimonial(
+                                    currentReviewIndex,
+                                    "location",
+                                    e.target.value
+                                  )
                                 }
                                 placeholder="যেমন: ঢাকা"
-                                className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                               />
                             </div>
 
                             <div>
                               <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                                রেটিং (স্টার)
+                                স্টার রেটিং
                               </label>
                               <div className="flex items-center gap-1 py-1.5">
                                 {[1, 2, 3, 4, 5].map((st) => (
                                   <button
                                     key={st}
                                     type="button"
-                                    onClick={() => handleUpdateTestimonial(index, "rating", st)}
+                                    onClick={() =>
+                                      handleUpdateTestimonial(currentReviewIndex, "rating", st)
+                                    }
                                     className="cursor-pointer transition hover:scale-125"
                                   >
                                     <FaStar
-                                      className={`text-base ${
-                                        st <= (rev.rating || 5)
+                                      className={`text-lg ${
+                                        st <= (activeRev.rating || 5)
                                           ? "text-amber-400"
                                           : "text-gray-300"
                                       }`}
                                     />
                                   </button>
                                 ))}
-                                <span className="text-xs font-bold text-gray-600 ml-1">
-                                  ({rev.rating || 5}/5)
+                                <span className="text-xs font-bold text-gray-600 ml-1.5">
+                                  ({activeRev.rating || 5}/5)
                                 </span>
                               </div>
                             </div>
@@ -6301,23 +6508,27 @@ export default function AdminSettings() {
 
                           <div>
                             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                              রিভিউ বক্তব্য / মতামত
+                              মতামত / রিভিউ বক্তব্য <span className="text-red-500">*</span>
                             </label>
                             <textarea
-                              rows={2}
-                              value={rev.comment}
+                              rows={3}
+                              value={activeRev.comment}
                               onChange={(e) =>
-                                handleUpdateTestimonial(index, "comment", e.target.value)
+                                handleUpdateTestimonial(
+                                  currentReviewIndex,
+                                  "comment",
+                                  e.target.value
+                                )
                               }
                               placeholder="গ্রাহকের প্রশংসামূলক বক্তব্য লিখুন..."
-                              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
+                              className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                             />
                           </div>
                         </div>
                       </div>
                     </div>
                   );
-                })}
+                })()}
               </div>
             </div>
 
@@ -6370,7 +6581,17 @@ export default function AdminSettings() {
                   {/* Section Title */}
                   <div className="text-center space-y-1">
                     <h3 className="text-2xl font-black text-white inline-flex items-center justify-center gap-2">
-                      <span>{testimonialSectionIcon || "🍃"}</span>
+                      {testimonialSectionIcon?.startsWith("data:") ||
+                      testimonialSectionIcon?.startsWith("http") ||
+                      testimonialSectionIcon?.startsWith("/") ? (
+                        <img
+                          src={testimonialSectionIcon}
+                          alt=""
+                          className="w-7 h-7 object-contain rounded"
+                        />
+                      ) : (
+                        <span>{testimonialSectionIcon || "🍃"}</span>
+                      )}
                       <span>{testimonialSectionTitle || "গ্রাহকদের মতামত"}</span>
                     </h3>
                     {testimonialDisplayMode === "real" && (
@@ -6467,7 +6688,17 @@ export default function AdminSettings() {
                       {/* Section Title */}
                       <div className="text-center space-y-1">
                         <h3 className="text-base font-black text-white inline-flex items-center justify-center gap-1.5">
-                          <span>{testimonialSectionIcon || "🍃"}</span>
+                          {testimonialSectionIcon?.startsWith("data:") ||
+                          testimonialSectionIcon?.startsWith("http") ||
+                          testimonialSectionIcon?.startsWith("/") ? (
+                            <img
+                              src={testimonialSectionIcon}
+                              alt=""
+                              className="w-5 h-5 object-contain rounded"
+                            />
+                          ) : (
+                            <span>{testimonialSectionIcon || "🍃"}</span>
+                          )}
                           <span>{testimonialSectionTitle || "গ্রাহকদের মতামত"}</span>
                         </h3>
                         {testimonialDisplayMode === "real" && (
@@ -6535,7 +6766,6 @@ export default function AdminSettings() {
                 </div>
               )}
             </div>
-
             {/* Bottom Save Settings Button */}
             <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
               <button
@@ -6741,6 +6971,176 @@ export default function AdminSettings() {
           </div>
         </div>
       )}
-    </div>
+    
+      {/* ADD REVIEW MODAL */}
+      {isAddReviewModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative animate-in fade-in zoom-in-95 max-h-[90vh] overflow-y-auto">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-10 h-10 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-lg shadow-sm">
+                  <FaStar />
+                </div>
+                <div>
+                  <h3 className="text-lg font-black text-gray-900">নতুন গ্রাহক রিভিউ যোগ করুন</h3>
+                  <p className="text-xs text-gray-400">গ্রাহকের প্রশংসামূলক বক্তব্য ও রেটিং প্রদান করুন</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddReviewModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 flex items-center justify-center transition cursor-pointer"
+              >
+                <FaTimes />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleCreateReviewSubmit} className="mt-5 space-y-4">
+              {/* Field 1: Name & Location */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    গ্রাহকের নাম <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={newRevName}
+                    onChange={(e) => setNewRevName(e.target.value)}
+                    placeholder="যেমন: তানভীর আহমেদ"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    ঠিকানা / শহর
+                  </label>
+                  <input
+                    type="text"
+                    value={newRevLocation}
+                    onChange={(e) => setNewRevLocation(e.target.value)}
+                    placeholder="যেমন: ধানমন্ডি, ঢাকা"
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+              </div>
+
+              {/* Field 2: Rating Stars */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  রেটিং (স্টার)
+                </label>
+                <div className="flex items-center gap-2 p-2.5 bg-gray-50 border border-gray-200 rounded-xl">
+                  {[1, 2, 3, 4, 5].map((st) => (
+                    <button
+                      key={st}
+                      type="button"
+                      onClick={() => setNewRevRating(st)}
+                      className="cursor-pointer transition hover:scale-125"
+                    >
+                      <FaStar
+                        className={`text-2xl ${
+                          st <= newRevRating ? "text-amber-400" : "text-gray-300"
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="text-xs font-bold text-gray-700 ml-2">
+                    ({newRevRating} স্টার)
+                  </span>
+                </div>
+              </div>
+
+              {/* Field 3: Avatar / Emoji / Image */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  অবতার / ছবি
+                </label>
+                <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                  <div className="w-12 h-12 rounded-full bg-emerald-200 flex items-center justify-center text-2xl shadow-inner shrink-0 overflow-hidden border border-emerald-300">
+                    {newRevAvatar &&
+                    (newRevAvatar.startsWith("data:") ||
+                      newRevAvatar.startsWith("http") ||
+                      newRevAvatar.startsWith("/")) ? (
+                      <img
+                        src={newRevAvatar}
+                        alt="Avatar"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span>{newRevAvatar || "😊"}</span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {["😊", "🥭", "🌿", "🌟", "👑", "💚", "🍃", "👍", "❤️", "🏆"].map((em) => (
+                      <button
+                        key={em}
+                        type="button"
+                        onClick={() => setNewRevAvatar(em)}
+                        className={`w-7 h-7 rounded-lg text-sm transition cursor-pointer flex items-center justify-center ${
+                          newRevAvatar === em
+                            ? "bg-green-600 text-white shadow"
+                            : "bg-white border border-gray-200 hover:bg-green-50"
+                        }`}
+                      >
+                        {em}
+                      </button>
+                    ))}
+
+                    <label className="px-2.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 rounded-lg text-[10px] font-bold cursor-pointer transition flex items-center gap-1 shadow-2xs">
+                      <FaUpload />
+                      <span>ছবি</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={(e) => handleModalAvatarUpload(e.target.files?.[0])}
+                        className="hidden"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Field 4: Comment Quote */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  মতামত / বক্তব্য <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  rows={3}
+                  value={newRevComment}
+                  onChange={(e) => setNewRevComment(e.target.value)}
+                  placeholder="গ্রাহকের সন্তুষ্টিমূলক মতামত লিখুন..."
+                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
+                  required
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-3 border-t border-gray-100 flex items-center justify-end gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => setIsAddReviewModalOpen(false)}
+                  className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-100 transition cursor-pointer"
+                >
+                  বাতিল
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-700 to-green-600 text-white text-xs font-extrabold hover:from-green-800 hover:to-green-700 shadow-lg transition flex items-center gap-1.5 cursor-pointer"
+                >
+                  <FaPlus /> <span>রিভিউ যোগ করুন</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+</div>
   );
 }
