@@ -72,6 +72,7 @@ export function AppProvider({ children }) {
             // Frontend Website Header Settings
             websiteFavicon: "",
             websiteLogo: "",
+            headerBrandDisplay: "logo_only",
             headerNavLinks: [
               { name: "হোম", href: "#home", icon: "🏠", showIcon: true },
               { name: "আমের জাত", href: "#varieties", icon: "🥭", showIcon: true },

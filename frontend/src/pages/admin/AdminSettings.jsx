@@ -244,6 +244,9 @@ export default function AdminSettings() {
   // Frontend Website Header Settings state
   const [websiteFavicon, setWebsiteFavicon] = useState(settings.websiteFavicon || "");
   const [websiteLogo, setWebsiteLogo] = useState(settings.websiteLogo || "");
+  const [headerBrandDisplay, setHeaderBrandDisplay] = useState(
+    settings.headerBrandDisplay || "logo_only"
+  );
   const [headerNavLinks, setHeaderNavLinks] = useState(
     settings.headerNavLinks && settings.headerNavLinks.length > 0
       ? settings.headerNavLinks
@@ -298,6 +301,7 @@ export default function AdminSettings() {
       if (settings.themeSecondaryBtn !== undefined) setThemeSecondaryBtn(settings.themeSecondaryBtn);
       if (settings.websiteFavicon !== undefined) setWebsiteFavicon(settings.websiteFavicon);
       if (settings.websiteLogo !== undefined) setWebsiteLogo(settings.websiteLogo);
+      if (settings.headerBrandDisplay !== undefined) setHeaderBrandDisplay(settings.headerBrandDisplay);
       if (settings.headerNavLinks !== undefined && Array.isArray(settings.headerNavLinks)) {
         setHeaderNavLinks(settings.headerNavLinks);
       }
@@ -724,6 +728,7 @@ export default function AdminSettings() {
       themeSecondaryBtn,
       websiteFavicon,
       websiteLogo,
+      headerBrandDisplay,
       headerNavLinks,
       headerCallBtnText,
       headerCallBtnPhone,
@@ -2175,6 +2180,151 @@ export default function AdminSettings() {
               </div>
             </div>
 
+            {/* Part 1B: Header Brand Display Style & Editable Brand Text */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-3">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaImage className="text-green-600" /> Header Brand Display Style & Text Settings
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Header-e sudhu matro single logo dekhaben, naki logo-r pashe Store Name & Tagline text dekhaben ta select korun ebong text edit korun.
+                </p>
+              </div>
+
+              {/* Display Mode Selector Cards */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Option 1: Single Logo Only */}
+                <div
+                  onClick={() => {
+                    setHeaderBrandDisplay("logo_only");
+                    updateSettings({ headerBrandDisplay: "logo_only" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    headerBrandDisplay === "logo_only"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+                  }`}
+                >
+                  <div className="mt-0.5">
+                    <input
+                      type="radio"
+                      name="headerBrandDisplay"
+                      checked={headerBrandDisplay === "logo_only"}
+                      onChange={() => {
+                        setHeaderBrandDisplay("logo_only");
+                        updateSettings({ headerBrandDisplay: "logo_only" });
+                      }}
+                      className="text-green-600 focus:ring-green-500 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-black text-gray-900">Single Logo Only</span>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-green-100 text-green-800">
+                        Default & Recommended
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                      Header-e sudhu matro uploaded single logo image show korbe. Kono extra text dekhabe na.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Option 2: Logo + Brand Text */}
+                <div
+                  onClick={() => {
+                    setHeaderBrandDisplay("logo_and_text");
+                    updateSettings({ headerBrandDisplay: "logo_and_text" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    headerBrandDisplay === "logo_and_text"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50/50"
+                  }`}
+                >
+                  <div className="mt-0.5">
+                    <input
+                      type="radio"
+                      name="headerBrandDisplay"
+                      checked={headerBrandDisplay === "logo_and_text"}
+                      onChange={() => {
+                        setHeaderBrandDisplay("logo_and_text");
+                        updateSettings({ headerBrandDisplay: "logo_and_text" });
+                      }}
+                      className="text-green-600 focus:ring-green-500 cursor-pointer"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-black text-gray-900">Logo + Brand Text</span>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1 leading-relaxed">
+                      Logo icon-er pashe Store Name & Tagline text dekhabe (nicher box-e edit kora jabe).
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Editable Brand Text Fields */}
+              <div className="p-4 bg-white rounded-2xl border border-gray-200 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2.5">
+                  <div>
+                    <h5 className="text-xs font-black text-gray-900 uppercase tracking-wide">
+                      Brand Name & Tagline Text (Edit & Update)
+                    </h5>
+                    <p className="text-[11px] text-gray-400">
+                      Website-er title ebong tagline text ja header text mode ebong footer copyright-e use hoy.
+                    </p>
+                  </div>
+                  {headerBrandDisplay === "logo_only" && (
+                    <span className="text-[11px] font-bold text-amber-800 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200 self-start sm:self-auto">
+                      Currently hidden in header (Single Logo Active)
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-extrabold text-gray-700 block mb-1">
+                      Store / Website Name (Header Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={siteName}
+                      onChange={(e) => {
+                        setSiteName(e.target.value);
+                        updateSettings({ siteName: e.target.value });
+                      }}
+                      placeholder="e.g. আমওয়ালা ভাইয়া"
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Header text mode ebong Footer copyright-e show kore
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-extrabold text-gray-700 block mb-1">
+                      Header Tagline / Slogan Subtitle
+                    </label>
+                    <input
+                      type="text"
+                      value={tagline}
+                      onChange={(e) => {
+                        setTagline(e.target.value);
+                        updateSettings({ tagline: e.target.value });
+                      }}
+                      placeholder="e.g. প্রিমিয়াম মানের দেশি আম ও খাঁটি প্রাকৃতিক খাদ্যপণ্য"
+                      className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                    />
+                    <p className="text-[11px] text-gray-400 mt-1">
+                      Store name-er niche choto subtitle slogan
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Part 2: Navigation Menu Management */}
             <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200/60 pb-3">
@@ -2572,7 +2722,11 @@ export default function AdminSettings() {
                         <img
                           src={websiteLogo}
                           alt="Logo"
-                          className="w-10 h-10 object-contain rounded-xl bg-white shadow-sm border border-gray-200"
+                          className={
+                            headerBrandDisplay === "logo_and_text"
+                              ? "w-10 h-10 object-contain rounded-xl bg-white shadow-sm border border-gray-200"
+                              : "h-10 w-auto max-w-[180px] object-contain rounded-xl drop-shadow-sm"
+                          }
                         />
                       ) : websiteFavicon ? (
                         <img
@@ -2585,14 +2739,18 @@ export default function AdminSettings() {
                           🍃
                         </div>
                       )}
-                      <div>
-                        <h5 className="text-sm font-black text-green-900 leading-tight">
-                          {siteName || "আমওয়ালা ভাইয়া"}
-                        </h5>
-                        <p className="text-[10px] text-amber-700 font-semibold truncate max-w-[160px]">
-                          {tagline || "প্রিমিয়াম মানের দেশি আম"}
-                        </p>
-                      </div>
+                      {headerBrandDisplay === "logo_and_text" && (
+                        <div>
+                          <h5 className="text-sm font-black text-green-900 leading-tight">
+                            {siteName || "আমওয়ালা ভাইয়া"}
+                          </h5>
+                          {tagline && (
+                            <p className="text-[10px] text-amber-700 font-semibold truncate max-w-[160px]">
+                              {tagline}
+                            </p>
+                          )}
+                        </div>
+                      )}
                     </div>
 
                     {/* Nav Links */}
@@ -2645,16 +2803,22 @@ export default function AdminSettings() {
                           <img
                             src={websiteLogo}
                             alt="Logo"
-                            className="w-8 h-8 object-contain rounded-xl bg-white shadow-sm shrink-0"
+                            className={
+                              headerBrandDisplay === "logo_and_text"
+                                ? "w-8 h-8 object-contain rounded-xl bg-white shadow-sm shrink-0"
+                                : "h-8 w-auto max-w-[120px] object-contain rounded-lg shrink-0"
+                            }
                           />
                         ) : (
                           <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center text-white text-xs shrink-0 shadow">
                             🍃
                           </div>
                         )}
-                        <span className="text-xs font-black text-green-950 truncate">
-                          {siteName || "আমওয়ালা ভাইয়া"}
-                        </span>
+                        {headerBrandDisplay === "logo_and_text" && (
+                          <span className="text-xs font-black text-green-950 truncate">
+                            {siteName || "আমওয়ালা ভাইয়া"}
+                          </span>
+                        )}
                       </div>
 
                       {/* Right icons on mobile */}

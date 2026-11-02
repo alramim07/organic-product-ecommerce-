@@ -101,23 +101,27 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16 md:h-20">
-            {/* Logo */}
+            {/* Logo & Brand Display */}
             <motion.div
-              whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2.5 cursor-pointer"
+              whileHover={{ scale: 1.03 }}
+              className="flex items-center space-x-2.5 cursor-pointer shrink-0"
               onClick={handleLogoClick}
             >
-              <div className="relative">
+              <div className="relative flex items-center">
                 {settings?.websiteLogo ? (
                   <img
                     src={settings.websiteLogo}
-                    alt="Logo"
-                    className="w-10 h-10 object-contain rounded-xl shadow-md border border-white/50 bg-white"
+                    alt={settings?.siteName || "Logo"}
+                    className={
+                      settings?.headerBrandDisplay === "logo_and_text"
+                        ? "w-10 h-10 object-contain rounded-xl shadow-md border border-white/50 bg-white"
+                        : "h-10 sm:h-12 max-h-12 w-auto max-w-[180px] sm:max-w-[240px] object-contain rounded-xl drop-shadow-sm"
+                    }
                   />
                 ) : settings?.websiteFavicon ? (
                   <img
                     src={settings.websiteFavicon}
-                    alt="Logo"
+                    alt={settings?.siteName || "Logo"}
                     className="w-10 h-10 object-contain rounded-xl shadow-md border border-white/50 bg-white"
                   />
                 ) : (
@@ -125,16 +129,24 @@ export default function Navbar() {
                     <FaLeaf className="text-white text-xl" />
                   </div>
                 )}
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-300 rounded-full animate-pulse" />
+                {settings?.headerBrandDisplay === "logo_and_text" && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-300 rounded-full animate-pulse" />
+                )}
               </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-green-700 to-yellow-600 bg-clip-text text-transparent leading-tight">
-                  {settings?.siteName || "আমওয়ালা ভাইয়া"}
-                </h1>
-                <p className="text-xs text-amber-600 font-semibold truncate max-w-[220px]">
-                  {settings?.tagline || "প্রিমিয়াম মানের দেশি আম"}
-                </p>
-              </div>
+
+              {/* Optional Brand Text (Title & Tagline) */}
+              {settings?.headerBrandDisplay === "logo_and_text" && (
+                <div className="hidden sm:block">
+                  <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-green-700 to-yellow-600 bg-clip-text text-transparent leading-tight">
+                    {settings?.siteName || "আমওয়ালা ভাইয়া"}
+                  </h1>
+                  {settings?.tagline && (
+                    <p className="text-xs text-amber-600 font-semibold truncate max-w-[220px]">
+                      {settings.tagline}
+                    </p>
+                  )}
+                </div>
+              )}
             </motion.div>
 
             {/* Desktop Navigation Links with Customizable Emojis/Icons */}
