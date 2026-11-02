@@ -3800,15 +3800,73 @@ export default function AdminSettings() {
                 return heroPreviewDevice === "desktop" ? (
                   /* DESKTOP PREVIEW */
                   <div className="rounded-2xl overflow-hidden border border-gray-800 bg-gray-900 shadow-2xl">
-                    {/* Browser Bar */}
-                    <div className="bg-gray-800/90 px-4 py-2 border-b border-gray-700/60 flex items-center gap-2">
-                      <div className="flex gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full bg-red-500/80" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
-                        <div className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
+                    {/* Live Website Header above Hero */}
+                    <div className="bg-gradient-to-r from-amber-50 via-yellow-50 to-green-50 text-gray-900 px-5 sm:px-6 py-3 border-b border-amber-200/80 flex items-center justify-between gap-4 shadow-sm">
+                      {/* Logo & Brand Name */}
+                      <div className="flex items-center gap-2.5 shrink-0">
+                        {websiteLogo ? (
+                          <img
+                            src={websiteLogo}
+                            alt="Logo"
+                            className={
+                              headerBrandDisplay === "logo_and_text"
+                                ? "w-9 h-9 object-contain rounded-xl bg-white shadow-sm border border-gray-200"
+                                : "h-9 w-auto max-w-[160px] object-contain rounded-xl drop-shadow-sm"
+                            }
+                          />
+                        ) : websiteFavicon ? (
+                          <img
+                            src={websiteFavicon}
+                            alt="Favicon"
+                            className="w-9 h-9 object-contain rounded-xl bg-white shadow-sm border border-gray-200"
+                          />
+                        ) : (
+                          <div className="w-9 h-9 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center text-white text-sm shadow">
+                            🍃
+                          </div>
+                        )}
+                        {headerBrandDisplay === "logo_and_text" && (
+                          <div>
+                            <h5 className="text-sm font-black text-green-950 leading-tight">
+                              {siteName || "আমওয়ালা ভাইয়া"}
+                            </h5>
+                            {tagline && (
+                              <p className="text-[10px] text-amber-800 font-semibold truncate max-w-[170px]">
+                                {tagline}
+                              </p>
+                            )}
+                          </div>
+                        )}
                       </div>
-                      <div className="flex-1 max-w-sm mx-auto bg-gray-950/80 rounded-md px-3 py-1 text-[11px] text-gray-400 font-mono text-center border border-gray-700/50">
-                        https://ammwalavaiya.com
+
+                      {/* Nav Links */}
+                      <div className="hidden md:flex items-center gap-1.5 flex-wrap justify-center">
+                        {headerNavLinks.map((item, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2.5 py-1 text-xs font-bold text-gray-700 rounded-lg hover:bg-yellow-100 flex items-center gap-1 transition"
+                          >
+                            {item.showIcon !== false && item.icon && (
+                              <span className="text-xs leading-none">{item.icon}</span>
+                            )}
+                            <span>{item.name}</span>
+                          </span>
+                        ))}
+                      </div>
+
+                      {/* Action Buttons: Hotline Call + WhatsApp */}
+                      <div className="flex items-center gap-2 shrink-0">
+                        {headerCallBtnShow && (
+                          <div className="h-8 sm:h-9 px-3.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-full text-xs font-black shadow flex items-center gap-1.5">
+                            <FaPhoneAlt className="text-[11px]" />
+                            <span>{headerCallBtnText || "কল করুন"}</span>
+                          </div>
+                        )}
+                        {headerWhatsappShow && (
+                          <div className="w-8 h-8 sm:w-9 sm:h-9 bg-green-500 text-white rounded-full flex items-center justify-center shadow text-base">
+                            <FaWhatsapp />
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -3934,6 +3992,45 @@ export default function AdminSettings() {
                       <div className="h-6 bg-gray-950 flex justify-center items-center">
                         <div className="w-20 h-3.5 bg-gray-900 rounded-full flex items-center justify-end pr-2 border border-gray-800">
                           <div className="w-2 h-2 rounded-full bg-blue-900/60" />
+                        </div>
+                      </div>
+
+                      {/* Rendered Live Mobile Header */}
+                      <div className="bg-gradient-to-r from-amber-50 via-yellow-50 to-green-50 text-gray-900 px-3 py-2 border-b border-amber-200/60 flex items-center justify-between">
+                        {/* Logo + Title */}
+                        <div className="flex items-center gap-2 min-w-0">
+                          {websiteLogo ? (
+                            <img
+                              src={websiteLogo}
+                              alt="Logo"
+                              className={
+                                headerBrandDisplay === "logo_and_text"
+                                  ? "w-7 h-7 object-contain rounded-lg bg-white shadow-sm shrink-0"
+                                  : "h-7 w-auto max-w-[100px] object-contain rounded shrink-0"
+                              }
+                            />
+                          ) : (
+                            <div className="w-7 h-7 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center text-white text-[10px] shrink-0 shadow">
+                              🍃
+                            </div>
+                          )}
+                          {headerBrandDisplay === "logo_and_text" && (
+                            <span className="text-[11px] font-black text-green-950 truncate">
+                              {siteName || "আমওয়ালা ভাইয়া"}
+                            </span>
+                          )}
+                        </div>
+
+                        {/* Right icons on mobile */}
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          {headerWhatsappShow && (
+                            <div className="w-7 h-7 bg-green-500 text-white rounded-full flex items-center justify-center text-xs shadow">
+                              <FaWhatsapp />
+                            </div>
+                          )}
+                          <div className="w-7 h-7 bg-gradient-to-br from-yellow-400 to-green-500 text-white rounded-full flex items-center justify-center text-[10px] shadow">
+                            <FaBars />
+                          </div>
                         </div>
                       </div>
 
