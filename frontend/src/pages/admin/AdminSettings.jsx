@@ -469,6 +469,55 @@ export default function AdminSettings() {
 
   const [aboutPreviewDevice, setAboutPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
 
+  // Testimonials / Reviews Section Settings state
+  const [testimonialSectionTitle, setTestimonialSectionTitle] = useState(
+    settings.testimonialSectionTitle || "গ্রাহকদের মতামত"
+  );
+  const [testimonialSectionIcon, setTestimonialSectionIcon] = useState(
+    settings.testimonialSectionIcon || "🍃"
+  );
+  const [testimonialDisplayMode, setTestimonialDisplayMode] = useState(
+    settings.testimonialDisplayMode || "custom"
+  ); // "custom" | "real"
+  const [testimonialAutoPlay, setTestimonialAutoPlay] = useState(
+    settings.testimonialAutoPlay !== undefined ? settings.testimonialAutoPlay : true
+  );
+  const [testimonialAutoPlayInterval, setTestimonialAutoPlayInterval] = useState(
+    settings.testimonialAutoPlayInterval || 4
+  );
+  const [testimonialItems, setTestimonialItems] = useState(
+    Array.isArray(settings.testimonialItems) && settings.testimonialItems.length > 0
+      ? settings.testimonialItems
+      : [
+          {
+            name: "মিজানুর রহমান",
+            location: "ঢাকা",
+            comment:
+              "আমওয়ালা ভাইয়ার আমের গুণগত মান অসাধারণ। হিমসাগর আমের স্বাদ সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
+            rating: 5,
+            avatar: "😊",
+          },
+          {
+            name: "নুসরাত জাহান",
+            location: "চট্টগ্রাম",
+            comment:
+              "প্রি-অর্ডার করেছিলাম ল্যাংড়া আম। ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
+            rating: 5,
+            avatar: "😊",
+          },
+          {
+            name: "রফিকুল ইসলাম",
+            location: "রাজশাহী",
+            comment:
+              "আম্রপালি ও ফজলি দুটোই চমৎকার। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ আমওয়ালা ভাইয়াকে।",
+            rating: 4,
+            avatar: "😊",
+          },
+        ]
+  );
+  const [testimonialPreviewDevice, setTestimonialPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
+  const [testimonialPreviewIndex, setTestimonialPreviewIndex] = useState(0);
+
   // Sync state if settings update from backend or initial load
   useEffect(() => {
     if (settings) {
@@ -552,6 +601,14 @@ export default function AdminSettings() {
       if (settings.aboutStat3ValueMode !== undefined) setAboutStat3ValueMode(settings.aboutStat3ValueMode);
       if (settings.aboutStat3CustomValue !== undefined) setAboutStat3CustomValue(settings.aboutStat3CustomValue);
       if (settings.aboutStat3Subtitle !== undefined) setAboutStat3Subtitle(settings.aboutStat3Subtitle);
+      if (settings.testimonialSectionTitle !== undefined) setTestimonialSectionTitle(settings.testimonialSectionTitle);
+      if (settings.testimonialSectionIcon !== undefined) setTestimonialSectionIcon(settings.testimonialSectionIcon);
+      if (settings.testimonialDisplayMode !== undefined) setTestimonialDisplayMode(settings.testimonialDisplayMode);
+      if (settings.testimonialAutoPlay !== undefined) setTestimonialAutoPlay(settings.testimonialAutoPlay);
+      if (settings.testimonialAutoPlayInterval !== undefined) setTestimonialAutoPlayInterval(settings.testimonialAutoPlayInterval);
+      if (settings.testimonialItems !== undefined && Array.isArray(settings.testimonialItems) && settings.testimonialItems.length > 0) {
+        setTestimonialItems(settings.testimonialItems);
+      }
     }
   }, [settings]);
 
@@ -733,6 +790,54 @@ export default function AdminSettings() {
       const compressed = await compressImage(file, 1600, 900, 0.82);
       setHeroSingleImage(compressed);
       updateSettings({ heroSingleImage: compressed });
+    } catch {
+      // fallback
+    }
+  };
+
+  // Testimonials Action Handlers
+  const handleAddTestimonial = () => {
+    setTestimonialItems((prev) => [
+      ...prev,
+      {
+        name: "নতুন ক্রেতা",
+        location: "ঢাকা",
+        comment: "আমের মিষ্টি স্বাদ ও কোয়ালিটি অত্যন্ত চমৎকার। ধন্যবাদ আমওয়ালা ভাইয়া।",
+        rating: 5,
+        avatar: "😊",
+      },
+    ]);
+  };
+
+  const handleRemoveTestimonial = (index) => {
+    setTestimonialItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateTestimonial = (index, field, value) => {
+    setTestimonialItems((prev) => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [field]: value };
+      return updated;
+    });
+  };
+
+  const handleMoveTestimonial = (index, direction) => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= testimonialItems.length) return;
+    setTestimonialItems((prev) => {
+      const updated = [...prev];
+      const temp = updated[index];
+      updated[index] = updated[targetIndex];
+      updated[targetIndex] = temp;
+      return updated;
+    });
+  };
+
+  const handleTestimonialAvatarUpload = async (index, file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 200, 200, 0.88);
+      handleUpdateTestimonial(index, "avatar", compressed);
     } catch {
       // fallback
     }
@@ -1233,6 +1338,12 @@ export default function AdminSettings() {
       aboutStat3ValueMode,
       aboutStat3CustomValue,
       aboutStat3Subtitle,
+      testimonialSectionTitle,
+      testimonialSectionIcon,
+      testimonialDisplayMode,
+      testimonialAutoPlay,
+      testimonialAutoPlayInterval: Number(testimonialAutoPlayInterval) || 4,
+      testimonialItems,
     });
 
     Swal.fire({
@@ -5812,6 +5923,620 @@ export default function AdminSettings() {
             </div>
 
             {/* Sticky/Bottom Save Settings Button */}
+            <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
+              <button
+                type="submit"
+                className="px-6 py-3 bg-gradient-to-r from-green-700 via-green-600 to-amber-600 hover:from-green-800 hover:to-amber-700 text-white font-extrabold rounded-2xl shadow-lg hover:shadow-xl transition flex items-center gap-2 cursor-pointer text-sm"
+              >
+                <FaSave />
+                <span>Save All Settings</span>
+              </button>
+            </div>
+          </div>
+
+
+        
+          {/* ========================================================================= */}
+          {/* Section 5: Testimonials & Reviews Settings (গ্রাহকদের মতামত) */}
+          {/* ========================================================================= */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-8">
+            {/* Header Title Bar */}
+            <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
+                  <FaStar className="text-amber-500" /> 5. Testimonials & Reviews Settings (গ্রাহকদের মতামত)
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  হোমপেজের রিভিউ ক্যারোসেল নিয়ন্ত্রণ করুন। যতখুশি রিভিউ যোগ করুন, অটো-ক্যারোসেল স্পিড নির্ধারণ করুন এবং রিয়েল রিভিউ অপশন বেছে নিন।
+                </p>
+              </div>
+
+              <span className="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 self-start sm:self-auto">
+                Customer Testimonials
+              </span>
+            </div>
+
+            {/* Part 1: Section Header & Display Mode */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-5 rounded-2xl bg-amber-50/40 border border-amber-200/60">
+              {/* Title & Icon */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-600" />
+                  <h4 className="text-xs font-black text-green-950 uppercase">
+                    সেকশন শিরোনাম ও আইকন (Title & Icon)
+                  </h4>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  <div className="col-span-1">
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      আইকন
+                    </label>
+                    <input
+                      type="text"
+                      value={testimonialSectionIcon}
+                      onChange={(e) => setTestimonialSectionIcon(e.target.value)}
+                      placeholder="🍃"
+                      className="w-full text-center px-2 py-2 bg-white border border-gray-300 rounded-xl text-base font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+
+                  <div className="col-span-3">
+                    <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                      শিরোনাম (Title)
+                    </label>
+                    <input
+                      type="text"
+                      value={testimonialSectionTitle}
+                      onChange={(e) => setTestimonialSectionTitle(e.target.value)}
+                      placeholder="গ্রাহকদের মতামত"
+                      className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <span className="text-[11px] text-gray-500 font-bold">জনপ্রিয় আইকন:</span>
+                  {["🍃", "⭐", "💬", "❤️", "🥭", "🌿", "🏆"].map((ic) => (
+                    <button
+                      key={ic}
+                      type="button"
+                      onClick={() => setTestimonialSectionIcon(ic)}
+                      className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-sm hover:bg-green-100 transition cursor-pointer flex items-center justify-center shadow-xs"
+                    >
+                      {ic}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Display Mode Selection */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-600" />
+                  <h4 className="text-xs font-black text-green-950 uppercase">
+                    রিভিউ প্রদর্শন মোড (Display Mode)
+                  </h4>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 p-1.5 bg-gray-100 rounded-2xl">
+                  <button
+                    type="button"
+                    onClick={() => setTestimonialDisplayMode("custom")}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer flex flex-col items-center gap-1 ${
+                      testimonialDisplayMode === "custom"
+                        ? "bg-green-600 text-white shadow-md"
+                        : "text-gray-700 hover:text-green-900"
+                    }`}
+                  >
+                    <span>⚡ কাস্টম রিভিউ</span>
+                    <span className="text-[10px] font-normal opacity-90">অটো ক্যারোসেল মোড</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setTestimonialDisplayMode("real")}
+                    className={`py-2.5 px-3 rounded-xl text-xs font-black transition cursor-pointer flex flex-col items-center gap-1 ${
+                      testimonialDisplayMode === "real"
+                        ? "bg-green-600 text-white shadow-md"
+                        : "text-gray-700 hover:text-green-900"
+                    }`}
+                  >
+                    <span>🌟 রিয়েল রিভিউ</span>
+                    <span className="text-[10px] font-normal opacity-90">ভেরিফাইড কাস্টমার</span>
+                  </button>
+                </div>
+
+                {testimonialDisplayMode === "real" ? (
+                  <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-900 leading-relaxed">
+                    <span className="font-bold">ℹ️ তথ্য:</span> রিয়েল রিভিউ সাবমিশন ফিচারটি পরবর্তীতে চালু করা হবে। বর্তমানে অপশনটি সিলেক্টেড রাখলে কাস্টমার ভেরিফাইড রিভিউ মোড ও ব্যাজ প্রদর্শিত হবে।
+                  </div>
+                ) : (
+                  <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-[11px] text-green-900 leading-relaxed">
+                    <span className="font-bold">✅ সক্রিয় মোড:</span> নিচের তালিকা থেকে আপনি যত খুশি রিভিউ যোগ/এডিট/ডিলিট করতে পারবেন, যা অটোমেটিক হোমপেজে ক্যারোসেল আকারে ঘুরবে।
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Part 2: Carousel Behavior Controls */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-600" />
+                  <h4 className="text-xs font-black text-green-950 uppercase">
+                    অটো ক্যারোসেল সেটিংস (Auto Carousel Controls)
+                  </h4>
+                </div>
+                <span className="text-xs font-bold text-gray-500">
+                  {testimonialAutoPlay ? "ক্যারোসেল সক্রিয়" : "ক্যারোসেল নিষ্ক্রিয়"}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200">
+                  <div>
+                    <span className="text-xs font-bold text-gray-800 block">অটো-প্লে (Auto Play)</span>
+                    <span className="text-[11px] text-gray-400">নির্ধারিত সময় পর পর রিভিউ পরিবর্তন হবে</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={testimonialAutoPlay}
+                    onChange={(e) => setTestimonialAutoPlay(e.target.checked)}
+                    className="toggle toggle-success"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200">
+                  <div>
+                    <span className="text-xs font-bold text-gray-800 block">পরিবর্তনের গতি (Speed)</span>
+                    <span className="text-[11px] text-gray-400">প্রতিটি রিভিউ প্রদর্শনের সময়কাল</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    {[3, 4, 5, 6].map((sec) => (
+                      <button
+                        key={sec}
+                        type="button"
+                        onClick={() => setTestimonialAutoPlayInterval(sec)}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-black transition cursor-pointer ${
+                          testimonialAutoPlayInterval === sec
+                            ? "bg-green-600 text-white shadow"
+                            : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                        }`}
+                      >
+                        {sec}s
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 3: Custom Reviews Manager */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-600" />
+                  <h4 className="text-sm font-extrabold text-green-950">
+                    কাস্টম রিভিউ তালিকা (Custom Reviews - মোট {testimonialItems.length}টি)
+                  </h4>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddTestimonial}
+                  className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer self-start sm:self-auto"
+                >
+                  <FaPlus /> <span>নতুন রিভিউ যোগ করুন</span>
+                </button>
+              </div>
+
+              {/* Review Cards Grid / List */}
+              <div className="space-y-4">
+                {testimonialItems.map((rev, index) => {
+                  const isImage =
+                    rev.avatar &&
+                    (rev.avatar.startsWith("data:") ||
+                      rev.avatar.startsWith("http") ||
+                      rev.avatar.startsWith("/"));
+
+                  return (
+                    <div
+                      key={index}
+                      className="p-5 rounded-2xl bg-yellow-50/50 border-2 border-yellow-200 space-y-4 relative group"
+                    >
+                      {/* Top Bar with ordering and delete */}
+                      <div className="flex items-center justify-between border-b border-yellow-200/80 pb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="w-6 h-6 rounded-full bg-green-700 text-white font-black text-xs flex items-center justify-center">
+                            {index + 1}
+                          </span>
+                          <span className="text-xs font-bold text-green-950">
+                            রিভিউ #{index + 1} — {rev.name || "অজানা গ্রাহক"}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            type="button"
+                            disabled={index === 0}
+                            onClick={() => handleMoveTestimonial(index, "up")}
+                            title="উপরে নিন"
+                            className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-green-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center justify-center text-xs cursor-pointer"
+                          >
+                            <FaArrowUp />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={index === testimonialItems.length - 1}
+                            onClick={() => handleMoveTestimonial(index, "down")}
+                            title="নিচে নিন"
+                            className="w-7 h-7 rounded-lg bg-white border border-gray-200 text-gray-700 hover:bg-green-50 disabled:opacity-30 disabled:cursor-not-allowed transition flex items-center justify-center text-xs cursor-pointer"
+                          >
+                            <FaArrowDown />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveTestimonial(index)}
+                            title="ডিলিট করুন"
+                            className="w-7 h-7 rounded-lg bg-red-50 border border-red-200 text-red-600 hover:bg-red-600 hover:text-white transition flex items-center justify-center text-xs cursor-pointer ml-1"
+                          >
+                            <FaTrash />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Fields Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start">
+                        {/* Avatar */}
+                        <div className="sm:col-span-3 space-y-2 text-center sm:text-left">
+                          <label className="block text-[11px] font-bold text-gray-700">
+                            অবতার / ছবি
+                          </label>
+                          <div className="flex items-center gap-2 justify-center sm:justify-start">
+                            <div className="w-12 h-12 rounded-full bg-emerald-200 flex items-center justify-center text-2xl shadow-inner shrink-0 overflow-hidden border border-emerald-300">
+                              {isImage ? (
+                                <img
+                                  src={rev.avatar}
+                                  alt={rev.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span>{rev.avatar || "😊"}</span>
+                              )}
+                            </div>
+
+                            <label className="px-2.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-lg text-[10px] font-bold cursor-pointer transition flex items-center gap-1 shadow-2xs">
+                              <FaUpload />
+                              <span>ছবি</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) =>
+                                  handleTestimonialAvatarUpload(index, e.target.files?.[0])
+                                }
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+
+                          <div className="flex items-center gap-1 flex-wrap justify-center sm:justify-start pt-1">
+                            {["😊", "🥭", "🌿", "🌟", "👑", "💚", "🍃", "👍"].map((em) => (
+                              <button
+                                key={em}
+                                type="button"
+                                onClick={() => handleUpdateTestimonial(index, "avatar", em)}
+                                className={`w-6 h-6 rounded-md text-xs transition cursor-pointer flex items-center justify-center ${
+                                  rev.avatar === em
+                                    ? "bg-green-600 text-white shadow-xs"
+                                    : "bg-white border border-gray-200 hover:bg-green-50"
+                                }`}
+                              >
+                                {em}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Name & Location & Rating */}
+                        <div className="sm:col-span-9 space-y-3">
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                            <div>
+                              <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                                গ্রাহকের নাম <span className="text-red-500">*</span>
+                              </label>
+                              <input
+                                type="text"
+                                value={rev.name}
+                                onChange={(e) =>
+                                  handleUpdateTestimonial(index, "name", e.target.value)
+                                }
+                                placeholder="যেমন: মিজানুর রহমান"
+                                className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                                ঠিকানা / শহর
+                              </label>
+                              <input
+                                type="text"
+                                value={rev.location}
+                                onChange={(e) =>
+                                  handleUpdateTestimonial(index, "location", e.target.value)
+                                }
+                                placeholder="যেমন: ঢাকা"
+                                className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                              />
+                            </div>
+
+                            <div>
+                              <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                                রেটিং (স্টার)
+                              </label>
+                              <div className="flex items-center gap-1 py-1.5">
+                                {[1, 2, 3, 4, 5].map((st) => (
+                                  <button
+                                    key={st}
+                                    type="button"
+                                    onClick={() => handleUpdateTestimonial(index, "rating", st)}
+                                    className="cursor-pointer transition hover:scale-125"
+                                  >
+                                    <FaStar
+                                      className={`text-base ${
+                                        st <= (rev.rating || 5)
+                                          ? "text-amber-400"
+                                          : "text-gray-300"
+                                      }`}
+                                    />
+                                  </button>
+                                ))}
+                                <span className="text-xs font-bold text-gray-600 ml-1">
+                                  ({rev.rating || 5}/5)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                              রিভিউ বক্তব্য / মতামত
+                            </label>
+                            <textarea
+                              rows={2}
+                              value={rev.comment}
+                              onChange={(e) =>
+                                handleUpdateTestimonial(index, "comment", e.target.value)
+                              }
+                              placeholder="গ্রাহকের প্রশংসামূলক বক্তব্য লিখুন..."
+                              className="w-full px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Part 4: Live Testimonials Carousel Preview */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+                  <div>
+                    <h4 className="text-sm font-black text-white">
+                      Live Testimonials Carousel Preview
+                    </h4>
+                    <p className="text-xs text-gray-400">
+                      Real-time interactive rendering of customer reviews auto carousel
+                    </p>
+                  </div>
+                </div>
+
+                {/* Device Switcher */}
+                <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
+                  <button
+                    type="button"
+                    onClick={() => setTestimonialPreviewDevice("desktop")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      testimonialPreviewDevice === "desktop"
+                        ? "bg-green-600 text-white shadow font-black"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaDesktop /> <span>Desktop</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTestimonialPreviewDevice("mobile")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      testimonialPreviewDevice === "mobile"
+                        ? "bg-green-600 text-white shadow font-black"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaMobileAlt /> <span>Mobile</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Rendered Live Carousel */}
+              {testimonialPreviewDevice === "desktop" ? (
+                /* DESKTOP PREVIEW (3 Cards Carousel) */
+                <div className="rounded-2xl border border-gray-800 bg-gradient-to-b from-gray-900 to-gray-950 p-6 space-y-6">
+                  {/* Section Title */}
+                  <div className="text-center space-y-1">
+                    <h3 className="text-2xl font-black text-white inline-flex items-center justify-center gap-2">
+                      <span>{testimonialSectionIcon || "🍃"}</span>
+                      <span>{testimonialSectionTitle || "গ্রাহকদের মতামত"}</span>
+                    </h3>
+                    {testimonialDisplayMode === "real" && (
+                      <p className="text-[11px] text-emerald-400 font-bold">
+                        ✓ ১০০% ভেরিফাইড ক্রেতাদের অভিজ্ঞতা ও সরাসরি রিভিউ
+                      </p>
+                    )}
+                  </div>
+
+                  {/* 3 Cards Slider Window */}
+                  <div className="relative">
+                    <div className="grid grid-cols-3 gap-4">
+                      {testimonialItems.slice(0, 3).map((rev, idx) => {
+                        const isImg =
+                          rev.avatar &&
+                          (rev.avatar.startsWith("data:") ||
+                            rev.avatar.startsWith("http") ||
+                            rev.avatar.startsWith("/"));
+
+                        return (
+                          <div
+                            key={idx}
+                            className="rounded-2xl bg-yellow-50 text-gray-800 p-5 shadow-md border-l-[6px] border-emerald-500 border border-yellow-200/60 flex flex-col justify-between"
+                          >
+                            <div>
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-emerald-200 flex items-center justify-center text-lg shadow-inner shrink-0 overflow-hidden">
+                                  {isImg ? (
+                                    <img
+                                      src={rev.avatar}
+                                      alt={rev.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
+                                    <span>{rev.avatar || "😊"}</span>
+                                  )}
+                                </div>
+                                <div className="min-w-0">
+                                  <h5 className="font-extrabold text-sm text-gray-900 truncate">
+                                    {rev.name}
+                                  </h5>
+                                  <p className="text-[10px] text-gray-500 truncate">
+                                    {rev.location || "বাংলাদেশ"}
+                                  </p>
+                                </div>
+                              </div>
+
+                              <p className="py-3 text-xs text-gray-700 italic leading-relaxed">
+                                "{rev.comment}"
+                              </p>
+                            </div>
+
+                            <div className="flex items-center gap-0.5 text-amber-400 pt-2 border-t border-yellow-200/60">
+                              {[...Array(5)].map((_, i) => (
+                                <FaStar
+                                  key={i}
+                                  className={`text-xs ${
+                                    i < (rev.rating || 5)
+                                      ? "text-amber-400"
+                                      : "text-gray-300"
+                                  }`}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Carousel indicator bar */}
+                    <div className="flex items-center justify-center gap-2 pt-4">
+                      <span className="w-6 h-1.5 bg-emerald-500 rounded-full" />
+                      <span className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
+                      <span className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
+                      <span className="text-[10px] text-gray-400 ml-2 font-bold">
+                        অটো-ক্যারোসেল ({testimonialAutoPlayInterval}s)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* SMARTPHONE FRAME MOCKUP (MOBILE PREVIEW) */
+                <div className="flex justify-center py-2">
+                  <div className="w-full max-w-[340px] rounded-[38px] border-[6px] border-gray-700 bg-gray-950 shadow-2xl overflow-hidden relative">
+                    {/* Notch */}
+                    <div className="h-6 bg-gray-950 flex justify-center items-center">
+                      <div className="w-20 h-3.5 bg-gray-900 rounded-full flex items-center justify-end pr-2 border border-gray-800">
+                        <div className="w-2 h-2 rounded-full bg-blue-900/60" />
+                      </div>
+                    </div>
+
+                    {/* Mobile Content Screen */}
+                    <div className="bg-gradient-to-b from-gray-900 via-gray-950 to-black p-4 space-y-4">
+                      {/* Section Title */}
+                      <div className="text-center space-y-1">
+                        <h3 className="text-base font-black text-white inline-flex items-center justify-center gap-1.5">
+                          <span>{testimonialSectionIcon || "🍃"}</span>
+                          <span>{testimonialSectionTitle || "গ্রাহকদের মতামত"}</span>
+                        </h3>
+                        {testimonialDisplayMode === "real" && (
+                          <p className="text-[9px] text-emerald-400 font-bold">
+                            ✓ ১০০% ভেরিফাইড ক্রেতাদের অভিজ্ঞতা
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Single Review Card in Mobile */}
+                      {testimonialItems[0] && (
+                        <div className="rounded-2xl bg-yellow-50 text-gray-800 p-4 shadow-md border-l-[6px] border-emerald-500 space-y-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-9 h-9 rounded-full bg-emerald-200 flex items-center justify-center text-base shadow-inner shrink-0 overflow-hidden">
+                              {testimonialItems[0].avatar &&
+                              (testimonialItems[0].avatar.startsWith("data:") ||
+                                testimonialItems[0].avatar.startsWith("http") ||
+                                testimonialItems[0].avatar.startsWith("/")) ? (
+                                <img
+                                  src={testimonialItems[0].avatar}
+                                  alt={testimonialItems[0].name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <span>{testimonialItems[0].avatar || "😊"}</span>
+                              )}
+                            </div>
+                            <div className="min-w-0">
+                              <h5 className="font-extrabold text-xs text-gray-900 truncate">
+                                {testimonialItems[0].name}
+                              </h5>
+                              <p className="text-[10px] text-gray-500 truncate">
+                                {testimonialItems[0].location || "বাংলাদেশ"}
+                              </p>
+                            </div>
+                          </div>
+
+                          <p className="text-xs text-gray-700 italic leading-relaxed">
+                            "{testimonialItems[0].comment}"
+                          </p>
+
+                          <div className="flex items-center gap-0.5 text-amber-400 pt-1.5 border-t border-yellow-200">
+                            {[...Array(5)].map((_, i) => (
+                              <FaStar
+                                key={i}
+                                className={`text-xs ${
+                                  i < (testimonialItems[0].rating || 5)
+                                    ? "text-amber-400"
+                                    : "text-gray-300"
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Mobile carousel dots */}
+                      <div className="flex items-center justify-center gap-1.5 pt-1">
+                        <span className="w-5 h-1.5 bg-emerald-500 rounded-full" />
+                        <span className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
+                        <span className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Save Settings Button */}
             <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
               <button
                 type="submit"

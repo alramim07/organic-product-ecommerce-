@@ -325,6 +325,65 @@ const settingSchema = new mongoose.Schema(
       type: String,
       default: "⭐ রিভিউ এর ভিত্তিতে",
     },
+    // Testimonials / Reviews Section Settings
+    testimonialSectionTitle: {
+      type: String,
+      default: "গ্রাহকদের মতামত",
+    },
+    testimonialSectionIcon: {
+      type: String,
+      default: "🍃",
+    },
+    testimonialDisplayMode: {
+      type: String,
+      enum: ["custom", "real"],
+      default: "custom",
+    },
+    testimonialAutoPlay: {
+      type: Boolean,
+      default: true,
+    },
+    testimonialAutoPlayInterval: {
+      type: Number,
+      default: 4,
+    },
+    testimonialItems: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          location: { type: String, default: "" },
+          comment: { type: String, default: "" },
+          rating: { type: Number, default: 5 },
+          avatar: { type: String, default: "😊" },
+        },
+      ],
+      default: [
+        {
+          name: "মিজানুর রহমান",
+          location: "ঢাকা",
+          comment:
+            "আমওয়ালা ভাইয়ার আমের গুণগত মান অসাধারণ। হিমসাগর আমের স্বাদ সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
+          rating: 5,
+          avatar: "😊",
+        },
+        {
+          name: "নুসরাত জাহান",
+          location: "চট্টগ্রাম",
+          comment:
+            "প্রি-অর্ডার করেছিলাম ল্যাংড়া আম। ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
+          rating: 5,
+          avatar: "😊",
+        },
+        {
+          name: "রফিকুল ইসলাম",
+          location: "রাজশাহী",
+          comment:
+            "আম্রপালি ও ফজলি দুটোই চমৎকার। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ আমওয়ালা ভাইয়াকে।",
+          rating: 4,
+          avatar: "😊",
+        },
+      ],
+    },
   },
   { timestamps: true, versionKey: false }
 );

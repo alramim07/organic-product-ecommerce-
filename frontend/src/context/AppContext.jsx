@@ -189,6 +189,38 @@ export function AppProvider({ children }) {
             aboutStat3ValueMode: "custom",
             aboutStat3CustomValue: "৯৮%",
             aboutStat3Subtitle: "⭐ রিভিউ এর ভিত্তিতে",
+            // Testimonials / Reviews Section Settings
+            testimonialSectionTitle: "গ্রাহকদের মতামত",
+            testimonialSectionIcon: "🍃",
+            testimonialDisplayMode: "custom", // "custom" | "real"
+            testimonialAutoPlay: true,
+            testimonialAutoPlayInterval: 4,
+            testimonialItems: [
+              {
+                name: "মিজানুর রহমান",
+                location: "ঢাকা",
+                comment:
+                  "আমওয়ালা ভাইয়ার আমের গুণগত মান অসাধারণ। হিমসাগর আমের স্বাদ সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
+                rating: 5,
+                avatar: "😊",
+              },
+              {
+                name: "নুসরাত জাহান",
+                location: "চট্টগ্রাম",
+                comment:
+                  "প্রি-অর্ডার করেছিলাম ল্যাংড়া আম। ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
+                rating: 5,
+                avatar: "😊",
+              },
+              {
+                name: "রফিকুল ইসলাম",
+                location: "রাজশাহী",
+                comment:
+                  "আম্রপালি ও ফজলি দুটোই চমৎকার। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ আমওয়ালা ভাইয়াকে।",
+                rating: 4,
+                avatar: "😊",
+              },
+            ],
           };
     } catch {
       return {};
