@@ -23,6 +23,7 @@ import {
   FaEyeSlash,
   FaCheckCircle,
   FaTimesCircle,
+  FaStar,
   FaUpload,
   FaTrash,
   FaShieldAlt,
