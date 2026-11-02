@@ -27,10 +27,107 @@ import {
   FaShieldAlt,
   FaTimes,
   FaCheck,
+  FaPalette,
+  FaPaintBrush,
+  FaUndoAlt,
+  FaSlidersH,
+  FaMousePointer,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../../context/AppContext";
 import { api } from "../../services/api";
+
+// Admin Dashboard Theme Presets
+const SIDEBAR_GRADIENT_PRESETS = [
+  {
+    id: "forest_gold",
+    name: "Forest & Mango Gold (Original)",
+    value: "linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%)",
+  },
+  {
+    id: "emerald_luxury",
+    name: "Emerald Luxury",
+    value: "linear-gradient(180deg, #064e3b 0%, #047857 50%, #0f172a 100%)",
+  },
+  {
+    id: "midnight_sapphire",
+    name: "Midnight Sapphire",
+    value: "linear-gradient(180deg, #0f172a 0%, #1e3a8a 50%, #172554 100%)",
+  },
+  {
+    id: "royal_amethyst",
+    name: "Royal Amethyst",
+    value: "linear-gradient(180deg, #3b0764 0%, #581c87 50%, #18181b 100%)",
+  },
+  {
+    id: "velvet_crimson",
+    name: "Velvet Crimson",
+    value: "linear-gradient(180deg, #450a0a 0%, #881337 50%, #1c1917 100%)",
+  },
+  {
+    id: "dark_obsidian",
+    name: "Dark Obsidian",
+    value: "linear-gradient(180deg, #18181b 0%, #27272a 50%, #09090b 100%)",
+  },
+  {
+    id: "ocean_breeze",
+    name: "Ocean Breeze",
+    value: "linear-gradient(180deg, #083344 0%, #0e7490 50%, #164e63 100%)",
+  },
+  {
+    id: "warm_amber",
+    name: "Warm Amber Sunset",
+    value: "linear-gradient(180deg, #451a03 0%, #78350f 50%, #9a3412 100%)",
+  },
+];
+
+const SIDEBAR_SOLID_PRESETS = [
+  { id: "deep_forest", name: "Deep Forest Green", value: "#052e16" },
+  { id: "midnight_navy", name: "Midnight Navy", value: "#0f172a" },
+  { id: "charcoal_black", name: "Charcoal Black", value: "#18181b" },
+  { id: "slate_navy", name: "Slate Navy", value: "#1e293b" },
+  { id: "royal_maroon", name: "Royal Maroon", value: "#450a0a" },
+  { id: "dark_espresso", name: "Dark Espresso", value: "#291507" },
+  { id: "teal_cypress", name: "Teal Cypress", value: "#134e4a" },
+  { id: "deep_indigo", name: "Deep Indigo", value: "#1e1b4b" },
+];
+
+const PRIMARY_BTN_GRADIENT_PRESETS = [
+  { id: "p_emerald_gold", name: "Emerald Gold (Default)", value: "linear-gradient(135deg, #16a34a 0%, #ca8a04 100%)" },
+  { id: "p_lush_green", name: "Pure Lush Green", value: "linear-gradient(135deg, #15803d 0%, #22c55e 100%)" },
+  { id: "p_royal_blue", name: "Royal Blue", value: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)" },
+  { id: "p_sunset_orange", name: "Sunset Orange", value: "linear-gradient(135deg, #ea580c 0%, #d97706 100%)" },
+  { id: "p_purple_violet", name: "Purple Violet", value: "linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)" },
+  { id: "p_ruby_crimson", name: "Ruby Crimson", value: "linear-gradient(135deg, #e11d48 0%, #be123c 100%)" },
+  { id: "p_dark_carbon", name: "Dark Carbon", value: "linear-gradient(135deg, #27272a 0%, #09090b 100%)" },
+];
+
+const PRIMARY_BTN_SOLID_PRESETS = [
+  { id: "p_s_forest", name: "Forest Green", value: "#15803d" },
+  { id: "p_s_emerald", name: "Emerald", value: "#16a34a" },
+  { id: "p_s_navy", name: "Navy Blue", value: "#1e40af" },
+  { id: "p_s_amber", name: "Amber Honey", value: "#d97706" },
+  { id: "p_s_crimson", name: "Crimson Red", value: "#dc2626" },
+  { id: "p_s_black", name: "Pure Black", value: "#111827" },
+];
+
+const SECONDARY_BTN_GRADIENT_PRESETS = [
+  { id: "s_amber_gold", name: "Amber Gold (Default)", value: "linear-gradient(135deg, #d97706 0%, #eab308 100%)" },
+  { id: "s_teal_breeze", name: "Teal Breeze", value: "linear-gradient(135deg, #0d9488 0%, #06b6d4 100%)" },
+  { id: "s_indigo_dream", name: "Indigo Dream", value: "linear-gradient(135deg, #4f46e5 0%, #6366f1 100%)" },
+  { id: "s_coral_peach", name: "Coral Peach", value: "linear-gradient(135deg, #f97316 0%, #fb923c 100%)" },
+  { id: "s_fuchsia_pink", name: "Fuchsia Pink", value: "linear-gradient(135deg, #c026d3 0%, #db2777 100%)" },
+  { id: "s_slate_graphite", name: "Slate Graphite", value: "linear-gradient(135deg, #475569 0%, #64748b 100%)" },
+];
+
+const SECONDARY_BTN_SOLID_PRESETS = [
+  { id: "s_s_amber", name: "Amber", value: "#d97706" },
+  { id: "s_s_gold", name: "Yellow Gold", value: "#eab308" },
+  { id: "s_s_slate", name: "Slate Gray", value: "#475569" },
+  { id: "s_s_sky", name: "Sky Blue", value: "#0284c7" },
+  { id: "s_s_purple", name: "Purple", value: "#9333ea" },
+  { id: "s_s_teal", name: "Teal", value: "#0d9488" },
+];
 
 export default function AdminSettings() {
   const { settings, updateSettings, adminToken } = useApp();
@@ -48,6 +145,43 @@ export default function AdminSettings() {
   const [ownerName, setOwnerName] = useState(
     settings.ownerName || "Md. Admin"
   );
+
+  // Admin Theme Customization state
+  const [themeSidebarType, setThemeSidebarType] = useState(settings.themeSidebarType || "gradient");
+  const [themeSidebarBg, setThemeSidebarBg] = useState(
+    settings.themeSidebarBg || "linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%)"
+  );
+  const [themePrimaryBtn, setThemePrimaryBtn] = useState(
+    settings.themePrimaryBtn || "linear-gradient(135deg, #16a34a 0%, #ca8a04 100%)"
+  );
+  const [themeSecondaryBtn, setThemeSecondaryBtn] = useState(
+    settings.themeSecondaryBtn || "linear-gradient(135deg, #d97706 0%, #eab308 100%)"
+  );
+
+  // Sidebar Controls state
+  const [sidebarPresetTab, setSidebarPresetTab] = useState("gradient");
+  const [sidebarCustomTab, setSidebarCustomTab] = useState("gradient");
+  const [customSidebarSolid, setCustomSidebarSolid] = useState("#052e16");
+  const [customSidebarStart, setCustomSidebarStart] = useState("#052e16");
+  const [customSidebarMid, setCustomSidebarMid] = useState("#14532d");
+  const [customSidebarEnd, setCustomSidebarEnd] = useState("#451a03");
+  const [customSidebarAngle, setCustomSidebarAngle] = useState("180deg");
+
+  // Primary Button Custom Controls
+  const [primaryBtnPresetTab, setPrimaryBtnPresetTab] = useState("gradient");
+  const [primaryBtnCustomTab, setPrimaryBtnCustomTab] = useState("gradient");
+  const [customPrimarySolid, setCustomPrimarySolid] = useState("#16a34a");
+  const [customPrimaryStart, setCustomPrimaryStart] = useState("#16a34a");
+  const [customPrimaryEnd, setCustomPrimaryEnd] = useState("#ca8a04");
+  const [customPrimaryAngle, setCustomPrimaryAngle] = useState("135deg");
+
+  // Secondary Button Custom Controls
+  const [secondaryBtnPresetTab, setSecondaryBtnPresetTab] = useState("gradient");
+  const [secondaryBtnCustomTab, setSecondaryBtnCustomTab] = useState("gradient");
+  const [customSecondarySolid, setCustomSecondarySolid] = useState("#d97706");
+  const [customSecondaryStart, setCustomSecondaryStart] = useState("#d97706");
+  const [customSecondaryEnd, setCustomSecondaryEnd] = useState("#eab308");
+  const [customSecondaryAngle, setCustomSecondaryAngle] = useState("135deg");
 
   // Website Settings state
   const [siteName, setSiteName] = useState(settings.siteName || "আমওয়ালা ভাইয়া");
@@ -74,6 +208,10 @@ export default function AdminSettings() {
       if (settings.profilePic !== undefined) setProfilePic(settings.profilePic);
       if (settings.businessName !== undefined) setBusinessName(settings.businessName);
       if (settings.ownerName !== undefined) setOwnerName(settings.ownerName);
+      if (settings.themeSidebarType !== undefined) setThemeSidebarType(settings.themeSidebarType);
+      if (settings.themeSidebarBg !== undefined) setThemeSidebarBg(settings.themeSidebarBg);
+      if (settings.themePrimaryBtn !== undefined) setThemePrimaryBtn(settings.themePrimaryBtn);
+      if (settings.themeSecondaryBtn !== undefined) setThemeSecondaryBtn(settings.themeSecondaryBtn);
       if (settings.siteName !== undefined) setSiteName(settings.siteName);
       if (settings.tagline !== undefined) setTagline(settings.tagline);
       if (settings.noticeText !== undefined) setNoticeText(settings.noticeText);
@@ -315,6 +453,81 @@ export default function AdminSettings() {
     }
   };
 
+  // Theme apply handlers (Live Preview & Instant update)
+  const applySidebarBg = (bgVal, type = "gradient") => {
+    setThemeSidebarBg(bgVal);
+    setThemeSidebarType(type);
+    updateSettings({ themeSidebarBg: bgVal, themeSidebarType: type });
+  };
+
+  const applyPrimaryBtn = (btnVal) => {
+    setThemePrimaryBtn(btnVal);
+    updateSettings({ themePrimaryBtn: btnVal });
+  };
+
+  const applySecondaryBtn = (btnVal) => {
+    setThemeSecondaryBtn(btnVal);
+    updateSettings({ themeSecondaryBtn: btnVal });
+  };
+
+  const handleApplyCustomSidebar = () => {
+    if (sidebarCustomTab === "solid") {
+      applySidebarBg(customSidebarSolid, "solid");
+    } else {
+      const grad = `linear-gradient(${customSidebarAngle}, ${customSidebarStart} 0%, ${customSidebarMid} 50%, ${customSidebarEnd} 100%)`;
+      applySidebarBg(grad, "gradient");
+    }
+  };
+
+  const handleApplyCustomPrimaryBtn = () => {
+    if (primaryBtnCustomTab === "solid") {
+      applyPrimaryBtn(customPrimarySolid);
+    } else {
+      const grad = `linear-gradient(${customPrimaryAngle}, ${customPrimaryStart} 0%, ${customPrimaryEnd} 100%)`;
+      applyPrimaryBtn(grad);
+    }
+  };
+
+  const handleApplyCustomSecondaryBtn = () => {
+    if (secondaryBtnCustomTab === "solid") {
+      applySecondaryBtn(customSecondarySolid);
+    } else {
+      const grad = `linear-gradient(${customSecondaryAngle}, ${customSecondaryStart} 0%, ${customSecondaryEnd} 100%)`;
+      applySecondaryBtn(grad);
+    }
+  };
+
+  const handleResetThemeToDefault = () => {
+    const defaultSidebar = "linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%)";
+    const defaultPrimary = "linear-gradient(135deg, #16a34a 0%, #ca8a04 100%)";
+    const defaultSecondary = "linear-gradient(135deg, #d97706 0%, #eab308 100%)";
+    setThemeSidebarType("gradient");
+    setThemeSidebarBg(defaultSidebar);
+    setThemePrimaryBtn(defaultPrimary);
+    setThemeSecondaryBtn(defaultSecondary);
+    setCustomSidebarStart("#052e16");
+    setCustomSidebarMid("#14532d");
+    setCustomSidebarEnd("#451a03");
+    setCustomSidebarAngle("180deg");
+    setCustomPrimaryStart("#16a34a");
+    setCustomPrimaryEnd("#ca8a04");
+    setCustomSecondaryStart("#d97706");
+    setCustomSecondaryEnd("#eab308");
+    updateSettings({
+      themeSidebarType: "gradient",
+      themeSidebarBg: defaultSidebar,
+      themePrimaryBtn: defaultPrimary,
+      themeSecondaryBtn: defaultSecondary,
+    });
+    Swal.fire({
+      icon: "info",
+      title: "Theme Reset",
+      text: "Admin portal theme restored to original Ammwala defaults.",
+      timer: 1500,
+      showConfirmButton: false,
+    });
+  };
+
   // Handle save settings
   const handleSave = (e) => {
     e?.preventDefault();
@@ -325,6 +538,10 @@ export default function AdminSettings() {
       profilePic,
       businessName,
       ownerName,
+      themeSidebarType,
+      themeSidebarBg,
+      themePrimaryBtn,
+      themeSecondaryBtn,
       siteName,
       tagline,
       noticeText,
@@ -368,7 +585,7 @@ export default function AdminSettings() {
           <button
             type="button"
             onClick={handleSave}
-            className="px-6 py-2.5 bg-green-700 hover:bg-green-800 text-white font-extrabold text-xs sm:text-sm rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
+            className="px-6 py-2.5 admin-btn-primary font-extrabold text-xs sm:text-sm rounded-2xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
           >
             <FaSave /> <span>Save Settings</span>
           </button>
@@ -382,7 +599,7 @@ export default function AdminSettings() {
           onClick={() => setActiveTab("dashboard")}
           className={`flex-1 sm:flex-initial px-5 py-3 rounded-xl font-black text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2 ${
             activeTab === "dashboard"
-              ? "bg-gradient-to-r from-green-800 to-green-700 text-white shadow-md"
+              ? "admin-btn-primary shadow-md"
               : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
           }`}
         >
@@ -395,7 +612,7 @@ export default function AdminSettings() {
           onClick={() => setActiveTab("website")}
           className={`flex-1 sm:flex-initial px-5 py-3 rounded-xl font-black text-xs sm:text-sm transition cursor-pointer flex items-center justify-center gap-2 ${
             activeTab === "website"
-              ? "bg-gradient-to-r from-green-800 to-green-700 text-white shadow-md"
+              ? "admin-btn-primary shadow-md"
               : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
           }`}
         >
@@ -632,10 +849,1007 @@ export default function AdminSettings() {
             <button
               type="button"
               onClick={() => setIsPasswordModalOpen(true)}
-              className="px-5 py-2.5 bg-gradient-to-r from-amber-600 to-yellow-600 hover:from-amber-700 hover:to-yellow-700 text-white font-black text-xs sm:text-sm rounded-xl shadow transition flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+              className="px-5 py-2.5 admin-btn-secondary text-white font-black text-xs sm:text-sm rounded-xl shadow transition flex items-center gap-2 cursor-pointer self-start sm:self-auto"
             >
               <FaKey /> <span>Change Password</span>
             </button>
+          </div>
+
+          {/* Card 4: Dashboard Theme & Color Customization */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+            {/* Header */}
+            <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
+                  <FaPalette className="text-green-600" /> 4. Admin Theme & Color Customization
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Customize the Admin Sidebar background, Primary & Secondary button colors.{" "}
+                  <span className="text-amber-700 font-bold bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                    Admin Portal Only — Website stays untouched
+                  </span>
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleResetThemeToDefault}
+                className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 transition flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+                title="Restore default original theme colors"
+              >
+                <FaUndoAlt className="text-[11px]" /> <span>Reset Defaults</span>
+              </button>
+            </div>
+
+            {/* Live Scheme Status Bar */}
+            <div className="p-4 bg-gray-50/80 rounded-2xl border border-gray-200 grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-black uppercase tracking-wider text-gray-500">
+                  Current Theme / Sidebar Color
+                </span>
+                <div className="flex items-center gap-2.5">
+                  <div
+                    style={{ background: themeSidebarBg }}
+                    className="w-10 h-10 rounded-xl shadow-md border border-black/10 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-gray-800 truncate">
+                      {themeSidebarType === "gradient" ? "Gradient Background" : "Solid Background"}
+                    </p>
+                    <p className="text-[10px] font-mono text-gray-500 truncate" title={themeSidebarBg}>
+                      {themeSidebarBg}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-black uppercase tracking-wider text-gray-500">
+                  Current Primary Button Color
+                </span>
+                <div className="flex items-center gap-2.5">
+                  <div
+                    style={{ background: themePrimaryBtn }}
+                    className="w-10 h-10 rounded-xl shadow-md border border-black/10 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-gray-800 truncate">Primary Actions</p>
+                    <p className="text-[10px] font-mono text-gray-500 truncate" title={themePrimaryBtn}>
+                      {themePrimaryBtn}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-black uppercase tracking-wider text-gray-500">
+                  Current Secondary Button Color
+                </span>
+                <div className="flex items-center gap-2.5">
+                  <div
+                    style={{ background: themeSecondaryBtn }}
+                    className="w-10 h-10 rounded-xl shadow-md border border-black/10 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-gray-800 truncate">Secondary Actions</p>
+                    <p className="text-[10px] font-mono text-gray-500 truncate" title={themeSecondaryBtn}>
+                      {themeSecondaryBtn}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* PART 1: Theme Color (Sidebar & Portal Theme) */}
+            <div className="space-y-4 pt-2">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2">
+                <h4 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-green-600" />
+                  Theme Color (Sidebar Background)
+                </h4>
+
+                {/* Sub Tab Switcher: Gradients, Solids, Custom */}
+                <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl self-start sm:self-auto text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setSidebarPresetTab("gradient")}
+                    className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                      sidebarPresetTab === "gradient"
+                        ? "bg-white text-gray-900 shadow-sm font-extrabold"
+                        : "text-gray-500 hover:text-gray-800"
+                    }`}
+                  >
+                    Gradient Presets
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSidebarPresetTab("solid")}
+                    className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                      sidebarPresetTab === "solid"
+                        ? "bg-white text-gray-900 shadow-sm font-extrabold"
+                        : "text-gray-500 hover:text-gray-800"
+                    }`}
+                  >
+                    Solid Presets
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSidebarPresetTab("custom")}
+                    className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                      sidebarPresetTab === "custom"
+                        ? "bg-white text-green-800 shadow-sm font-extrabold"
+                        : "text-gray-500 hover:text-gray-800"
+                    }`}
+                  >
+                    Custom Color (Solid + Gradient)
+                  </button>
+                </div>
+              </div>
+
+              {/* Sidebar Presets: Gradients */}
+              {sidebarPresetTab === "gradient" && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {SIDEBAR_GRADIENT_PRESETS.map((preset) => {
+                    const isActive = themeSidebarBg === preset.value;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => applySidebarBg(preset.value, "gradient")}
+                        className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between h-24 relative overflow-hidden group cursor-pointer ${
+                          isActive
+                            ? "border-green-600 ring-2 ring-green-500 shadow-md"
+                            : "border-gray-200 hover:border-gray-400 bg-white"
+                        }`}
+                      >
+                        <div
+                          style={{ background: preset.value }}
+                          className="w-full h-10 rounded-xl shadow-inner border border-black/10 transition group-hover:scale-[1.02]"
+                        />
+                        <div className="flex items-center justify-between gap-1 mt-2">
+                          <span className="text-xs font-extrabold text-gray-800 truncate">
+                            {preset.name}
+                          </span>
+                          {isActive && (
+                            <span className="w-4 h-4 rounded-full bg-green-600 text-white flex items-center justify-center text-[10px] shrink-0">
+                              <FaCheck />
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Sidebar Presets: Solids */}
+              {sidebarPresetTab === "solid" && (
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {SIDEBAR_SOLID_PRESETS.map((preset) => {
+                    const isActive = themeSidebarBg === preset.value;
+                    return (
+                      <button
+                        key={preset.id}
+                        type="button"
+                        onClick={() => applySidebarBg(preset.value, "solid")}
+                        className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between h-24 relative overflow-hidden group cursor-pointer ${
+                          isActive
+                            ? "border-green-600 ring-2 ring-green-500 shadow-md"
+                            : "border-gray-200 hover:border-gray-400 bg-white"
+                        }`}
+                      >
+                        <div
+                          style={{ background: preset.value }}
+                          className="w-full h-10 rounded-xl shadow-inner border border-black/10 transition group-hover:scale-[1.02]"
+                        />
+                        <div className="flex items-center justify-between gap-1 mt-2">
+                          <span className="text-xs font-extrabold text-gray-800 truncate">
+                            {preset.name}
+                          </span>
+                          {isActive && (
+                            <span className="w-4 h-4 rounded-full bg-green-600 text-white flex items-center justify-center text-[10px] shrink-0">
+                              <FaCheck />
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Sidebar: Custom Color Builder (Solid + Gradient) */}
+              {sidebarPresetTab === "custom" && (
+                <div className="p-4 sm:p-5 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-2">
+                    <span className="text-xs font-black uppercase tracking-wider text-gray-700">
+                      Custom Theme Builder
+                    </span>
+                    <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-gray-200 text-xs font-bold">
+                      <button
+                        type="button"
+                        onClick={() => setSidebarCustomTab("gradient")}
+                        className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                          sidebarCustomTab === "gradient"
+                            ? "bg-green-700 text-white font-black"
+                            : "text-gray-500 hover:text-gray-800"
+                        }`}
+                      >
+                        Custom Gradient
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSidebarCustomTab("solid")}
+                        className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                          sidebarCustomTab === "solid"
+                            ? "bg-green-700 text-white font-black"
+                            : "text-gray-500 hover:text-gray-800"
+                        }`}
+                      >
+                        Custom Solid
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Custom Gradient Builder */}
+                  {sidebarCustomTab === "gradient" ? (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            Start Color (0%)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={customSidebarStart}
+                              onChange={(e) => setCustomSidebarStart(e.target.value)}
+                              className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={customSidebarStart}
+                              onChange={(e) => setCustomSidebarStart(e.target.value)}
+                              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            Middle Color (50%)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={customSidebarMid}
+                              onChange={(e) => setCustomSidebarMid(e.target.value)}
+                              className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={customSidebarMid}
+                              onChange={(e) => setCustomSidebarMid(e.target.value)}
+                              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            End Color (100%)
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={customSidebarEnd}
+                              onChange={(e) => setCustomSidebarEnd(e.target.value)}
+                              className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={customSidebarEnd}
+                              onChange={(e) => setCustomSidebarEnd(e.target.value)}
+                              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            Direction / Angle
+                          </label>
+                          <select
+                            value={customSidebarAngle}
+                            onChange={(e) => setCustomSidebarAngle(e.target.value)}
+                            className="w-full h-10 px-3 bg-white border border-gray-200 rounded-xl text-xs font-bold"
+                          >
+                            <option value="180deg">Top to Bottom (180°)</option>
+                            <option value="135deg">Diagonal Down-Right (135°)</option>
+                            <option value="90deg">Left to Right (90°)</option>
+                            <option value="0deg">Bottom to Top (0°)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      {/* Live Preview Box of the Custom Gradient */}
+                      <div className="p-3 bg-white rounded-xl border border-gray-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            style={{
+                              background: `linear-gradient(${customSidebarAngle}, ${customSidebarStart} 0%, ${customSidebarMid} 50%, ${customSidebarEnd} 100%)`,
+                            }}
+                            className="w-24 h-10 rounded-xl shadow-md border border-black/10 shrink-0"
+                          />
+                          <div className="min-w-0">
+                            <p className="text-xs font-bold text-gray-800">Custom Gradient Preview</p>
+                            <p className="text-[10px] font-mono text-gray-500 truncate">
+                              {`linear-gradient(${customSidebarAngle}, ${customSidebarStart} 0%, ${customSidebarMid} 50%, ${customSidebarEnd} 100%)`}
+                            </p>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleApplyCustomSidebar}
+                          className="px-4 py-2 admin-btn-primary text-white text-xs font-black rounded-xl shadow transition shrink-0 cursor-pointer"
+                        >
+                          Apply Custom Gradient
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Custom Solid Builder */
+                    <div className="space-y-4">
+                      <div className="max-w-xs">
+                        <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                          Solid Hex Color
+                        </label>
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="color"
+                            value={customSidebarSolid}
+                            onChange={(e) => setCustomSidebarSolid(e.target.value)}
+                            className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                          />
+                          <input
+                            type="text"
+                            value={customSidebarSolid}
+                            onChange={(e) => setCustomSidebarSolid(e.target.value)}
+                            className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            style={{ background: customSidebarSolid }}
+                            className="w-12 h-10 rounded-xl shadow-md border border-black/10 shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs font-bold text-gray-800">Custom Solid Preview</p>
+                            <p className="text-[10px] font-mono text-gray-500">{customSidebarSolid}</p>
+                          </div>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleApplyCustomSidebar}
+                          className="px-4 py-2 admin-btn-primary text-white text-xs font-black rounded-xl shadow transition shrink-0 cursor-pointer"
+                        >
+                          Apply Custom Solid
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* PART 2: Button Color Customization */}
+            <div className="space-y-6 pt-4 border-t border-gray-100">
+              {/* Classification Info Card */}
+              <div className="p-4 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2">
+                <h4 className="text-sm font-extrabold text-emerald-950 flex items-center gap-2">
+                  <FaMousePointer className="text-emerald-700 text-xs" />
+                  Admin Button Classification & Role
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs text-emerald-900 font-medium">
+                  <div className="p-3 bg-white/80 rounded-xl border border-emerald-200 flex items-center justify-between gap-2">
+                    <div>
+                      <p className="font-extrabold text-gray-900">1. Primary Action Buttons</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Save Settings, Add Product, Publish Product, Add Category & Units
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      style={{ background: themePrimaryBtn }}
+                      className="px-3.5 py-1.5 text-white font-extrabold text-xs rounded-xl shadow shrink-0 pointer-events-none"
+                    >
+                      Primary Demo
+                    </button>
+                  </div>
+
+                  <div className="p-3 bg-white/80 rounded-xl border border-emerald-200 flex items-center justify-between gap-2">
+                    <div>
+                      <p className="font-extrabold text-gray-900">2. Secondary Action Buttons</p>
+                      <p className="text-[11px] text-gray-500 mt-0.5">
+                        Change Password, Quick Settings, Filter / Status Highlights
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      style={{ background: themeSecondaryBtn }}
+                      className="px-3.5 py-1.5 text-white font-extrabold text-xs rounded-xl shadow shrink-0 pointer-events-none"
+                    >
+                      Secondary Demo
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* SECTION B1: Primary Button Color */}
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2">
+                  <h4 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-600" />
+                    Primary Button Color
+                  </h4>
+
+                  {/* Primary Tab Switcher */}
+                  <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl self-start sm:self-auto text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setPrimaryBtnPresetTab("gradient")}
+                      className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                        primaryBtnPresetTab === "gradient"
+                          ? "bg-white text-gray-900 shadow-sm font-extrabold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      Gradient Presets
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPrimaryBtnPresetTab("solid")}
+                      className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                        primaryBtnPresetTab === "solid"
+                          ? "bg-white text-gray-900 shadow-sm font-extrabold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      Solid Presets
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setPrimaryBtnPresetTab("custom")}
+                      className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                        primaryBtnPresetTab === "custom"
+                          ? "bg-white text-emerald-800 shadow-sm font-extrabold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      Custom Color
+                    </button>
+                  </div>
+                </div>
+
+                {/* Primary Button: Gradient Presets */}
+                {primaryBtnPresetTab === "gradient" && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {PRIMARY_BTN_GRADIENT_PRESETS.map((preset) => {
+                      const isActive = themePrimaryBtn === preset.value;
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => applyPrimaryBtn(preset.value)}
+                          className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between h-20 relative overflow-hidden group cursor-pointer ${
+                            isActive
+                              ? "border-emerald-600 ring-2 ring-emerald-500 shadow-md"
+                              : "border-gray-200 hover:border-gray-400 bg-white"
+                          }`}
+                        >
+                          <div
+                            style={{ background: preset.value }}
+                            className="w-full h-8 rounded-lg shadow-inner border border-black/10 transition group-hover:scale-[1.02]"
+                          />
+                          <div className="flex items-center justify-between gap-1 mt-1.5">
+                            <span className="text-[11px] font-extrabold text-gray-800 truncate">
+                              {preset.name}
+                            </span>
+                            {isActive && (
+                              <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[8px] shrink-0">
+                                <FaCheck />
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Primary Button: Solid Presets */}
+                {primaryBtnPresetTab === "solid" && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                    {PRIMARY_BTN_SOLID_PRESETS.map((preset) => {
+                      const isActive = themePrimaryBtn === preset.value;
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => applyPrimaryBtn(preset.value)}
+                          className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between h-20 relative overflow-hidden group cursor-pointer ${
+                            isActive
+                              ? "border-emerald-600 ring-2 ring-emerald-500 shadow-md"
+                              : "border-gray-200 hover:border-gray-400 bg-white"
+                          }`}
+                        >
+                          <div
+                            style={{ background: preset.value }}
+                            className="w-full h-8 rounded-lg shadow-inner border border-black/10 transition group-hover:scale-[1.02]"
+                          />
+                          <div className="flex items-center justify-between gap-1 mt-1.5">
+                            <span className="text-[11px] font-extrabold text-gray-800 truncate">
+                              {preset.name}
+                            </span>
+                            {isActive && (
+                              <span className="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[8px] shrink-0">
+                                <FaCheck />
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Primary Button: Custom Builder */}
+                {primaryBtnPresetTab === "custom" && (
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-gray-700">
+                        Custom Primary Button Builder
+                      </span>
+                      <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-gray-200 text-xs font-bold">
+                        <button
+                          type="button"
+                          onClick={() => setPrimaryBtnCustomTab("gradient")}
+                          className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                            primaryBtnCustomTab === "gradient"
+                              ? "bg-emerald-700 text-white font-black"
+                              : "text-gray-500 hover:text-gray-800"
+                          }`}
+                        >
+                          Gradient
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setPrimaryBtnCustomTab("solid")}
+                          className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                            primaryBtnCustomTab === "solid"
+                              ? "bg-emerald-700 text-white font-black"
+                              : "text-gray-500 hover:text-gray-800"
+                          }`}
+                        >
+                          Solid
+                        </button>
+                      </div>
+                    </div>
+
+                    {primaryBtnCustomTab === "gradient" ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                              Gradient Start
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                value={customPrimaryStart}
+                                onChange={(e) => setCustomPrimaryStart(e.target.value)}
+                                className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={customPrimaryStart}
+                                onChange={(e) => setCustomPrimaryStart(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                              Gradient End
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                value={customPrimaryEnd}
+                                onChange={(e) => setCustomPrimaryEnd(e.target.value)}
+                                className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={customPrimaryEnd}
+                                onChange={(e) => setCustomPrimaryEnd(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                              Angle
+                            </label>
+                            <select
+                              value={customPrimaryAngle}
+                              onChange={(e) => setCustomPrimaryAngle(e.target.value)}
+                              className="w-full h-10 px-3 bg-white border border-gray-200 rounded-xl text-xs font-bold"
+                            >
+                              <option value="135deg">Diagonal (135°)</option>
+                              <option value="90deg">Left to Right (90°)</option>
+                              <option value="180deg">Top to Bottom (180°)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              style={{
+                                background: `linear-gradient(${customPrimaryAngle}, ${customPrimaryStart} 0%, ${customPrimaryEnd} 100%)`,
+                              }}
+                              className="px-4 py-2 text-white font-extrabold text-xs rounded-xl shadow pointer-events-none"
+                            >
+                              Live Button Preview
+                            </button>
+                            <span className="text-[10px] font-mono text-gray-500 hidden sm:inline truncate">
+                              {`linear-gradient(${customPrimaryAngle}, ${customPrimaryStart} 0%, ${customPrimaryEnd} 100%)`}
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleApplyCustomPrimaryBtn}
+                            className="px-4 py-2 admin-btn-primary text-white text-xs font-black rounded-xl shadow transition cursor-pointer"
+                          >
+                            Apply Primary Color
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="max-w-xs">
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            Solid Color
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={customPrimarySolid}
+                              onChange={(e) => setCustomPrimarySolid(e.target.value)}
+                              className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={customPrimarySolid}
+                              onChange={(e) => setCustomPrimarySolid(e.target.value)}
+                              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-3">
+                          <button
+                            type="button"
+                            style={{ background: customPrimarySolid }}
+                            className="px-4 py-2 text-white font-extrabold text-xs rounded-xl shadow pointer-events-none"
+                          >
+                            Live Button Preview
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleApplyCustomPrimaryBtn}
+                            className="px-4 py-2 admin-btn-primary text-white text-xs font-black rounded-xl shadow transition cursor-pointer"
+                          >
+                            Apply Primary Color
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* SECTION B2: Secondary Button Color */}
+              <div className="space-y-4 pt-2">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2">
+                  <h4 className="text-sm font-extrabold text-gray-900 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-amber-500" />
+                    Secondary Button Color
+                  </h4>
+
+                  {/* Secondary Tab Switcher */}
+                  <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl self-start sm:self-auto text-xs font-bold">
+                    <button
+                      type="button"
+                      onClick={() => setSecondaryBtnPresetTab("gradient")}
+                      className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                        secondaryBtnPresetTab === "gradient"
+                          ? "bg-white text-gray-900 shadow-sm font-extrabold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      Gradient Presets
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSecondaryBtnPresetTab("solid")}
+                      className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                        secondaryBtnPresetTab === "solid"
+                          ? "bg-white text-gray-900 shadow-sm font-extrabold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      Solid Presets
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSecondaryBtnPresetTab("custom")}
+                      className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                        secondaryBtnPresetTab === "custom"
+                          ? "bg-white text-amber-800 shadow-sm font-extrabold"
+                          : "text-gray-500 hover:text-gray-800"
+                      }`}
+                    >
+                      Custom Color
+                    </button>
+                  </div>
+                </div>
+
+                {/* Secondary Button: Gradient Presets */}
+                {secondaryBtnPresetTab === "gradient" && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                    {SECONDARY_BTN_GRADIENT_PRESETS.map((preset) => {
+                      const isActive = themeSecondaryBtn === preset.value;
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => applySecondaryBtn(preset.value)}
+                          className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between h-20 relative overflow-hidden group cursor-pointer ${
+                            isActive
+                              ? "border-amber-600 ring-2 ring-amber-500 shadow-md"
+                              : "border-gray-200 hover:border-gray-400 bg-white"
+                          }`}
+                        >
+                          <div
+                            style={{ background: preset.value }}
+                            className="w-full h-8 rounded-lg shadow-inner border border-black/10 transition group-hover:scale-[1.02]"
+                          />
+                          <div className="flex items-center justify-between gap-1 mt-1.5">
+                            <span className="text-[11px] font-extrabold text-gray-800 truncate">
+                              {preset.name}
+                            </span>
+                            {isActive && (
+                              <span className="w-3.5 h-3.5 rounded-full bg-amber-600 text-white flex items-center justify-center text-[8px] shrink-0">
+                                <FaCheck />
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Secondary Button: Solid Presets */}
+                {secondaryBtnPresetTab === "solid" && (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                    {SECONDARY_BTN_SOLID_PRESETS.map((preset) => {
+                      const isActive = themeSecondaryBtn === preset.value;
+                      return (
+                        <button
+                          key={preset.id}
+                          type="button"
+                          onClick={() => applySecondaryBtn(preset.value)}
+                          className={`p-3 rounded-2xl border text-left transition flex flex-col justify-between h-20 relative overflow-hidden group cursor-pointer ${
+                            isActive
+                              ? "border-amber-600 ring-2 ring-amber-500 shadow-md"
+                              : "border-gray-200 hover:border-gray-400 bg-white"
+                          }`}
+                        >
+                          <div
+                            style={{ background: preset.value }}
+                            className="w-full h-8 rounded-lg shadow-inner border border-black/10 transition group-hover:scale-[1.02]"
+                          />
+                          <div className="flex items-center justify-between gap-1 mt-1.5">
+                            <span className="text-[11px] font-extrabold text-gray-800 truncate">
+                              {preset.name}
+                            </span>
+                            {isActive && (
+                              <span className="w-3.5 h-3.5 rounded-full bg-amber-600 text-white flex items-center justify-center text-[8px] shrink-0">
+                                <FaCheck />
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Secondary Button: Custom Builder */}
+                {secondaryBtnPresetTab === "custom" && (
+                  <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                    <div className="flex items-center justify-between flex-wrap gap-2">
+                      <span className="text-xs font-black uppercase tracking-wider text-gray-700">
+                        Custom Secondary Button Builder
+                      </span>
+                      <div className="flex items-center gap-1 bg-white p-0.5 rounded-xl border border-gray-200 text-xs font-bold">
+                        <button
+                          type="button"
+                          onClick={() => setSecondaryBtnCustomTab("gradient")}
+                          className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                            secondaryBtnCustomTab === "gradient"
+                              ? "bg-amber-600 text-white font-black"
+                              : "text-gray-500 hover:text-gray-800"
+                          }`}
+                        >
+                          Gradient
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSecondaryBtnCustomTab("solid")}
+                          className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                            secondaryBtnCustomTab === "solid"
+                              ? "bg-amber-600 text-white font-black"
+                              : "text-gray-500 hover:text-gray-800"
+                          }`}
+                        >
+                          Solid
+                        </button>
+                      </div>
+                    </div>
+
+                    {secondaryBtnCustomTab === "gradient" ? (
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                              Gradient Start
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                value={customSecondaryStart}
+                                onChange={(e) => setCustomSecondaryStart(e.target.value)}
+                                className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={customSecondaryStart}
+                                onChange={(e) => setCustomSecondaryStart(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                              Gradient End
+                            </label>
+                            <div className="flex items-center gap-2">
+                              <input
+                                type="color"
+                                value={customSecondaryEnd}
+                                onChange={(e) => setCustomSecondaryEnd(e.target.value)}
+                                className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                              />
+                              <input
+                                type="text"
+                                value={customSecondaryEnd}
+                                onChange={(e) => setCustomSecondaryEnd(e.target.value)}
+                                className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                              Angle
+                            </label>
+                            <select
+                              value={customSecondaryAngle}
+                              onChange={(e) => setCustomSecondaryAngle(e.target.value)}
+                              className="w-full h-10 px-3 bg-white border border-gray-200 rounded-xl text-xs font-bold"
+                            >
+                              <option value="135deg">Diagonal (135°)</option>
+                              <option value="90deg">Left to Right (90°)</option>
+                              <option value="180deg">Top to Bottom (180°)</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              style={{
+                                background: `linear-gradient(${customSecondaryAngle}, ${customSecondaryStart} 0%, ${customSecondaryEnd} 100%)`,
+                              }}
+                              className="px-4 py-2 text-white font-extrabold text-xs rounded-xl shadow pointer-events-none"
+                            >
+                              Live Button Preview
+                            </button>
+                            <span className="text-[10px] font-mono text-gray-500 hidden sm:inline truncate">
+                              {`linear-gradient(${customSecondaryAngle}, ${customSecondaryStart} 0%, ${customSecondaryEnd} 100%)`}
+                            </span>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={handleApplyCustomSecondaryBtn}
+                            className="px-4 py-2 admin-btn-secondary text-white text-xs font-black rounded-xl shadow transition cursor-pointer"
+                          >
+                            Apply Secondary Color
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="max-w-xs">
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            Solid Color
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <input
+                              type="color"
+                              value={customSecondarySolid}
+                              onChange={(e) => setCustomSecondarySolid(e.target.value)}
+                              className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer bg-white"
+                            />
+                            <input
+                              type="text"
+                              value={customSecondarySolid}
+                              onChange={(e) => setCustomSecondarySolid(e.target.value)}
+                              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-3">
+                          <button
+                            type="button"
+                            style={{ background: customSecondarySolid }}
+                            className="px-4 py-2 text-white font-extrabold text-xs rounded-xl shadow pointer-events-none"
+                          >
+                            Live Button Preview
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={handleApplyCustomSecondaryBtn}
+                            className="px-4 py-2 admin-btn-secondary text-white text-xs font-black rounded-xl shadow transition cursor-pointer"
+                          >
+                            Apply Secondary Color
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -1034,7 +2248,7 @@ export default function AdminSettings() {
                   className={`px-5 py-2 text-white text-xs font-extrabold rounded-xl shadow transition flex items-center gap-2 cursor-pointer ${
                     !isPasswordValid || !isConfirmMatching || isChangingPassword
                       ? "bg-gray-400 cursor-not-allowed opacity-60"
-                      : "bg-green-700 hover:bg-green-800"
+                      : "admin-btn-primary"
                   }`}
                 >
                   <FaKey />

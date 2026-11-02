@@ -27,3 +27,30 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #22c55e;
 }
+
+/* Scoped Admin Dashboard Theme Customizations (Strictly Admin Portal Only) */
+.admin-theme-scope {
+  --admin-sidebar-bg: linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%);
+  --admin-primary-btn: linear-gradient(135deg, #16a34a 0%, #ca8a04 100%);
+  --admin-secondary-btn: linear-gradient(135deg, #d97706 0%, #eab308 100%);
+}
+
+.admin-theme-scope .admin-btn-primary {
+  background: var(--admin-primary-btn) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out;
+}
+.admin-theme-scope .admin-btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.18);
+}
+
+.admin-theme-scope .admin-btn-secondary {
+  background: var(--admin-secondary-btn) !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease-in-out;
+}
+.admin-theme-scope .admin-btn-secondary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.18);
+}

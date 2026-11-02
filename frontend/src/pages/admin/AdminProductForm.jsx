@@ -1867,7 +1867,7 @@ export default function AdminProductForm() {
           <button
             type="button"
             onClick={(e) => handleSaveProduct(e, "published")}
-            className="px-4 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer"
+            className="px-4 py-1.5 admin-btn-primary text-white font-extrabold text-xs rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer"
           >
             <FaSave className="text-xs" /> <span>{isEdit ? "Update" : "Publish"}</span>
           </button>

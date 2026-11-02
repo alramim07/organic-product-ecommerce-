@@ -327,7 +327,7 @@ export default function AdminCategories() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-3 bg-gradient-to-r from-green-600 to-yellow-600 hover:from-green-700 hover:to-yellow-700 text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
+              className="px-6 py-3 admin-btn-primary text-white font-extrabold text-sm rounded-xl shadow-md hover:shadow-lg transition flex items-center gap-2 cursor-pointer"
             >
               <FaSave /> <span>{isSubmitting ? "Adding..." : "Add Category & Unit"}</span>
             </button>
@@ -559,7 +559,7 @@ export default function AdminCategories() {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5"
+                  className="px-5 py-2 admin-btn-primary text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5"
                 >
                   <FaSave /> Save Changes
                 </button>

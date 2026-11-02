@@ -7,6 +7,20 @@ const settingSchema = new mongoose.Schema(
     profilePic: { type: String, default: "" },
     businessName: { type: String, default: "Ammwala Agro & Organic Food" },
     ownerName: { type: String, default: "Md. Admin" },
+    // Admin Dashboard Theme Settings
+    themeSidebarType: { type: String, default: "gradient" },
+    themeSidebarBg: {
+      type: String,
+      default: "linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%)",
+    },
+    themePrimaryBtn: {
+      type: String,
+      default: "linear-gradient(135deg, #16a34a 0%, #ca8a04 100%)",
+    },
+    themeSecondaryBtn: {
+      type: String,
+      default: "linear-gradient(135deg, #d97706 0%, #eab308 100%)",
+    },
     siteName: { type: String, default: "আমওয়ালা ভাইয়া" },
     tagline: { type: String, default: "প্রিমিয়াম মানের দেশি আম ও খাঁটি প্রাকৃতিক খাদ্যপণ্য" },
     hotlinePhone: { type: String, default: "০১৭৪৯-৭৭৫০৩০" },

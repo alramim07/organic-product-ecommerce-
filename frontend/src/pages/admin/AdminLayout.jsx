@@ -111,7 +111,14 @@ export default function AdminLayout() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div
+      className="min-h-screen bg-gray-50 admin-theme-scope"
+      style={{
+        "--admin-sidebar-bg": settings?.themeSidebarBg || "linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%)",
+        "--admin-primary-btn": settings?.themePrimaryBtn || "linear-gradient(135deg, #16a34a 0%, #ca8a04 100%)",
+        "--admin-secondary-btn": settings?.themeSecondaryBtn || "linear-gradient(135deg, #d97706 0%, #eab308 100%)",
+      }}
+    >
       {/* Mobile Sidebar Backdrop */}
       {sidebarOpen && (
         <div
@@ -124,7 +131,10 @@ export default function AdminLayout() {
       <aside
         onMouseEnter={() => !isLockedOpen && setIsHovered(true)}
         onMouseLeave={() => !isLockedOpen && setIsHovered(false)}
-        className={`fixed top-0 bottom-0 left-0 h-screen bg-gradient-to-b from-green-950 via-green-900 to-amber-950 text-white flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl overflow-y-auto ${
+        style={{
+          background: settings?.themeSidebarBg || "linear-gradient(180deg, #052e16 0%, #14532d 50%, #451a03 100%)",
+        }}
+        className={`fixed top-0 bottom-0 left-0 h-screen text-white flex flex-col justify-between transition-all duration-300 ease-in-out shadow-2xl overflow-y-auto ${
           sidebarOpen ? "translate-x-0 z-50" : "-translate-x-full lg:translate-x-0"
         } ${
           isExpanded
