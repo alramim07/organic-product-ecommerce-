@@ -21,6 +21,32 @@ const settingSchema = new mongoose.Schema(
       type: String,
       default: "linear-gradient(135deg, #d97706 0%, #eab308 100%)",
     },
+    // Frontend Website Header Settings
+    websiteFavicon: { type: String, default: "" },
+    websiteLogo: { type: String, default: "" },
+    headerNavLinks: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          href: { type: String, default: "" },
+          icon: { type: String, default: "" },
+          showIcon: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { name: "হোম", href: "#home", icon: "🏠", showIcon: true },
+        { name: "আমের জাত", href: "#varieties", icon: "🥭", showIcon: true },
+        { name: "পরিচয়", href: "#about", icon: "📖", showIcon: true },
+        { name: "মতামত", href: "#reviews", icon: "⭐", showIcon: true },
+        { name: "অর্ডার করুন", href: "#order", icon: "📦", showIcon: true },
+      ],
+    },
+    headerCallBtnText: { type: String, default: "কল করুন" },
+    headerCallBtnPhone: { type: String, default: "01749775030" },
+    headerCallBtnShow: { type: Boolean, default: true },
+    headerWhatsappNumber: { type: String, default: "8801749775030" },
+    headerWhatsappShow: { type: Boolean, default: true },
+    headerCartShow: { type: Boolean, default: true },
     siteName: { type: String, default: "আমওয়ালা ভাইয়া" },
     tagline: { type: String, default: "প্রিমিয়াম মানের দেশি আম ও খাঁটি প্রাকৃতিক খাদ্যপণ্য" },
     hotlinePhone: { type: String, default: "০১৭৪৯-৭৭৫০৩০" },

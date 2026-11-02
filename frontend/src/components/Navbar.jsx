@@ -15,12 +15,12 @@ import {
 } from "react-icons/fa";
 import { useApp } from "../context/AppContext";
 
-const navLinks = [
-  { name: "হোম", href: "#home", icon: "🏠" },
-  { name: "আমের জাত", href: "#varieties", icon: "🥭" },
-  { name: "পরিচয়", href: "#about", icon: "📖" },
-  { name: "মতামত", href: "#reviews", icon: "⭐" },
-  { name: "অর্ডার করুন", href: "#order", icon: "📦" },
+const DEFAULT_NAV_LINKS = [
+  { name: "হোম", href: "#home", icon: "🏠", showIcon: true },
+  { name: "আমের জাত", href: "#varieties", icon: "🥭", showIcon: true },
+  { name: "পরিচয়", href: "#about", icon: "📖", showIcon: true },
+  { name: "মতামত", href: "#reviews", icon: "⭐", showIcon: true },
+  { name: "অর্ডার করুন", href: "#order", icon: "📦", showIcon: true },
 ];
 
 const floatingSocials = [
@@ -37,6 +37,11 @@ export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [cartCount, setCartCount] = useState(0);
+
+  const navLinks =
+    settings?.headerNavLinks && settings.headerNavLinks.length > 0
+      ? settings.headerNavLinks
+      : DEFAULT_NAV_LINKS;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,6 +78,14 @@ export default function Navbar() {
     }
   };
 
+  const activeCallPhone =
+    settings?.headerCallBtnPhone || settings?.rawHotlinePhone || "01749775030";
+  const activeWhatsapp = (
+    settings?.headerWhatsappNumber ||
+    settings?.whatsappNumber ||
+    "8801749775030"
+  ).replace(/[^0-9]/g, "");
+
   return (
     <>
       {/* Main Header with Exact Frosted Amber/Yellow/Green Gradient */}
@@ -91,30 +104,44 @@ export default function Navbar() {
             {/* Logo */}
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-2.5 cursor-pointer"
               onClick={handleLogoClick}
             >
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center shadow-lg">
-                  <FaLeaf className="text-white text-xl" />
-                </div>
+                {settings?.websiteLogo ? (
+                  <img
+                    src={settings.websiteLogo}
+                    alt="Logo"
+                    className="w-10 h-10 object-contain rounded-xl shadow-md border border-white/50 bg-white"
+                  />
+                ) : settings?.websiteFavicon ? (
+                  <img
+                    src={settings.websiteFavicon}
+                    alt="Logo"
+                    className="w-10 h-10 object-contain rounded-xl shadow-md border border-white/50 bg-white"
+                  />
+                ) : (
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center shadow-lg">
+                    <FaLeaf className="text-white text-xl" />
+                  </div>
+                )}
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-300 rounded-full animate-pulse" />
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-green-700 to-yellow-600 bg-clip-text text-transparent">
-                  আমওয়ালা ভাইয়া
+                <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-green-700 to-yellow-600 bg-clip-text text-transparent leading-tight">
+                  {settings?.siteName || "আমওয়ালা ভাইয়া"}
                 </h1>
-                <p className="text-xs text-amber-600 font-medium">
-                  প্রিমিয়াম মানের দেশি আম
+                <p className="text-xs text-amber-600 font-semibold truncate max-w-[220px]">
+                  {settings?.tagline || "প্রিমিয়াম মানের দেশি আম"}
                 </p>
               </div>
             </motion.div>
 
-            {/* Desktop Navigation Links with Emojis */}
+            {/* Desktop Navigation Links with Customizable Emojis/Icons */}
             <nav className="hidden md:flex items-center space-x-1">
               {navLinks.map((item, index) => (
                 <motion.a
-                  key={item.name}
+                  key={item.name + index}
                   href={item.href}
                   onClick={(e) => handleNavClick(e, item.href)}
                   initial={{ opacity: 0, y: -20 }}
@@ -122,71 +149,88 @@ export default function Navbar() {
                   transition={{ delay: index * 0.05 }}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-green-600 font-medium transition-all duration-200 hover:bg-yellow-100/50 group relative cursor-pointer"
+                  className="px-3 py-2 rounded-lg text-gray-700 hover:text-green-600 font-bold transition-all duration-200 hover:bg-yellow-100/50 group relative cursor-pointer flex items-center gap-1.5 text-sm"
                 >
-                  <span className="mr-1">{item.icon}</span>
-                  {item.name}
+                  {item.showIcon !== false && item.icon && (
+                    item.icon.startsWith("data:") ||
+                    item.icon.startsWith("http") ||
+                    item.icon.startsWith("/") ? (
+                      <img
+                        src={item.icon}
+                        alt=""
+                        className="w-4 h-4 object-contain inline"
+                      />
+                    ) : (
+                      <span className="text-base leading-none">{item.icon}</span>
+                    )
+                  )}
+                  <span>{item.name}</span>
                   <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 w-0 group-hover:w-full h-0.5 bg-gradient-to-r from-yellow-400 to-green-500 transition-all duration-300" />
                 </motion.a>
               ))}
             </nav>
 
-            {/* Right Action Buttons */}
-            <div className="flex items-center space-x-3">
-              {/* Call CTA */}
-              <motion.a
-                href={`tel:${settings?.rawHotlinePhone || "01749775030"}`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="hidden md:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all"
-              >
-                <FaPhoneAlt className="text-xs" />
-                <span>কল করুন</span>
-              </motion.a>
+            {/* Right Action Buttons with Clean Unified Alignment */}
+            <div className="flex items-center gap-2 sm:gap-2.5">
+              {/* Call CTA Button */}
+              {settings?.headerCallBtnShow !== false && (
+                <motion.a
+                  href={`tel:${activeCallPhone}`}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  className="hidden md:inline-flex items-center gap-2 h-10 px-4 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-full text-xs sm:text-sm font-black shadow-md hover:shadow-lg transition-all"
+                  title={`Call ${activeCallPhone}`}
+                >
+                  <FaPhoneAlt className="text-xs" />
+                  <span>{settings?.headerCallBtnText || "কল করুন"}</span>
+                </motion.a>
+              )}
 
               {/* WhatsApp Button */}
-              <motion.a
-                href={`https://wa.me/${settings?.whatsappNumber || "8801749775030"}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                whileHover={{ scale: 1.05, rotate: 5 }}
-                whileTap={{ scale: 0.95 }}
-                className="hidden sm:flex items-center justify-center w-9 h-9 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600 transition-all"
-                aria-label="WhatsApp"
-              >
-                <FaWhatsapp className="text-lg" />
-              </motion.a>
+              {settings?.headerWhatsappShow !== false && (
+                <motion.a
+                  href={`https://wa.me/${activeWhatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.94 }}
+                  className="hidden sm:inline-flex items-center justify-center w-10 h-10 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-md hover:shadow-lg transition-all text-xl"
+                  aria-label="WhatsApp"
+                  title="Chat on WhatsApp"
+                >
+                  <FaWhatsapp />
+                </motion.a>
+              )}
 
-              {/* Cart Button */}
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => handleNavClick(e, "#order")}
-                className="relative cursor-pointer"
-                aria-label="Cart"
-              >
-                <div className="w-9 h-9 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-md">
-                  <FaShoppingCart className="text-white text-sm" />
-                </div>
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center animate-bounce">
-                    {cartCount}
-                  </span>
-                )}
-              </motion.div>
+              {/* Cart Button (Always Kept in Header as Requested) */}
+              {settings?.headerCartShow !== false && (
+                <motion.div
+                  whileHover={{ scale: 1.08 }}
+                  whileTap={{ scale: 0.92 }}
+                  onClick={(e) => handleNavClick(e, "#order")}
+                  className="relative cursor-pointer"
+                  aria-label="Cart"
+                  title="View Cart / Orders"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-full flex items-center justify-center shadow-md hover:shadow-lg transition-all">
+                    <FaShoppingCart className="text-white text-base" />
+                  </div>
+                  {cartCount > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white font-black text-xs rounded-full flex items-center justify-center shadow-sm animate-bounce">
+                      {cartCount}
+                    </span>
+                  )}
+                </motion.div>
+              )}
 
               {/* Mobile Menu Toggle Button */}
               <motion.button
-                whileTap={{ scale: 0.9 }}
+                whileTap={{ scale: 0.92 }}
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="md:hidden w-9 h-9 bg-gradient-to-br from-yellow-400 to-green-400 rounded-full flex items-center justify-center shadow-md cursor-pointer"
+                className="md:hidden w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 text-white rounded-full flex items-center justify-center shadow-md cursor-pointer text-base"
                 aria-label="Toggle menu"
               >
-                {mobileMenuOpen ? (
-                  <FaTimes className="text-white" />
-                ) : (
-                  <FaBars className="text-white" />
-                )}
+                {mobileMenuOpen ? <FaTimes /> : <FaBars />}
               </motion.button>
             </div>
           </div>
@@ -225,26 +269,50 @@ export default function Navbar() {
           <div className="flex flex-col p-6 space-y-4">
             {navLinks.map((item, index) => (
               <motion.a
-                key={item.name}
+                key={item.name + index}
                 href={item.href}
                 onClick={(e) => handleNavClick(e, item.href)}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: mobileMenuOpen ? 1 : 0, x: mobileMenuOpen ? 0 : -20 }}
                 transition={{ delay: index * 0.05 }}
-                className="px-4 py-3 rounded-lg text-gray-700 hover:text-green-600 font-medium text-lg hover:bg-yellow-50 transition-all flex items-center gap-3 cursor-pointer"
+                className="px-4 py-3 rounded-xl text-gray-700 hover:text-green-600 font-bold text-base hover:bg-yellow-50 transition-all flex items-center gap-3 cursor-pointer"
               >
-                <span className="text-2xl">{item.icon}</span>
-                {item.name}
+                {item.showIcon !== false && item.icon && (
+                  item.icon.startsWith("data:") ||
+                  item.icon.startsWith("http") ||
+                  item.icon.startsWith("/") ? (
+                    <img
+                      src={item.icon}
+                      alt=""
+                      className="w-5 h-5 object-contain inline"
+                    />
+                  ) : (
+                    <span className="text-xl leading-none">{item.icon}</span>
+                  )
+                )}
+                <span>{item.name}</span>
               </motion.a>
             ))}
 
             <div className="border-t border-gray-200 pt-4 space-y-3">
-              <a
-                href={`tel:${settings?.rawHotlinePhone || "01749775030"}`}
-                className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold shadow"
-              >
-                <FaPhoneAlt /> <span>কল করুন</span>
-              </a>
+              {settings?.headerCallBtnShow !== false && (
+                <a
+                  href={`tel:${activeCallPhone}`}
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-bold shadow"
+                >
+                  <FaPhoneAlt /> <span>{settings?.headerCallBtnText || "কল করুন"}</span>
+                </a>
+              )}
+              {settings?.headerWhatsappShow !== false && (
+                <a
+                  href={`https://wa.me/${activeWhatsapp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 w-full py-3 bg-green-500 text-white rounded-xl font-bold shadow"
+                >
+                  <FaWhatsapp className="text-lg" /> <span>WhatsApp-এ মেসেজ দিন</span>
+                </a>
+              )}
               <div className="flex justify-center gap-4 pt-2">
                 {floatingSocials.map((item, i) => (
                   <a

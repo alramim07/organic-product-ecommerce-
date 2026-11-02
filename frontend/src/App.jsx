@@ -38,8 +38,7 @@ export default function App() {
   const isAdminRoute = location.pathname.startsWith("/admin") || location.pathname === "/login";
 
   // Dynamic Favicon Switcher:
-  // Dashboard favicon is ONLY applied on /admin routes.
-  // Frontend home and product pages ALWAYS keep the original public store favicon.
+  // Admin dashboard uses dashboard favicon; Frontend public website uses website favicon.
   useEffect(() => {
     let link = document.querySelector("link[rel*='icon']");
     if (!link) {
@@ -48,12 +47,12 @@ export default function App() {
       document.head.appendChild(link);
     }
 
-    if (isAdminRoute && settings?.favicon) {
-      link.href = settings.favicon;
+    if (isAdminRoute) {
+      link.href = settings?.favicon || "/favicon.svg";
     } else {
-      link.href = "/favicon.svg";
+      link.href = settings?.websiteFavicon || "/favicon.svg";
     }
-  }, [isAdminRoute, settings?.favicon]);
+  }, [isAdminRoute, settings?.favicon, settings?.websiteFavicon]);
 
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-800 font-sans selection:bg-yellow-300 selection:text-green-900 max-w-full overflow-x-hidden">

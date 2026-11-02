@@ -32,10 +32,22 @@ import {
   FaUndoAlt,
   FaSlidersH,
   FaMousePointer,
+  FaDesktop,
+  FaMobileAlt,
+  FaPlus,
+  FaArrowUp,
+  FaArrowDown,
+  FaBars,
+  FaShoppingCart,
+  FaLink,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../../context/AppContext";
 import { api } from "../../services/api";
+
+const POPULAR_MENU_ICONS = [
+  "🏠", "🥭", "📖", "⭐", "📦", "🏷️", "🛒", "📞", "ℹ️", "🎁", "💬", "📍", "🚚", "🔥", "🌿", "🍯", "🍇", "🍎", "🌱", "✨"
+];
 
 // Admin Dashboard Theme Presets
 const SIDEBAR_GRADIENT_PRESETS = [
@@ -183,6 +195,32 @@ export default function AdminSettings() {
   const [customSecondaryEnd, setCustomSecondaryEnd] = useState("#eab308");
   const [customSecondaryAngle, setCustomSecondaryAngle] = useState("135deg");
 
+  // Frontend Website Header Settings state
+  const [websiteFavicon, setWebsiteFavicon] = useState(settings.websiteFavicon || "");
+  const [websiteLogo, setWebsiteLogo] = useState(settings.websiteLogo || "");
+  const [headerNavLinks, setHeaderNavLinks] = useState(
+    settings.headerNavLinks && settings.headerNavLinks.length > 0
+      ? settings.headerNavLinks
+      : [
+          { name: "হোম", href: "#home", icon: "🏠", showIcon: true },
+          { name: "আমের জাত", href: "#varieties", icon: "🥭", showIcon: true },
+          { name: "পরিচয়", href: "#about", icon: "📖", showIcon: true },
+          { name: "মতামত", href: "#reviews", icon: "⭐", showIcon: true },
+          { name: "অর্ডার করুন", href: "#order", icon: "📦", showIcon: true },
+        ]
+  );
+  const [headerCallBtnText, setHeaderCallBtnText] = useState(settings.headerCallBtnText || "কল করুন");
+  const [headerCallBtnPhone, setHeaderCallBtnPhone] = useState(settings.headerCallBtnPhone || settings.rawHotlinePhone || "01749775030");
+  const [headerCallBtnShow, setHeaderCallBtnShow] = useState(settings.headerCallBtnShow !== false);
+  const [headerWhatsappNumber, setHeaderWhatsappNumber] = useState(settings.headerWhatsappNumber || settings.whatsappNumber || "8801749775030");
+  const [headerWhatsappShow, setHeaderWhatsappShow] = useState(settings.headerWhatsappShow !== false);
+  const [headerCartShow, setHeaderCartShow] = useState(settings.headerCartShow !== false);
+
+  // Live Header Preview state
+  const [previewDevice, setPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
+  const [previewMobileDrawer, setPreviewMobileDrawer] = useState(false);
+  const [activeIconPickerIndex, setActiveIconPickerIndex] = useState(null);
+
   // Website Settings state
   const [siteName, setSiteName] = useState(settings.siteName || "আমওয়ালা ভাইয়া");
   const [tagline, setTagline] = useState(settings.tagline || "প্রিমিয়াম মানের দেশি আম ও খাঁটি প্রাকৃতিক খাদ্যপণ্য");
@@ -212,6 +250,17 @@ export default function AdminSettings() {
       if (settings.themeSidebarBg !== undefined) setThemeSidebarBg(settings.themeSidebarBg);
       if (settings.themePrimaryBtn !== undefined) setThemePrimaryBtn(settings.themePrimaryBtn);
       if (settings.themeSecondaryBtn !== undefined) setThemeSecondaryBtn(settings.themeSecondaryBtn);
+      if (settings.websiteFavicon !== undefined) setWebsiteFavicon(settings.websiteFavicon);
+      if (settings.websiteLogo !== undefined) setWebsiteLogo(settings.websiteLogo);
+      if (settings.headerNavLinks !== undefined && Array.isArray(settings.headerNavLinks)) {
+        setHeaderNavLinks(settings.headerNavLinks);
+      }
+      if (settings.headerCallBtnText !== undefined) setHeaderCallBtnText(settings.headerCallBtnText);
+      if (settings.headerCallBtnPhone !== undefined) setHeaderCallBtnPhone(settings.headerCallBtnPhone);
+      if (settings.headerCallBtnShow !== undefined) setHeaderCallBtnShow(settings.headerCallBtnShow);
+      if (settings.headerWhatsappNumber !== undefined) setHeaderWhatsappNumber(settings.headerWhatsappNumber);
+      if (settings.headerWhatsappShow !== undefined) setHeaderWhatsappShow(settings.headerWhatsappShow);
+      if (settings.headerCartShow !== undefined) setHeaderCartShow(settings.headerCartShow);
       if (settings.siteName !== undefined) setSiteName(settings.siteName);
       if (settings.tagline !== undefined) setTagline(settings.tagline);
       if (settings.noticeText !== undefined) setNoticeText(settings.noticeText);
@@ -313,6 +362,80 @@ export default function AdminSettings() {
     } catch {
       // fallback
     }
+  };
+
+  // Frontend Header Upload Handlers
+  const handleWebsiteFaviconUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const compressed = await compressImage(file, 96, 96, 0.9);
+      setWebsiteFavicon(compressed);
+      updateSettings({ websiteFavicon: compressed });
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleWebsiteLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const compressed = await compressImage(file, 480, 140, 0.9);
+      setWebsiteLogo(compressed);
+      updateSettings({ websiteLogo: compressed });
+    } catch {
+      // fallback
+    }
+  };
+
+  // Menu Items Management Handlers
+  const handleAddMenuItem = () => {
+    const newItems = [
+      ...headerNavLinks,
+      {
+        name: `মেনু ${headerNavLinks.length + 1}`,
+        href: "#section",
+        icon: "✨",
+        showIcon: true,
+      },
+    ];
+    setHeaderNavLinks(newItems);
+    updateSettings({ headerNavLinks: newItems });
+  };
+
+  const handleUpdateMenuItem = (index, field, value) => {
+    const updated = [...headerNavLinks];
+    updated[index] = { ...updated[index], [field]: value };
+    setHeaderNavLinks(updated);
+    updateSettings({ headerNavLinks: updated });
+  };
+
+  const handleDeleteMenuItem = (index) => {
+    if (headerNavLinks.length <= 1) {
+      Swal.fire({
+        icon: "warning",
+        title: "Cannot Delete",
+        text: "You must keep at least one navigation menu item.",
+      });
+      return;
+    }
+    const updated = headerNavLinks.filter((_, i) => i !== index);
+    setHeaderNavLinks(updated);
+    updateSettings({ headerNavLinks: updated });
+  };
+
+  const handleMoveMenuItem = (index, direction) => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= headerNavLinks.length) return;
+    const updated = [...headerNavLinks];
+    const temp = updated[index];
+    updated[index] = updated[targetIndex];
+    updated[targetIndex] = temp;
+    setHeaderNavLinks(updated);
+    updateSettings({ headerNavLinks: updated });
   };
 
   // Password rules validation logic
@@ -542,6 +665,15 @@ export default function AdminSettings() {
       themeSidebarBg,
       themePrimaryBtn,
       themeSecondaryBtn,
+      websiteFavicon,
+      websiteLogo,
+      headerNavLinks,
+      headerCallBtnText,
+      headerCallBtnPhone,
+      headerCallBtnShow,
+      headerWhatsappNumber,
+      headerWhatsappShow,
+      headerCartShow,
       siteName,
       tagline,
       noticeText,
@@ -1857,10 +1989,682 @@ export default function AdminSettings() {
       {/* TAB 2: WEBSITE SETTINGS */}
       {activeTab === "website" && (
         <form onSubmit={handleSave} className="space-y-6">
-          {/* Section 1: Contact Details */}
+          {/* Section 1: Header Settings */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+            {/* Header Title Bar */}
+            <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
+                  <FaGlobe className="text-green-600" /> 1. Header Settings
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Manage frontend store Favicon, Logo, Navigation Menus (with icons and toggles), Call & WhatsApp action buttons, and preview live on desktop and mobile.
+                </p>
+              </div>
+
+              <span className="px-3 py-1 bg-green-50 text-green-800 text-xs font-black rounded-xl border border-green-200 self-start sm:self-auto">
+                Customer Storefront
+              </span>
+            </div>
+
+            {/* Part 1: Frontend Favicon & Logo Upload */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Frontend Favicon */}
+              <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-extrabold text-gray-900 block">
+                      Frontend Favicon
+                    </label>
+                    <p className="text-[11px] text-gray-400">
+                      Browser tab icon for website visitors (Recommended: 96x96 px)
+                    </p>
+                  </div>
+                  {websiteFavicon && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWebsiteFavicon("");
+                        updateSettings({ websiteFavicon: "" });
+                      }}
+                      className="text-xs text-red-500 hover:text-red-700 font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <FaTrash className="text-[10px]" /> Clear
+                    </button>
+                  )}
+                </div>
+
+                <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-inner">
+                    {websiteFavicon ? (
+                      <img src={websiteFavicon} alt="Website Favicon" className="w-8 h-8 object-contain" />
+                    ) : (
+                      <span className="text-xl">🍃</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-800 truncate">
+                      {websiteFavicon ? "Custom Favicon Active" : "Default: /favicon.svg"}
+                    </p>
+                    <p className="text-[10px] text-gray-400">
+                      Appears in customer browser tab when viewing store pages
+                    </p>
+                  </div>
+                </div>
+
+                <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 hover:border-green-600 text-gray-700 hover:text-green-800 text-xs font-extrabold rounded-xl shadow-sm transition cursor-pointer">
+                  <FaUpload /> <span>Upload Website Favicon</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleWebsiteFaviconUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              {/* Frontend Logo */}
+              <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <label className="text-sm font-extrabold text-gray-900 block">
+                      Frontend Header Logo
+                    </label>
+                    <p className="text-[11px] text-gray-400">
+                      Brand logo shown in website navbar (Recommended: 480x140 px)
+                    </p>
+                  </div>
+                  {websiteLogo && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setWebsiteLogo("");
+                        updateSettings({ websiteLogo: "" });
+                      }}
+                      className="text-xs text-red-500 hover:text-red-700 font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <FaTrash className="text-[10px]" /> Clear
+                    </button>
+                  )}
+                </div>
+
+                <div className="p-4 bg-white rounded-xl border border-gray-200 flex items-center gap-4">
+                  <div className="w-16 h-12 rounded-xl bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-inner p-1">
+                    {websiteLogo ? (
+                      <img src={websiteLogo} alt="Website Logo" className="w-full h-full object-contain" />
+                    ) : (
+                      <span className="text-sm font-bold text-gray-400">Ammwala</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold text-gray-800 truncate">
+                      {websiteLogo ? "Custom Brand Logo Set" : "Default: Leaf Badge + Store Name"}
+                    </p>
+                    <p className="text-[10px] text-gray-400">
+                      Renders beside store title in top navigation bar
+                    </p>
+                  </div>
+                </div>
+
+                <label className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-300 hover:border-green-600 text-gray-700 hover:text-green-800 text-xs font-extrabold rounded-xl shadow-sm transition cursor-pointer">
+                  <FaUpload /> <span>Upload Website Logo</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleWebsiteLogoUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+            </div>
+
+            {/* Part 2: Navigation Menu Management */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-200/60 pb-3">
+                <div>
+                  <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                    <FaBars className="text-green-600" /> Header Navigation Menus
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Rename menu items, reorder them, select emojis/icons, or turn icons on/off.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleAddMenuItem}
+                  className="px-4 py-2 admin-btn-primary text-white text-xs font-black rounded-xl shadow transition flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+                >
+                  <FaPlus className="text-xs" /> <span>Add New Menu Item</span>
+                </button>
+              </div>
+
+              {/* Menu items list */}
+              <div className="space-y-2.5">
+                {headerNavLinks.map((item, index) => (
+                  <div
+                    key={index}
+                    className="p-3 bg-white rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center gap-3 transition hover:border-green-400"
+                  >
+                    {/* Reorder Buttons */}
+                    <div className="flex items-center gap-1 text-gray-400 self-start md:self-center">
+                      <button
+                        type="button"
+                        onClick={() => handleMoveMenuItem(index, "up")}
+                        disabled={index === 0}
+                        className="p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
+                        title="Move Up"
+                      >
+                        <FaArrowUp className="text-xs" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleMoveMenuItem(index, "down")}
+                        disabled={index === headerNavLinks.length - 1}
+                        className="p-1.5 rounded-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer"
+                        title="Move Down"
+                      >
+                        <FaArrowDown className="text-xs" />
+                      </button>
+                      <span className="text-xs font-black text-gray-400 w-4 text-center">
+                        {index + 1}
+                      </span>
+                    </div>
+
+                    {/* Icon Selection & Picker */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setActiveIconPickerIndex(
+                            activeIconPickerIndex === index ? null : index
+                          )
+                        }
+                        className="w-10 h-10 rounded-xl bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-lg shadow-inner cursor-pointer transition"
+                        title="Click to select or change icon"
+                      >
+                        {item.icon ? (
+                          item.icon.startsWith("data:") || item.icon.startsWith("http") ? (
+                            <img src={item.icon} alt="" className="w-5 h-5 object-contain" />
+                          ) : (
+                            <span>{item.icon}</span>
+                          )
+                        ) : (
+                          <span className="text-[10px] text-gray-400 font-bold">No Icon</span>
+                        )}
+                      </button>
+
+                      {/* Floating Emoji Selector Palette */}
+                      {activeIconPickerIndex === index && (
+                        <div className="absolute top-12 left-0 z-50 p-3 bg-white rounded-2xl shadow-2xl border border-gray-200 w-64 space-y-2">
+                          <div className="flex items-center justify-between text-xs font-bold text-gray-600 border-b pb-1.5">
+                            <span>Select Icon / Emoji</span>
+                            <button
+                              type="button"
+                              onClick={() => setActiveIconPickerIndex(null)}
+                              className="text-gray-400 hover:text-red-500 cursor-pointer"
+                            >
+                              <FaTimes />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-5 gap-1.5">
+                            {POPULAR_MENU_ICONS.map((emoji) => (
+                              <button
+                                key={emoji}
+                                type="button"
+                                onClick={() => {
+                                  handleUpdateMenuItem(index, "icon", emoji);
+                                  setActiveIconPickerIndex(null);
+                                }}
+                                className="w-10 h-10 rounded-xl hover:bg-yellow-100 flex items-center justify-center text-xl transition cursor-pointer"
+                              >
+                                {emoji}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="pt-2 border-t border-gray-100 flex items-center gap-1.5">
+                            <input
+                              type="text"
+                              value={item.icon}
+                              onChange={(e) =>
+                                handleUpdateMenuItem(index, "icon", e.target.value)
+                              }
+                              placeholder="Or type custom emoji..."
+                              className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                            />
+                            {item.icon && (
+                              <button
+                                type="button"
+                                onClick={() => handleUpdateMenuItem(index, "icon", "")}
+                                className="text-[10px] text-red-500 hover:underline shrink-0 cursor-pointer"
+                              >
+                                Clear
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Menu Item Name */}
+                    <div className="flex-1 min-w-0">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase">
+                        Menu Title
+                      </label>
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => handleUpdateMenuItem(index, "name", e.target.value)}
+                        placeholder="e.g. হোম / অফার"
+                        className="w-full px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                    </div>
+
+                    {/* Menu Item Link / Target */}
+                    <div className="w-full md:w-44">
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase">
+                        Link / Section Anchor
+                      </label>
+                      <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-xl px-2 py-1.5">
+                        <FaLink className="text-[10px] text-gray-400 shrink-0" />
+                        <input
+                          type="text"
+                          value={item.href}
+                          onChange={(e) => handleUpdateMenuItem(index, "href", e.target.value)}
+                          placeholder="#home or /page"
+                          className="w-full bg-transparent text-xs font-mono font-semibold text-gray-700 focus:outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Icon Visibility Toggle (Show Icon On/Off) */}
+                    <div className="flex items-center gap-2 self-start md:self-center shrink-0 pt-2 md:pt-0">
+                      <label className="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-gray-600 select-none bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200 transition">
+                        <input
+                          type="checkbox"
+                          checked={item.showIcon !== false}
+                          onChange={(e) =>
+                            handleUpdateMenuItem(index, "showIcon", e.target.checked)
+                          }
+                          className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer"
+                        />
+                        <span>Icon Show</span>
+                      </label>
+
+                      {/* Delete Menu Item */}
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteMenuItem(index)}
+                        className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition cursor-pointer ml-1"
+                        title="Delete Menu Item"
+                      >
+                        <FaTrash className="text-xs" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Part 3: Action Buttons (Call Button & WhatsApp Number Settings) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Call Button Settings */}
+              <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-200/60 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-green-100 text-green-700 flex items-center justify-center text-sm shadow-sm">
+                      <FaPhoneAlt />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-gray-900 uppercase tracking-wide">
+                        Header Call Button
+                      </h4>
+                      <p className="text-[11px] text-gray-400">Direct phone call CTA button</p>
+                    </div>
+                  </div>
+
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-gray-700 select-none bg-white px-2.5 py-1 rounded-xl border border-gray-200">
+                    <input
+                      type="checkbox"
+                      checked={headerCallBtnShow}
+                      onChange={(e) => {
+                        setHeaderCallBtnShow(e.target.checked);
+                        updateSettings({ headerCallBtnShow: e.target.checked });
+                      }}
+                      className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer"
+                    />
+                    <span>Active</span>
+                  </label>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                      Button Label Text
+                    </label>
+                    <input
+                      type="text"
+                      value={headerCallBtnText}
+                      onChange={(e) => {
+                        setHeaderCallBtnText(e.target.value);
+                        updateSettings({ headerCallBtnText: e.target.value });
+                      }}
+                      placeholder="কল করুন"
+                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-800"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                      Phone Number to Dial
+                    </label>
+                    <input
+                      type="text"
+                      value={headerCallBtnPhone}
+                      onChange={(e) => {
+                        setHeaderCallBtnPhone(e.target.value);
+                        updateSettings({ headerCallBtnPhone: e.target.value });
+                      }}
+                      placeholder="01749775030"
+                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold text-gray-800"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-gray-500 font-medium">Header CTA Preview:</span>
+                  <div className="h-10 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-full text-xs font-black shadow flex items-center gap-2 pointer-events-none">
+                    <FaPhoneAlt className="text-xs" />
+                    <span>{headerCallBtnText || "কল করুন"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* WhatsApp Button Settings */}
+              <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-200/60 pb-3">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-base shadow-sm">
+                      <FaWhatsapp />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-black text-gray-900 uppercase tracking-wide">
+                        Header WhatsApp Button
+                      </h4>
+                      <p className="text-[11px] text-gray-400">Direct WhatsApp messaging link</p>
+                    </div>
+                  </div>
+
+                  <label className="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-gray-700 select-none bg-white px-2.5 py-1 rounded-xl border border-gray-200">
+                    <input
+                      type="checkbox"
+                      checked={headerWhatsappShow}
+                      onChange={(e) => {
+                        setHeaderWhatsappShow(e.target.checked);
+                        updateSettings({ headerWhatsappShow: e.target.checked });
+                      }}
+                      className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer"
+                    />
+                    <span>Active</span>
+                  </label>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                    WhatsApp Number (with country code, e.g. 8801749775030)
+                  </label>
+                  <input
+                    type="text"
+                    value={headerWhatsappNumber}
+                    onChange={(e) => {
+                      setHeaderWhatsappNumber(e.target.value);
+                      updateSettings({ headerWhatsappNumber: e.target.value });
+                    }}
+                    placeholder="8801749775030"
+                    className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-mono font-bold text-gray-800"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    Generates link: <span className="font-mono text-green-700">https://wa.me/{headerWhatsappNumber.replace(/[^0-9]/g, "")}</span>
+                  </p>
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-gray-200 flex items-center justify-between gap-2 text-xs">
+                  <span className="text-gray-500 font-medium">Aligned Header Buttons:</span>
+                  <div className="flex items-center gap-2 pointer-events-none">
+                    <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow text-xl">
+                      <FaWhatsapp />
+                    </div>
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center shadow text-base">
+                      <FaShoppingCart />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 4: Live Interactive Header Preview (Desktop + Mobile) */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-gray-900 text-white space-y-4 shadow-xl">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+                  <div>
+                    <h4 className="text-sm font-black text-white">
+                      Live Header Preview (লাইভ প্রিভিউ)
+                    </h4>
+                    <p className="text-xs text-gray-400">
+                      Real-time interactive rendering of customer website header
+                    </p>
+                  </div>
+                </div>
+
+                {/* Device Switcher */}
+                <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-xl self-start sm:self-auto text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setPreviewDevice("desktop");
+                      setPreviewMobileDrawer(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
+                      previewDevice === "desktop"
+                        ? "bg-white text-gray-950 font-black shadow"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaDesktop /> <span>Desktop View</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewDevice("mobile")}
+                    className={`px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
+                      previewDevice === "mobile"
+                        ? "bg-white text-gray-950 font-black shadow"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaMobileAlt /> <span>Mobile View</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* DESKTOP PREVIEW FRAME */}
+              {previewDevice === "desktop" && (
+                <div className="rounded-2xl border border-gray-700 bg-gray-800 overflow-hidden shadow-2xl">
+                  {/* Browser chrome header */}
+                  <div className="bg-gray-800 px-4 py-2 flex items-center gap-3 border-b border-gray-700 text-xs text-gray-400">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-3 h-3 rounded-full bg-red-500 inline-block" />
+                      <span className="w-3 h-3 rounded-full bg-yellow-500 inline-block" />
+                      <span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
+                    </div>
+                    <div className="flex-1 bg-gray-900 px-4 py-1 rounded-lg text-center font-mono text-[11px] text-gray-300 truncate">
+                      🔒 https://ammwala.com
+                    </div>
+                  </div>
+
+                  {/* Rendered Live Desktop Navbar */}
+                  <div className="bg-gradient-to-r from-amber-50/95 via-yellow-50/95 to-green-50/95 text-gray-900 px-6 py-3.5 border-b border-amber-200/60 shadow-sm flex items-center justify-between gap-4">
+                    {/* Logo & Title */}
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      {websiteLogo ? (
+                        <img
+                          src={websiteLogo}
+                          alt="Logo"
+                          className="w-10 h-10 object-contain rounded-xl bg-white shadow-sm border border-gray-200"
+                        />
+                      ) : websiteFavicon ? (
+                        <img
+                          src={websiteFavicon}
+                          alt="Favicon"
+                          className="w-10 h-10 object-contain rounded-xl bg-white shadow-sm border border-gray-200"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center text-white text-base shadow">
+                          🍃
+                        </div>
+                      )}
+                      <div>
+                        <h5 className="text-sm font-black text-green-900 leading-tight">
+                          {siteName || "আমওয়ালা ভাইয়া"}
+                        </h5>
+                        <p className="text-[10px] text-amber-700 font-semibold truncate max-w-[160px]">
+                          {tagline || "প্রিমিয়াম মানের দেশি আম"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Nav Links */}
+                    <div className="hidden lg:flex items-center gap-1 flex-wrap justify-center">
+                      {headerNavLinks.map((item, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2.5 py-1 text-xs font-bold text-gray-700 rounded-lg hover:bg-yellow-100 flex items-center gap-1 transition"
+                        >
+                          {item.showIcon !== false && item.icon && (
+                            <span className="text-sm leading-none">{item.icon}</span>
+                          )}
+                          <span>{item.name}</span>
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Right Aligned Action Buttons */}
+                    <div className="flex items-center gap-2.5 shrink-0">
+                      {headerCallBtnShow && (
+                        <div className="h-10 px-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-full text-xs font-black shadow flex items-center gap-2">
+                          <FaPhoneAlt className="text-xs" />
+                          <span>{headerCallBtnText || "কল করুন"}</span>
+                        </div>
+                      )}
+                      {headerWhatsappShow && (
+                        <div className="w-10 h-10 bg-green-500 text-white rounded-full flex items-center justify-center shadow text-xl">
+                          <FaWhatsapp />
+                        </div>
+                      )}
+                      {headerCartShow && (
+                        <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center shadow text-base">
+                          <FaShoppingCart />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MOBILE PREVIEW FRAME */}
+              {previewDevice === "mobile" && (
+                <div className="flex justify-center py-2">
+                  <div className="w-full max-w-xs rounded-3xl border-4 border-gray-700 bg-gray-800 overflow-hidden shadow-2xl relative">
+                    {/* Phone speaker/notch */}
+                    <div className="h-5 bg-gray-800 flex justify-center items-center">
+                      <div className="w-16 h-1 bg-gray-600 rounded-full" />
+                    </div>
+
+                    {/* Rendered Live Mobile Header */}
+                    <div className="bg-gradient-to-r from-amber-50 via-yellow-50 to-green-50 text-gray-900 px-3 py-2.5 border-b border-amber-200/60 flex items-center justify-between">
+                      {/* Logo + Title */}
+                      <div className="flex items-center gap-2 min-w-0">
+                        {websiteLogo ? (
+                          <img
+                            src={websiteLogo}
+                            alt="Logo"
+                            className="w-8 h-8 object-contain rounded-xl bg-white shadow-sm shrink-0"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center text-white text-xs shrink-0 shadow">
+                            🍃
+                          </div>
+                        )}
+                        <span className="text-xs font-black text-green-950 truncate">
+                          {siteName || "আমওয়ালা ভাইয়া"}
+                        </span>
+                      </div>
+
+                      {/* Right icons on mobile */}
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {headerWhatsappShow && (
+                          <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm shadow">
+                            <FaWhatsapp />
+                          </div>
+                        )}
+                        {headerCartShow && (
+                          <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-full flex items-center justify-center text-xs shadow">
+                            <FaShoppingCart />
+                          </div>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setPreviewMobileDrawer(!previewMobileDrawer)}
+                          className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-green-500 text-white rounded-full flex items-center justify-center text-xs shadow cursor-pointer"
+                          title="Toggle mobile menu preview"
+                        >
+                          {previewMobileDrawer ? <FaTimes /> : <FaBars />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Mobile Menu Drawer Preview */}
+                    {previewMobileDrawer ? (
+                      <div className="p-4 bg-white text-gray-800 space-y-2 border-b border-gray-200">
+                        <p className="text-[10px] uppercase font-black tracking-wider text-gray-400 mb-2">
+                          Mobile Navigation Links
+                        </p>
+                        {headerNavLinks.map((item, i) => (
+                          <div
+                            key={i}
+                            className="p-2 rounded-lg bg-gray-50 flex items-center gap-2 text-xs font-bold text-gray-700"
+                          >
+                            {item.showIcon !== false && item.icon && (
+                              <span className="text-sm">{item.icon}</span>
+                            )}
+                            <span>{item.name}</span>
+                          </div>
+                        ))}
+                        {headerCallBtnShow && (
+                          <div className="w-full py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1.5 mt-3 shadow">
+                            <FaPhoneAlt className="text-[10px]" />
+                            <span>{headerCallBtnText || "কল করুন"}</span>
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="p-6 bg-gray-50 text-center text-xs text-gray-400">
+                        <p>Customer Website View</p>
+                        <p className="text-[10px] mt-1 text-gray-500">
+                          Click hamburger icon to preview mobile menu
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Section 2: Contact Details */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
             <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2">
-              1. Contact & Hotline Information (Header & Footer)
+              2. Contact & Hotline Information (Header & Footer)
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
@@ -1930,10 +2734,10 @@ export default function AdminSettings() {
             </div>
           </div>
 
-          {/* Section 2: Delivery Fees */}
+          {/* Section 3: Delivery Fees */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
             <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-              <FaTruck className="text-green-600" /> 2. Delivery Fees & Shipping Charges
+              <FaTruck className="text-green-600" /> 3. Delivery Fees & Shipping Charges
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200">
@@ -1968,10 +2772,10 @@ export default function AdminSettings() {
             </div>
           </div>
 
-          {/* Section 3: Announcement Notice Bar */}
+          {/* Section 4: Announcement Notice Bar */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
             <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-              <FaBullhorn className="text-yellow-600" /> 3. Top Announcement Notice Bar
+              <FaBullhorn className="text-yellow-600" /> 4. Top Announcement Notice Bar
             </h3>
             <div>
               <label className="block text-xs font-bold text-gray-700 mb-1">
@@ -1987,10 +2791,10 @@ export default function AdminSettings() {
             </div>
           </div>
 
-          {/* Section 4: Hero Section Content */}
+          {/* Section 5: Hero Section Content */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
             <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2">
-              4. Homepage Hero Section Texts
+              5. Homepage Hero Section Texts
             </h3>
             <div className="space-y-4">
               <div>
@@ -2021,10 +2825,10 @@ export default function AdminSettings() {
             </div>
           </div>
 
-          {/* Section 5: Social Media Profiles */}
+          {/* Section 6: Social Media Profiles */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
             <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2">
-              5. Social Media Profile Links
+              6. Social Media Profile Links
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
