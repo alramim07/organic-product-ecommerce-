@@ -97,6 +97,30 @@ export function AppProvider({ children }) {
             deliveryFeeOutside: 150,
             noticeText:
               "📢 রাজশাহীর বিখ্যাত হিমসাগর, গোপালভোগ আম এবং সুন্দরবনের খাঁটি মধুর প্রি-অর্ডার শুরু হয়েছে!",
+            heroBgMode: "carousel",
+            heroSingleImage: "/assets/one.avif",
+            heroSlides: [
+              { url: "/assets/one.avif", title: "তাজা ও রসালো আম", subtitle: "সরাসরি বাগান থেকে" },
+              { url: "/assets/two.avif", title: "প্রিমিয়াম কোয়ালিটি", subtitle: "কেমিক্যাল মুক্ত" },
+              { url: "/assets/three.avif", title: "সারা দেশ ডেলিভারি", subtitle: "দ্রুত ও নিরাপদ" },
+              { url: "/assets/four.avif", title: "১১+ জাতের আম", subtitle: "বাছাই করুন আপনার পছন্দ" },
+            ],
+            heroTopBadgeText: "কেমিক্যাল মুক্ত",
+            heroTopBadgeIcon: "🍃",
+            heroMainTitlePart1: "আমওয়ালা",
+            heroMainTitlePart2: "ভাইয়া",
+            heroSubtitleText: "প্রিমিয়াম কোয়ালিটি",
+            heroDescriptionText:
+              "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।",
+            heroTrustBadge1Text: "১০০% রেকমেন্ডেড",
+            heroTrustBadge1Icon: "✓",
+            heroTrustBadge2Text: "৬+ গ্রাহক রিভিউ",
+            heroTrustBadge2Icon: "★",
+            heroHighlights: [
+              { text: "সারা দেশ ডেলিভারি", icon: "truck" },
+              { text: "কেমিক্যাল ফ্রি", icon: "leaf" },
+              { text: "০১৭৪৯-৭৭৫০৩০", icon: "phone" },
+            ],
           };
     } catch {
       return {};

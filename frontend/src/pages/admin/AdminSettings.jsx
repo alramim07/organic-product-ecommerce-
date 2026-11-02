@@ -287,6 +287,42 @@ export default function AdminSettings() {
   const [heroTitle, setHeroTitle] = useState(settings.heroTitle || "");
   const [heroSubtitle, setHeroSubtitle] = useState(settings.heroSubtitle || "");
 
+  // Hero Section Settings state
+  const [heroBgMode, setHeroBgMode] = useState(settings.heroBgMode || "carousel"); // "carousel" | "single"
+  const [heroSingleImage, setHeroSingleImage] = useState(settings.heroSingleImage || "/assets/one.avif");
+  const [heroSlides, setHeroSlides] = useState(
+    settings.heroSlides && settings.heroSlides.length > 0
+      ? settings.heroSlides
+      : [
+          { url: "/assets/one.avif", title: "তাজা ও রসালো আম", subtitle: "সরাসরি বাগান থেকে" },
+          { url: "/assets/two.avif", title: "প্রিমিয়াম কোয়ালিটি", subtitle: "কেমিক্যাল মুক্ত" },
+          { url: "/assets/three.avif", title: "সারা দেশ ডেলিভারি", subtitle: "দ্রুত ও নিরাপদ" },
+          { url: "/assets/four.avif", title: "১১+ জাতের আম", subtitle: "বাছাই করুন আপনার পছন্দ" },
+        ]
+  );
+  const [heroTopBadgeText, setHeroTopBadgeText] = useState(settings.heroTopBadgeText || "কেমিক্যাল মুক্ত");
+  const [heroTopBadgeIcon, setHeroTopBadgeIcon] = useState(settings.heroTopBadgeIcon || "🍃");
+  const [heroMainTitlePart1, setHeroMainTitlePart1] = useState(settings.heroMainTitlePart1 || "আমওয়ালা");
+  const [heroMainTitlePart2, setHeroMainTitlePart2] = useState(settings.heroMainTitlePart2 || "ভাইয়া");
+  const [heroSubtitleText, setHeroSubtitleText] = useState(settings.heroSubtitleText || "প্রিমিয়াম কোয়ালিটি");
+  const [heroDescriptionText, setHeroDescriptionText] = useState(
+    settings.heroDescriptionText ||
+      "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।"
+  );
+  const [heroTrustBadge1Text, setHeroTrustBadge1Text] = useState(settings.heroTrustBadge1Text || "১০০% রেকমেন্ডেড");
+  const [heroTrustBadge1Icon, setHeroTrustBadge1Icon] = useState(settings.heroTrustBadge1Icon || "✓");
+  const [heroTrustBadge2Text, setHeroTrustBadge2Text] = useState(settings.heroTrustBadge2Text || "৬+ গ্রাহক রিভিউ");
+  const [heroTrustBadge2Icon, setHeroTrustBadge2Icon] = useState(settings.heroTrustBadge2Icon || "★");
+  const [heroHighlights, setHeroHighlights] = useState(
+    settings.heroHighlights && settings.heroHighlights.length > 0
+      ? settings.heroHighlights
+      : [
+          { text: "সারা দেশ ডেলিভারি", icon: "truck" },
+          { text: "কেমিক্যাল ফ্রি", icon: "leaf" },
+          { text: "০১৭৪৯-৭৭৫০৩০", icon: "phone" },
+        ]
+  );
+
   // Sync state if settings update from backend or initial load
   useEffect(() => {
     if (settings) {
@@ -326,6 +362,20 @@ export default function AdminSettings() {
       if (settings.youtubeUrl !== undefined) setYoutubeUrl(settings.youtubeUrl);
       if (settings.heroTitle !== undefined) setHeroTitle(settings.heroTitle);
       if (settings.heroSubtitle !== undefined) setHeroSubtitle(settings.heroSubtitle);
+      if (settings.heroBgMode !== undefined) setHeroBgMode(settings.heroBgMode);
+      if (settings.heroSingleImage !== undefined) setHeroSingleImage(settings.heroSingleImage);
+      if (settings.heroSlides !== undefined && Array.isArray(settings.heroSlides)) setHeroSlides(settings.heroSlides);
+      if (settings.heroTopBadgeText !== undefined) setHeroTopBadgeText(settings.heroTopBadgeText);
+      if (settings.heroTopBadgeIcon !== undefined) setHeroTopBadgeIcon(settings.heroTopBadgeIcon);
+      if (settings.heroMainTitlePart1 !== undefined) setHeroMainTitlePart1(settings.heroMainTitlePart1);
+      if (settings.heroMainTitlePart2 !== undefined) setHeroMainTitlePart2(settings.heroMainTitlePart2);
+      if (settings.heroSubtitleText !== undefined) setHeroSubtitleText(settings.heroSubtitleText);
+      if (settings.heroDescriptionText !== undefined) setHeroDescriptionText(settings.heroDescriptionText);
+      if (settings.heroTrustBadge1Text !== undefined) setHeroTrustBadge1Text(settings.heroTrustBadge1Text);
+      if (settings.heroTrustBadge1Icon !== undefined) setHeroTrustBadge1Icon(settings.heroTrustBadge1Icon);
+      if (settings.heroTrustBadge2Text !== undefined) setHeroTrustBadge2Text(settings.heroTrustBadge2Text);
+      if (settings.heroTrustBadge2Icon !== undefined) setHeroTrustBadge2Icon(settings.heroTrustBadge2Icon);
+      if (settings.heroHighlights !== undefined && Array.isArray(settings.heroHighlights)) setHeroHighlights(settings.heroHighlights);
     }
   }, [settings]);
 
@@ -497,6 +547,81 @@ export default function AdminSettings() {
     } catch {
       // fallback
     }
+  };
+
+  // Hero Section Handlers
+  const handleHeroSingleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 1600, 900, 0.82);
+      setHeroSingleImage(compressed);
+      updateSettings({ heroSingleImage: compressed });
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleSlideImageUpload = async (index, file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 1600, 900, 0.82);
+      const updated = [...heroSlides];
+      updated[index] = { ...updated[index], url: compressed };
+      setHeroSlides(updated);
+      updateSettings({ heroSlides: updated });
+    } catch {
+      // fallback
+    }
+  };
+
+  const handleUpdateSlide = (index, field, value) => {
+    const updated = [...heroSlides];
+    updated[index] = { ...updated[index], [field]: value };
+    setHeroSlides(updated);
+    updateSettings({ heroSlides: updated });
+  };
+
+  const handleAddSlide = () => {
+    const updated = [
+      ...heroSlides,
+      { url: "/assets/one.avif", title: "নতুন স্লাইড টাইটেল", subtitle: "নতুন সাবটাইটেল" },
+    ];
+    setHeroSlides(updated);
+    updateSettings({ heroSlides: updated });
+  };
+
+  const handleRemoveSlide = (idx) => {
+    if (heroSlides.length <= 1) {
+      Swal.fire({
+        icon: "warning",
+        title: "কমপক্ষে ১টি স্লাইড থাকতে হবে",
+        text: "You must keep at least one slide in carousel mode.",
+      });
+      return;
+    }
+    const updated = heroSlides.filter((_, i) => i !== idx);
+    setHeroSlides(updated);
+    updateSettings({ heroSlides: updated });
+  };
+
+  const handleAddHighlight = () => {
+    const updated = [...heroHighlights, { text: "নতুন সুবিধা", icon: "truck" }];
+    setHeroHighlights(updated);
+    updateSettings({ heroHighlights: updated });
+  };
+
+  const handleUpdateHighlight = (index, field, value) => {
+    const updated = [...heroHighlights];
+    updated[index] = { ...updated[index], [field]: value };
+    setHeroHighlights(updated);
+    updateSettings({ heroHighlights: updated });
+  };
+
+  const handleRemoveHighlight = (index) => {
+    const updated = heroHighlights.filter((_, i) => i !== index);
+    setHeroHighlights(updated);
+    updateSettings({ heroHighlights: updated });
   };
 
   // Password rules validation logic
@@ -751,6 +876,20 @@ export default function AdminSettings() {
       youtubeUrl,
       heroTitle,
       heroSubtitle,
+      heroBgMode,
+      heroSingleImage,
+      heroSlides,
+      heroTopBadgeText,
+      heroTopBadgeIcon,
+      heroMainTitlePart1,
+      heroMainTitlePart2,
+      heroSubtitleText,
+      heroDescriptionText,
+      heroTrustBadge1Text,
+      heroTrustBadge1Icon,
+      heroTrustBadge2Text,
+      heroTrustBadge2Icon,
+      heroHighlights,
     });
 
     Swal.fire({
@@ -2877,213 +3016,431 @@ export default function AdminSettings() {
             </div>
           </div>
 
-          {/* Section 2: Contact Details */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
-            <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2">
-              2. Contact & Hotline Information (Header & Footer)
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Section 2: Hero Section Settings */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+            <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaPhoneAlt className="text-green-600" /> Display Hotline Phone
-                </label>
-                <input
-                  type="text"
-                  value={hotlinePhone}
-                  onChange={(e) => setHotlinePhone(e.target.value)}
-                  placeholder="০১৭৪৯-৭৭৫০৩০"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
+                <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
+                  <FaImage className="text-green-600" /> 2. Hero Section Settings
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Homepage-er top Hero Section-er background (Single Image vs Carousel), main headline, subtitles, trust badges ebong features control korun.
+                </p>
               </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaPhoneAlt className="text-gray-400" /> Raw Dialing Number (e.g. 01749775030)
-                </label>
-                <input
-                  type="text"
-                  value={rawHotlinePhone}
-                  onChange={(e) => setRawHotlinePhone(e.target.value)}
-                  placeholder="01749775030"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaWhatsapp className="text-emerald-600" /> WhatsApp Number (with Country Code)
-                </label>
-                <input
-                  type="text"
-                  value={whatsappNumber}
-                  onChange={(e) => setWhatsappNumber(e.target.value)}
-                  placeholder="8801749775030"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaEnvelope className="text-amber-600" /> Support Email
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="ammwalaaviya@gmail.com"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
-              </div>
-
-              <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaMapMarkerAlt className="text-red-500" /> Physical Office Address
-                </label>
-                <input
-                  type="text"
-                  value={officeAddress}
-                  onChange={(e) => setOfficeAddress(e.target.value)}
-                  placeholder="রাজশাহী, বাংলাদেশ - ৬২০৩"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
-              </div>
+              <span className="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 self-start sm:self-auto">
+                Homepage Hero Top
+              </span>
             </div>
-          </div>
 
-          {/* Section 3: Delivery Fees */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
-            <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-              <FaTruck className="text-green-600" /> 3. Delivery Fees & Shipping Charges
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Inside Dhaka Delivery Fee (৳)
-                </label>
-                <input
-                  type="number"
-                  value={deliveryFeeDhaka}
-                  onChange={(e) => setDeliveryFeeDhaka(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-black text-green-800 text-lg"
-                />
-                <span className="text-[11px] text-gray-400 mt-1 block">
-                  Applied automatically in checkout for inside Dhaka orders
-                </span>
+            {/* Part 1: Background Mode Selector (Single Image vs Carousel) */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-2.5">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaDesktop className="text-amber-600" /> Hero Background Image Mode
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  User chaile akta single static image o use korte pare (kono animation ba slider chara), athoba multi-image carousel use korte pare.
+                </p>
               </div>
 
-              <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200">
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Outside Dhaka Delivery Fee (৳)
-                </label>
-                <input
-                  type="number"
-                  value={deliveryFeeOutside}
-                  onChange={(e) => setDeliveryFeeOutside(e.target.value)}
-                  className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl font-black text-green-800 text-lg"
-                />
-                <span className="text-[11px] text-gray-400 mt-1 block">
-                  Applied automatically in checkout for nationwide outside Dhaka delivery
-                </span>
+              {/* Mode Options */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Single Image Mode */}
+                <div
+                  onClick={() => {
+                    setHeroBgMode("single");
+                    updateSettings({ heroBgMode: "single" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    heroBgMode === "single"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="heroBgMode"
+                    checked={heroBgMode === "single"}
+                    onChange={() => {
+                      setHeroBgMode("single");
+                      updateSettings({ heroBgMode: "single" });
+                    }}
+                    className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-sm font-black text-gray-900 block">Single Static Image</span>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      Just akta image static thakbe. Kono slider, next/prev arrow ba animation thakbe na.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Multi-image Carousel Mode */}
+                <div
+                  onClick={() => {
+                    setHeroBgMode("carousel");
+                    updateSettings({ heroBgMode: "carousel" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    heroBgMode === "carousel"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="heroBgMode"
+                    checked={heroBgMode === "carousel"}
+                    onChange={() => {
+                      setHeroBgMode("carousel");
+                      updateSettings({ heroBgMode: "carousel" });
+                    }}
+                    className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-sm font-black text-gray-900 block">Multi-image Carousel (Slider)</span>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      Bortoman animation slider active thakbe jekhane multiple image slide hoye transition hobe.
+                    </p>
+                  </div>
+                </div>
               </div>
+
+              {/* Single Image Upload Box */}
+              {heroBgMode === "single" && (
+                <div className="p-4 bg-white rounded-2xl border border-gray-200 space-y-3">
+                  <span className="text-xs font-black text-gray-800 uppercase tracking-wide block">
+                    Single Background Image
+                  </span>
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <div className="w-full sm:w-48 h-28 rounded-xl bg-gray-100 overflow-hidden border border-gray-300 shrink-0 shadow-inner">
+                      <img
+                        src={heroSingleImage || "/assets/one.avif"}
+                        alt="Hero Background"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="space-y-2 flex-1">
+                      <label className="inline-flex items-center gap-2 px-4 py-2.5 bg-green-700 hover:bg-green-800 text-white text-xs font-bold rounded-xl shadow cursor-pointer transition">
+                        <FaUpload /> <span>Upload Single Hero Image</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleHeroSingleImageUpload}
+                          className="hidden"
+                        />
+                      </label>
+                      <p className="text-[11px] text-gray-400">
+                        Recommended: High resolution 1920x1080 px image.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Carousel Slides List */}
+              {heroBgMode === "carousel" && (
+                <div className="p-4 bg-white rounded-2xl border border-gray-200 space-y-4">
+                  <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                    <span className="text-xs font-black text-gray-800 uppercase tracking-wide">
+                      Carousel Slides List ({heroSlides.length})
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleAddSlide}
+                      className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-xl shadow flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <FaPlus className="text-[10px]" /> <span>Add Slide</span>
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {heroSlides.map((slide, sIdx) => (
+                      <div
+                        key={sIdx}
+                        className="p-3 bg-gray-50 rounded-xl border border-gray-200 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
+                      >
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={slide.url || "/assets/one.avif"}
+                            alt={`Slide ${sIdx + 1}`}
+                            className="w-16 h-12 object-cover rounded-lg border border-gray-300 shrink-0"
+                          />
+                          <label className="px-2.5 py-1 bg-white border border-gray-300 hover:border-green-600 text-[11px] font-bold rounded-lg cursor-pointer shrink-0">
+                            Change Image
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleSlideImageUpload(sIdx, e.target.files?.[0])}
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 flex-1">
+                          <input
+                            type="text"
+                            value={slide.subtitle || ""}
+                            onChange={(e) => handleUpdateSlide(sIdx, "subtitle", e.target.value)}
+                            placeholder="Top badge text e.g. সরাসরি বাগান থেকে"
+                            className="w-full px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                          />
+                          <input
+                            type="text"
+                            value={slide.title || ""}
+                            onChange={(e) => handleUpdateSlide(sIdx, "title", e.target.value)}
+                            placeholder="Slide title e.g. তাজা ও রসালো আম"
+                            className="w-full px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                          />
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveSlide(sIdx)}
+                          className="text-red-500 hover:text-red-700 text-xs font-bold p-1 self-end md:self-center cursor-pointer"
+                          title="Delete slide"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
 
-          {/* Section 4: Announcement Notice Bar */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
-            <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2 flex items-center gap-2">
-              <FaBullhorn className="text-yellow-600" /> 4. Top Announcement Notice Bar
-            </h3>
-            <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1">
-                Notice Text (Scrolls at the top of the store)
-              </label>
-              <textarea
-                rows="2"
-                value={noticeText}
-                onChange={(e) => setNoticeText(e.target.value)}
-                placeholder="📢 রাজশাহীর বিখ্যাত হিমসাগর, গোপালভোগ আম এবং সুন্দরবনের খাঁটি মধুর প্রি-অর্ডার শুরু হয়েছে!"
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Section 5: Hero Section Content */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
-            <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2">
-              5. Homepage Hero Section Texts
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Hero Main Headline
-                </label>
-                <input
-                  type="text"
-                  value={heroTitle}
-                  onChange={(e) => setHeroTitle(e.target.value)}
-                  placeholder="রাজশাহীর সেরা ও খাঁটি আম এবং প্রাকৃতিক পণ্য, বাগান থেকে সরাসরি আপনার ঘরে"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold"
-                />
+            {/* Part 2: Hero Left Section Texts & Slogans */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-2.5">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaPaintBrush className="text-green-600" /> Hero Left Content & Badges
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Hero section-er baam pasher headline, subtitle, description ebong trust badges customize korun.
+                </p>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Hero Subtitle Paragraph
+              {/* Top Badge: "কেমিক্যাল মুক্ত" */}
+              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-2">
+                <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
+                  Top Rounded Badge (যেমন: কেমিক্যাল মুক্ত)
                 </label>
-                <textarea
-                  rows="2"
-                  value={heroSubtitle}
-                  onChange={(e) => setHeroSubtitle(e.target.value)}
-                  placeholder="কোনো প্রকার কেমিক্যাল বা ক্ষতিকর প্রিজারভেটিভ ছাড়া শতভাগ খাঁটি ও ফ্রেশ পণ্য ডেলিভারির নিশ্চয়তা।"
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 6: Social Media Profiles */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-4">
-            <h3 className="text-base font-extrabold text-green-900 border-b border-gray-100 pb-2">
-              6. Social Media Profile Links
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaFacebookF className="text-blue-600" /> Facebook Page URL
-                </label>
-                <input
-                  type="url"
-                  value={facebookUrl}
-                  onChange={(e) => setFacebookUrl(e.target.value)}
-                  placeholder="https://facebook.com/..."
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaInstagram className="text-pink-600" /> Instagram Profile URL
-                </label>
-                <input
-                  type="url"
-                  value={instagramUrl}
-                  onChange={(e) => setInstagramUrl(e.target.value)}
-                  placeholder="https://instagram.com/..."
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="sm:col-span-1">
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">Badge Icon (Emoji/Icon)</label>
+                    <input
+                      type="text"
+                      value={heroTopBadgeIcon}
+                      onChange={(e) => {
+                        setHeroTopBadgeIcon(e.target.value);
+                        updateSettings({ heroTopBadgeIcon: e.target.value });
+                      }}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold"
+                      placeholder="🍃"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">Badge Text</label>
+                    <input
+                      type="text"
+                      value={heroTopBadgeText}
+                      onChange={(e) => {
+                        setHeroTopBadgeText(e.target.value);
+                        updateSettings({ heroTopBadgeText: e.target.value });
+                      }}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold"
+                      placeholder="কেমিক্যাল মুক্ত"
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
-                  <FaYoutube className="text-red-600" /> YouTube Channel URL
+              {/* Main Headline & Subtitle */}
+              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
+                <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
+                  Hero Titles & Paragraph
                 </label>
-                <input
-                  type="url"
-                  value={youtubeUrl}
-                  onChange={(e) => setYoutubeUrl(e.target.value)}
-                  placeholder="https://youtube.com/..."
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm"
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                      Main Title Part 1 (Yellow Highlight)
+                    </label>
+                    <input
+                      type="text"
+                      value={heroMainTitlePart1}
+                      onChange={(e) => {
+                        setHeroMainTitlePart1(e.target.value);
+                        updateSettings({ heroMainTitlePart1: e.target.value });
+                      }}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-yellow-700"
+                      placeholder="আমওয়ালা"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                      Main Title Part 2 (White Text)
+                    </label>
+                    <input
+                      type="text"
+                      value={heroMainTitlePart2}
+                      onChange={(e) => {
+                        setHeroMainTitlePart2(e.target.value);
+                        updateSettings({ heroMainTitlePart2: e.target.value });
+                      }}
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold"
+                      placeholder="ভাইয়া"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                    Quality Subtitle / Highlight (যেমন: প্রিমিয়াম কোয়ালিটি)
+                  </label>
+                  <input
+                    type="text"
+                    value={heroSubtitleText}
+                    onChange={(e) => {
+                      setHeroSubtitleText(e.target.value);
+                      updateSettings({ heroSubtitleText: e.target.value });
+                    }}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-green-900"
+                    placeholder="প্রিমিয়াম কোয়ালিটি"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                    Hero Description Paragraph
+                  </label>
+                  <textarea
+                    rows="3"
+                    value={heroDescriptionText}
+                    onChange={(e) => {
+                      setHeroDescriptionText(e.target.value);
+                      updateSettings({ heroDescriptionText: e.target.value });
+                    }}
+                    className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs"
+                    placeholder="তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন..."
+                  />
+                </div>
+              </div>
+
+              {/* Trust Badges */}
+              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
+                <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
+                  Trust Badges (১০০% রেকমেন্ডেড & ৬+ গ্রাহক রিভিউ)
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-3 rounded-xl bg-green-50/60 border border-green-200 space-y-2">
+                    <span className="text-[11px] font-black text-green-900 block">Trust Badge 1</span>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={heroTrustBadge1Icon}
+                        onChange={(e) => {
+                          setHeroTrustBadge1Icon(e.target.value);
+                          updateSettings({ heroTrustBadge1Icon: e.target.value });
+                        }}
+                        className="w-14 px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-center font-bold"
+                        placeholder="✓"
+                      />
+                      <input
+                        type="text"
+                        value={heroTrustBadge1Text}
+                        onChange={(e) => {
+                          setHeroTrustBadge1Text(e.target.value);
+                          updateSettings({ heroTrustBadge1Text: e.target.value });
+                        }}
+                        className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                        placeholder="১০০% রেকমেন্ডেড"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-yellow-50/60 border border-yellow-200 space-y-2">
+                    <span className="text-[11px] font-black text-yellow-900 block">Trust Badge 2</span>
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={heroTrustBadge2Icon}
+                        onChange={(e) => {
+                          setHeroTrustBadge2Icon(e.target.value);
+                          updateSettings({ heroTrustBadge2Icon: e.target.value });
+                        }}
+                        className="w-14 px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-center font-bold"
+                        placeholder="★"
+                      />
+                      <input
+                        type="text"
+                        value={heroTrustBadge2Text}
+                        onChange={(e) => {
+                          setHeroTrustBadge2Text(e.target.value);
+                          updateSettings({ heroTrustBadge2Text: e.target.value });
+                        }}
+                        className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                        placeholder="৬+ গ্রাহক রিভিউ"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Feature Badges / Highlights List */}
+              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
+                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+                  <div>
+                    <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
+                      Bottom Highlights List (ফিচার ও হটলাইন)
+                    </label>
+                    <p className="text-[11px] text-gray-400">
+                      যেমন: সারা দেশ ডেলিভারি, কেমিক্যাল ফ্রি, ০১৭৪৯-৭৭৫০৩০
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddHighlight}
+                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-xl shadow flex items-center gap-1 cursor-pointer"
+                  >
+                    <FaPlus className="text-[10px]" /> <span>Add Feature</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2">
+                  {heroHighlights.map((hl, hlIdx) => (
+                    <div
+                      key={hlIdx}
+                      className="p-2.5 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-3 text-xs"
+                    >
+                      <select
+                        value={hl.icon || "truck"}
+                        onChange={(e) => handleUpdateHighlight(hlIdx, "icon", e.target.value)}
+                        className="px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                      >
+                        <option value="truck">🚚 Truck / Delivery</option>
+                        <option value="leaf">🍃 Leaf / Organic</option>
+                        <option value="phone">📞 Phone / Hotline</option>
+                      </select>
+
+                      <input
+                        type="text"
+                        value={hl.text || ""}
+                        onChange={(e) => handleUpdateHighlight(hlIdx, "text", e.target.value)}
+                        placeholder="Feature text e.g. সারা দেশ ডেলিভারি"
+                        className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
+                      />
+
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveHighlight(hlIdx)}
+                        className="text-red-500 hover:text-red-700 font-bold p-1 cursor-pointer"
+                        title="Delete feature"
+                      >
+                        <FaTrash />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

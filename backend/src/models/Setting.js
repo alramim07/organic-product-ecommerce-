@@ -78,6 +78,85 @@ const settingSchema = new mongoose.Schema(
       default:
         "কোনো প্রকার কেমিক্যাল বা ক্ষতিকর প্রিজারভেটিভ ছাড়া শতভাগ খাঁটি ও ফ্রেশ পণ্য ডেলিভারির নিশ্চয়তা।",
     },
+    // Hero Section Detailed Settings
+    heroBgMode: {
+      type: String,
+      enum: ["carousel", "single"],
+      default: "carousel",
+    },
+    heroSingleImage: {
+      type: String,
+      default: "/assets/one.avif",
+    },
+    heroSlides: {
+      type: [
+        {
+          url: { type: String, default: "" },
+          title: { type: String, default: "" },
+          subtitle: { type: String, default: "" },
+        },
+      ],
+      default: [
+        { url: "/assets/one.avif", title: "তাজা ও রসালো আম", subtitle: "সরাসরি বাগান থেকে" },
+        { url: "/assets/two.avif", title: "প্রিমিয়াম কোয়ালিটি", subtitle: "কেমিক্যাল মুক্ত" },
+        { url: "/assets/three.avif", title: "সারা দেশ ডেলিভারি", subtitle: "দ্রুত ও নিরাপদ" },
+        { url: "/assets/four.avif", title: "১১+ জাতের আম", subtitle: "বাছাই করুন আপনার পছন্দ" },
+      ],
+    },
+    heroTopBadgeText: {
+      type: String,
+      default: "কেমিক্যাল মুক্ত",
+    },
+    heroTopBadgeIcon: {
+      type: String,
+      default: "🍃",
+    },
+    heroMainTitlePart1: {
+      type: String,
+      default: "আমওয়ালা",
+    },
+    heroMainTitlePart2: {
+      type: String,
+      default: "ভাইয়া",
+    },
+    heroSubtitleText: {
+      type: String,
+      default: "প্রিমিয়াম কোয়ালিটি",
+    },
+    heroDescriptionText: {
+      type: String,
+      default:
+        "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।",
+    },
+    heroTrustBadge1Text: {
+      type: String,
+      default: "১০০% রেকমেন্ডেড",
+    },
+    heroTrustBadge1Icon: {
+      type: String,
+      default: "✓",
+    },
+    heroTrustBadge2Text: {
+      type: String,
+      default: "৬+ গ্রাহক রিভিউ",
+    },
+    heroTrustBadge2Icon: {
+      type: String,
+      default: "★",
+    },
+    heroHighlights: {
+      type: [
+        {
+          text: { type: String, default: "" },
+          icon: { type: String, default: "truck" },
+        },
+      ],
+      default: [
+        { text: "সারা দেশ ডেলিভারি", icon: "truck" },
+        { text: "কেমিক্যাল ফ্রি", icon: "leaf" },
+        { text: "০১৭৪৯-৭৭৫০৩০", icon: "phone" },
+      ],
+    },
   },
   { timestamps: true, versionKey: false }
 );
