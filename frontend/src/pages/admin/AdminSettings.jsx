@@ -44,6 +44,10 @@ import {
   FaLink,
   FaChevronLeft,
   FaChevronRight,
+  FaThLarge,
+  FaBoxes,
+  FaChevronDown,
+  FaChevronUp,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../../context/AppContext";
@@ -146,7 +150,7 @@ const SECONDARY_BTN_SOLID_PRESETS = [
 ];
 
 export default function AdminSettings() {
-  const { settings, updateSettings, adminToken } = useApp();
+  const { settings, updateSettings, adminToken, products } = useApp();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const tabQuery = searchParams.get("tab");
@@ -376,6 +380,35 @@ export default function AdminSettings() {
   const [heroBadgeIconPickerOpen, setHeroBadgeIconPickerOpen] = useState(false);
   const [heroPreviewDevice, setHeroPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
 
+  // Product Section Settings state
+  const [productSectionTitle, setProductSectionTitle] = useState(
+    settings.productSectionTitle || "আমের জাত ও মূল্য"
+  );
+  const [productSectionTitleIcon, setProductSectionTitleIcon] = useState(
+    settings.productSectionTitleIcon || "🥭"
+  );
+  const [productSectionSubtitle, setProductSectionSubtitle] = useState(
+    settings.productSectionSubtitle ||
+      "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"
+  );
+  const [productCardPreset, setProductCardPreset] = useState(
+    settings.productCardPreset || "classic"
+  );
+  const [productDisplayMode, setProductDisplayMode] = useState(
+    settings.productDisplayMode || "auto"
+  );
+  const [productCustomIds, setProductCustomIds] = useState(
+    Array.isArray(settings.productCustomIds) ? settings.productCustomIds : []
+  );
+  const [productShowMoreBtnText, setProductShowMoreBtnText] = useState(
+    settings.productShowMoreBtnText || "Show More Products"
+  );
+  const [productCollapseBtnText, setProductCollapseBtnText] = useState(
+    settings.productCollapseBtnText || "Collapse Products"
+  );
+  const [productIconPickerOpen, setProductIconPickerOpen] = useState(false);
+  const [productSearchQuery, setProductSearchQuery] = useState("");
+
   // Sync state if settings update from backend or initial load
   useEffect(() => {
     if (settings) {
@@ -434,6 +467,16 @@ export default function AdminSettings() {
       if (settings.heroTextSlides !== undefined && Array.isArray(settings.heroTextSlides) && settings.heroTextSlides.length > 0) {
         setHeroTextSlides(settings.heroTextSlides);
       }
+      if (settings.productSectionTitle !== undefined) setProductSectionTitle(settings.productSectionTitle);
+      if (settings.productSectionTitleIcon !== undefined) setProductSectionTitleIcon(settings.productSectionTitleIcon);
+      if (settings.productSectionSubtitle !== undefined) setProductSectionSubtitle(settings.productSectionSubtitle);
+      if (settings.productCardPreset !== undefined) setProductCardPreset(settings.productCardPreset);
+      if (settings.productDisplayMode !== undefined) setProductDisplayMode(settings.productDisplayMode);
+      if (settings.productCustomIds !== undefined && Array.isArray(settings.productCustomIds)) {
+        setProductCustomIds(settings.productCustomIds);
+      }
+      if (settings.productShowMoreBtnText !== undefined) setProductShowMoreBtnText(settings.productShowMoreBtnText);
+      if (settings.productCollapseBtnText !== undefined) setProductCollapseBtnText(settings.productCollapseBtnText);
     }
   }, [settings]);
 
@@ -787,6 +830,19 @@ export default function AdminSettings() {
     }
   };
 
+  // Product Section Custom Product Selection Handler
+  const handleToggleCustomProduct = (productId) => {
+    const idStr = String(productId);
+    let updated;
+    if (productCustomIds.includes(idStr)) {
+      updated = productCustomIds.filter((id) => id !== idStr);
+    } else {
+      updated = [...productCustomIds, idStr];
+    }
+    setProductCustomIds(updated);
+    updateSettings({ productCustomIds: updated });
+  };
+
   const handleHeroBadgeIconUploadForSlide = async (file) => {
     if (!file) return;
     try {
@@ -1067,6 +1123,14 @@ export default function AdminSettings() {
       heroTextMode,
       heroHotlinePhone,
       heroTextSlides,
+      productSectionTitle,
+      productSectionTitleIcon,
+      productSectionSubtitle,
+      productCardPreset,
+      productDisplayMode,
+      productCustomIds,
+      productShowMoreBtnText,
+      productCollapseBtnText,
     });
 
     Swal.fire({
@@ -4136,6 +4200,619 @@ export default function AdminSettings() {
               })()}
             </div>
           </div>
+        
+
+          {/* Section 3: Product Section Settings */}
+          <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-6">
+            {/* Header Title Bar */}
+            <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
+                  <FaBoxes className="text-green-600" /> 3. Product Section Settings (আমের জাত ও মূল্য)
+                </h3>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  হোমপেজের 'আমের জাত ও মূল্য' সেকশনের হেডার টেক্সট, কার্ড ডিজাইন প্রিসেট, ৮টি প্রডাক্ট ডিসপ্লে মোড এবং 'Show More' ও 'Collapse' বাটন কাস্টমাইজ করুন।
+                </p>
+              </div>
+            </div>
+
+            {/* Part 1: Section Header & Subtitle */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-2.5">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaPaintBrush className="text-amber-600" /> Section Title & Subheading
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  সেকশন হেডিং, টাইটেল আইকন এবং সাব-হেডিং টেক্সট কাস্টমাইজ করুন।
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Title Icon */}
+                <div className="sm:col-span-1">
+                  <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                    Title Icon (Emoji / Symbol)
+                  </label>
+                  <div className="relative">
+                    <button
+                      type="button"
+                      onClick={() => setProductIconPickerOpen(!productIconPickerOpen)}
+                      className="w-full px-3 py-2 bg-white border border-gray-300 hover:border-green-500 rounded-xl text-xs font-black flex items-center justify-between cursor-pointer transition"
+                    >
+                      <span className="flex items-center gap-2">
+                        <span className="text-lg">{productSectionTitleIcon || "🥭"}</span>
+                        <span className="text-gray-600 font-semibold text-[11px]">Select Icon</span>
+                      </span>
+                      <FaSlidersH className="text-gray-400 text-xs" />
+                    </button>
+
+                    {productIconPickerOpen && (
+                      <div className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl shadow-2xl border border-gray-300 p-3 w-64 space-y-2.5">
+                        <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
+                          <span className="text-[11px] font-black text-gray-700">Choose Section Icon</span>
+                          <button
+                            type="button"
+                            onClick={() => setProductIconPickerOpen(false)}
+                            className="text-gray-400 hover:text-gray-600 text-xs"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                        <div className="grid grid-cols-5 gap-1.5">
+                          {["🥭", "🍃", "🌿", "⭐", "📦", "🔥", "✨", "👑", "🏷️", "🍈", "🍯", "🍇", "🍎", "🌱", "🥇"].map(
+                            (emoji, eIdx) => (
+                              <button
+                                key={eIdx}
+                                type="button"
+                                onClick={() => {
+                                  setProductSectionTitleIcon(emoji);
+                                  updateSettings({ productSectionTitleIcon: emoji });
+                                  setProductIconPickerOpen(false);
+                                }}
+                                className="w-9 h-9 rounded-lg hover:bg-yellow-100 text-lg flex items-center justify-center transition cursor-pointer"
+                              >
+                                {emoji}
+                              </button>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Section Title */}
+                <div className="sm:col-span-2">
+                  <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                    Section Title Text
+                  </label>
+                  <input
+                    type="text"
+                    value={productSectionTitle}
+                    onChange={(e) => {
+                      setProductSectionTitle(e.target.value);
+                      updateSettings({ productSectionTitle: e.target.value });
+                    }}
+                    placeholder="আমের জাত ও মূল্য"
+                    className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                </div>
+              </div>
+
+              {/* Section Subtitle */}
+              <div>
+                <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                  Section Subheading Text (সাব-হেডিং)
+                </label>
+                <textarea
+                  rows="2"
+                  value={productSectionSubtitle}
+                  onChange={(e) => {
+                    setProductSectionSubtitle(e.target.value);
+                    updateSettings({ productSectionSubtitle: e.target.value });
+                  }}
+                  placeholder="রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"
+                  className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <p className="text-[11px] text-gray-400 mt-1">
+                  এই টেক্সটটি হোমপেজে রেসপন্সিভভাবে ব্যালেন্সড হয়ে দেখাবে, কোনো একক শব্দ নিচে ভেঙে পড়বে না।
+                </p>
+              </div>
+            </div>
+
+            {/* Part 2: Card Design Preset Selector */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-2.5">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaPalette className="text-green-600" /> Product Card Design Presets
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  আপনার পছন্দের কার্ড ডিজাইন স্টাইল নির্বাচন করুন। কার্ডের সাইজ সবসময় সমান থাকবে এবং যেকোনো ছবির সাইজ কার্ডের সাথে মানানসইভাবে ফিট হবে।
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Preset 1: Classic */}
+                <div
+                  onClick={() => {
+                    setProductCardPreset("classic");
+                    updateSettings({ productCardPreset: "classic" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                    productCardPreset === "classic"
+                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-gray-900">Classic Mango</span>
+                      <input
+                        type="radio"
+                        name="productCardPreset"
+                        checked={productCardPreset === "classic"}
+                        onChange={() => {
+                          setProductCardPreset("classic");
+                          updateSettings({ productCardPreset: "classic" });
+                        }}
+                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                      />
+                    </div>
+                    {/* Mini Visual Preview */}
+                    <div className="p-2.5 rounded-xl bg-amber-50/90 border border-yellow-200 space-y-1.5 shadow-sm text-[10px]">
+                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                        Image (Fill)
+                      </div>
+                      <div className="font-bold text-green-900 truncate">আমের নাম...</div>
+                      <div className="text-amber-700 font-bold">৳ ১৮০/কেজি</div>
+                      <div className="h-4 bg-gradient-to-r from-green-600 to-emerald-600 rounded-full text-white text-[9px] flex items-center justify-center">
+                        প্রি-অর্ডার
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-2">
+                    ক্লাসিক ওয়ার্ম অ্যাম্বার লুক ও রাউন্ডেড বাটন
+                  </p>
+                </div>
+
+                {/* Preset 2: Modern */}
+                <div
+                  onClick={() => {
+                    setProductCardPreset("modern");
+                    updateSettings({ productCardPreset: "modern" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                    productCardPreset === "modern"
+                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-gray-900">Modern Minimal</span>
+                      <input
+                        type="radio"
+                        name="productCardPreset"
+                        checked={productCardPreset === "modern"}
+                        onChange={() => {
+                          setProductCardPreset("modern");
+                          updateSettings({ productCardPreset: "modern" });
+                        }}
+                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                      />
+                    </div>
+                    {/* Mini Visual Preview */}
+                    <div className="p-2.5 rounded-xl bg-white border border-gray-200 space-y-1.5 shadow-sm text-[10px]">
+                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                        Image (Fill)
+                      </div>
+                      <div className="font-bold text-gray-900 truncate">আমের নাম...</div>
+                      <div className="text-emerald-700 font-bold">৳ ১৮০/কেজি</div>
+                      <div className="h-4 bg-emerald-600 rounded-lg text-white text-[9px] flex items-center justify-center">
+                        প্রি-অর্ডার
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-2">
+                    ক্লিন হোয়াইট ব্যাকগ্রাউন্ড ও স্লিক ডিজাইন
+                  </p>
+                </div>
+
+                {/* Preset 3: Elevated */}
+                <div
+                  onClick={() => {
+                    setProductCardPreset("elevated");
+                    updateSettings({ productCardPreset: "elevated" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                    productCardPreset === "elevated"
+                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-gray-900">Elevated Luxury</span>
+                      <input
+                        type="radio"
+                        name="productCardPreset"
+                        checked={productCardPreset === "elevated"}
+                        onChange={() => {
+                          setProductCardPreset("elevated");
+                          updateSettings({ productCardPreset: "elevated" });
+                        }}
+                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                      />
+                    </div>
+                    {/* Mini Visual Preview */}
+                    <div className="p-2.5 rounded-xl bg-gradient-to-b from-white to-emerald-50 border-2 border-emerald-400/30 space-y-1.5 shadow-md text-[10px]">
+                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                        Image (Fill)
+                      </div>
+                      <div className="font-bold text-green-950 truncate">আমের নাম...</div>
+                      <div className="text-amber-600 font-black">৳ ১৮০/কেজি</div>
+                      <div className="h-4 bg-gradient-to-r from-amber-500 to-green-600 rounded-full text-white text-[9px] flex items-center justify-center font-bold">
+                        প্রি-অর্ডার
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-2">
+                    ডিপ শ্যাডো, প্রিমিয়াম ফিল ও গ্রেডিয়েন্ট বাটন
+                  </p>
+                </div>
+
+                {/* Preset 4: Bordered */}
+                <div
+                  onClick={() => {
+                    setProductCardPreset("bordered");
+                    updateSettings({ productCardPreset: "bordered" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
+                    productCardPreset === "bordered"
+                      ? "border-green-600 bg-green-50/80 shadow-md ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-black text-gray-900">Bordered Compact</span>
+                      <input
+                        type="radio"
+                        name="productCardPreset"
+                        checked={productCardPreset === "bordered"}
+                        onChange={() => {
+                          setProductCardPreset("bordered");
+                          updateSettings({ productCardPreset: "bordered" });
+                        }}
+                        className="text-green-600 focus:ring-green-500 cursor-pointer"
+                      />
+                    </div>
+                    {/* Mini Visual Preview */}
+                    <div className="p-2.5 rounded-xl bg-white border-2 border-emerald-300 space-y-1.5 shadow-sm text-[10px]">
+                      <div className="h-10 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400">
+                        Image (Fill)
+                      </div>
+                      <div className="font-bold text-emerald-950 truncate">আমের নাম...</div>
+                      <div className="text-amber-700 font-bold">৳ ১৮০/কেজি</div>
+                      <div className="h-4 bg-emerald-700 rounded-lg text-white text-[9px] flex items-center justify-center">
+                        প্রি-অর্ডার
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-gray-500 mt-2">
+                    ডিস্টিঙ্কট এমারেল্ড আউটলাইন ও কম্প্যাক্ট স্টাইল
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 3: Product Display Mode (Latest 8 vs Custom Selection) */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-2.5">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaThLarge className="text-emerald-600" /> Products Display Mode (প্রদর্শন পদ্ধতি)
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  ইউজার স্বয়ংক্রিয়ভাবে সর্বশেষ যুক্ত হওয়া ৮টি প্রোডাক্ট দেখতে পারবে, অথবা আপনি নিজের ইচ্ছামতো নির্দিষ্ট প্রোডাক্ট সিলেক্ট করে দিতে পারবেন।
+                </p>
+              </div>
+
+              {/* Mode Radios */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Auto Mode */}
+                <div
+                  onClick={() => {
+                    setProductDisplayMode("auto");
+                    updateSettings({ productDisplayMode: "auto" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    productDisplayMode === "auto"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="productDisplayMode"
+                    checked={productDisplayMode === "auto"}
+                    onChange={() => {
+                      setProductDisplayMode("auto");
+                      updateSettings({ productDisplayMode: "auto" });
+                    }}
+                    className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-sm font-black text-gray-900 block">
+                      Automatic (সর্বশেষ যুক্ত হওয়া ৮টি প্রোডাক্ট)
+                    </span>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      ডাটাবেসের সর্বশেষ প্রোডাক্টগুলো স্বয়ংক্রিয়ভাবে প্রথমে ৮টি দেখাবে এবং 'Show More' বাটনে ক্লিক করলে পরবর্তী ৮টি ক্রমান্বয়ে লোড হবে।
+                    </p>
+                  </div>
+                </div>
+
+                {/* Custom Selection Mode */}
+                <div
+                  onClick={() => {
+                    setProductDisplayMode("custom");
+                    updateSettings({ productDisplayMode: "custom" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    productDisplayMode === "custom"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="productDisplayMode"
+                    checked={productDisplayMode === "custom"}
+                    onChange={() => {
+                      setProductDisplayMode("custom");
+                      updateSettings({ productDisplayMode: "custom" });
+                    }}
+                    className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-sm font-black text-gray-900 block">
+                      Custom Selection (নিজের ইচ্ছামতো প্রোডাক্ট নির্বাচন)
+                    </span>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      নিচের তালিকা থেকে আপনার পছন্দের নির্দিষ্ট প্রোডাক্টগুলো সিলেক্ট করে দিন। সেই প্রোডাক্টগুলোই এখানে প্রাধান্য পাবে।
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Custom Product Selection Checklist */}
+              {productDisplayMode === "custom" && (
+                <div className="p-4 bg-white rounded-2xl border border-gray-200 space-y-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 pb-2.5">
+                    <div>
+                      <span className="text-xs font-black text-gray-800 uppercase tracking-wide block">
+                        Select Products to Feature
+                      </span>
+                      <span className="text-[11px] text-gray-500">
+                        Selected: <strong className="text-green-700 font-black">{productCustomIds.length}</strong> products
+                      </span>
+                    </div>
+
+                    {/* Search box for products */}
+                    <input
+                      type="text"
+                      value={productSearchQuery}
+                      onChange={(e) => setProductSearchQuery(e.target.value)}
+                      placeholder="Search product by name..."
+                      className="px-3 py-1.5 bg-gray-50 border border-gray-300 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-green-500 w-full sm:w-56"
+                    />
+                  </div>
+
+                  {/* Product Cards List */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5 max-h-72 overflow-y-auto pr-1">
+                    {(products || [])
+                      .filter((p) => {
+                        if (!productSearchQuery) return true;
+                        const q = productSearchQuery.toLowerCase();
+                        return (
+                          p.name_bn?.toLowerCase().includes(q) ||
+                          p.name_en?.toLowerCase().includes(q) ||
+                          p.category?.toLowerCase().includes(q)
+                        );
+                      })
+                      .map((product) => {
+                        const pid = String(product._id || product.id);
+                        const isSelected = productCustomIds.includes(pid);
+
+                        return (
+                          <div
+                            key={pid}
+                            onClick={() => handleToggleCustomProduct(pid)}
+                            className={`p-2.5 rounded-xl border flex items-center gap-2.5 cursor-pointer transition ${
+                              isSelected
+                                ? "bg-green-50/80 border-green-500 shadow-sm"
+                                : "bg-gray-50/60 border-gray-200 hover:bg-gray-100"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={() => handleToggleCustomProduct(pid)}
+                              className="rounded text-green-600 focus:ring-green-500 cursor-pointer shrink-0"
+                            />
+                            <img
+                              src={product.image || "/assets/mangoes/m1.jpg"}
+                              alt={product.name_bn}
+                              className="w-10 h-10 object-cover rounded-lg border border-gray-200 shrink-0"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <h5 className="text-xs font-bold text-gray-900 truncate">
+                                {product.name_bn || product.name_en}
+                              </h5>
+                              <p className="text-[10px] text-amber-700 font-semibold">
+                                ৳ {product.price_per_unit || product.price || 0}/{product.unit || "কেজি"}
+                              </p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Part 4: Dynamic "Show More" & "Collapse" Button Settings */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="border-b border-gray-200/60 pb-2.5">
+                <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                  <FaSlidersH className="text-amber-600" /> "Show More" & "Collapse" Button Texts
+                </h4>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  প্রোডাক্ট গ্রিডের নিচের বাটনের লেখা কাস্টমাইজ করুন। ডিফল্টভাবে "Show More Products" থাকবে এবং ইউজার চাইলে বাংলায় বা অন্য যেকোনো টেক্সট (যেমন: "Aro Product Dekhun") দিতে পারবে।
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                    "Show More" Button Text (আরও প্রোডাক্ট দেখতে)
+                  </label>
+                  <input
+                    type="text"
+                    value={productShowMoreBtnText}
+                    onChange={(e) => {
+                      setProductShowMoreBtnText(e.target.value);
+                      updateSettings({ productShowMoreBtnText: e.target.value });
+                    }}
+                    placeholder="Show More Products / আরও প্রোডাক্ট দেখুন"
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    ক্লিক করলে পরবর্তী ৮টি প্রোডাক্ট লোড হবে।
+                  </p>
+                </div>
+
+                <div>
+                  <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                    "Collapse" Button Text (সব প্রোডাক্ট দেখানো শেষে ফোল্ড করতে)
+                  </label>
+                  <input
+                    type="text"
+                    value={productCollapseBtnText}
+                    onChange={(e) => {
+                      setProductCollapseBtnText(e.target.value);
+                      updateSettings({ productCollapseBtnText: e.target.value });
+                    }}
+                    placeholder="Collapse Products / কমিয়ে আনুন"
+                    className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    সব প্রোডাক্ট শেষ হলে এই বাটনটি দেখাবে এবং ক্লিক করলে পুনরায় ৮টিতে সংকুচিত হবে।
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Part 5: Live Product Section Preview */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
+              <div className="flex items-center justify-between border-b border-gray-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+                  <div>
+                    <h4 className="text-sm font-black text-white">
+                      Live Product Section Preview
+                    </h4>
+                    <p className="text-xs text-gray-400">
+                      Real-time interactive rendering of homepage products section
+                    </p>
+                  </div>
+                </div>
+                <span className="text-xs font-bold px-2.5 py-1 bg-green-900/60 text-green-300 rounded-lg border border-green-700/50">
+                  Preset: {productCardPreset.toUpperCase()}
+                </span>
+              </div>
+
+              {/* Rendered Preview Box */}
+              <div className="rounded-2xl border border-gray-800 bg-amber-50/10 p-5 space-y-6">
+                {/* Header Preview */}
+                <div className="text-center space-y-2">
+                  <h3 className="text-2xl sm:text-3xl font-black text-white inline-flex items-center justify-center gap-2 border-b-4 border-yellow-400 pb-1 px-3">
+                    <span>{productSectionTitleIcon || "🥭"}</span>
+                    <span>{productSectionTitle || "আমের জাত ও মূল্য"}</span>
+                  </h3>
+                  <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
+                    {productSectionSubtitle ||
+                      "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"}
+                  </p>
+                </div>
+
+                {/* Sample Card Preview Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {[
+                    { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
+                    { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
+                    { name: "ল্যাংড়া", price: "৳ ১৬০/কেজি", dates: "চুয়াডাঙ্গা: ২৮ মে, নওগাঁ: ১০ জুন" },
+                    { name: "আম্রপালি", price: "৳ ১৯০/কেজি", dates: "চুয়াডাঙ্গা: ৫ জুন, রাজশাহী: ১৫ জুন" },
+                  ].map((item, idx) => (
+                    <div
+                      key={idx}
+                      className={`flex flex-col rounded-2xl overflow-hidden shadow-md text-gray-800 ${
+                        productCardPreset === "modern"
+                          ? "bg-white border border-gray-200"
+                          : productCardPreset === "elevated"
+                          ? "bg-gradient-to-b from-white to-emerald-50 border-2 border-emerald-400/40 shadow-xl"
+                          : productCardPreset === "bordered"
+                          ? "bg-white border-2 border-emerald-300"
+                          : "bg-white/95 border border-yellow-200"
+                      }`}
+                    >
+                      <div className="h-32 bg-gray-200 relative overflow-hidden flex items-center justify-center text-gray-400 text-xs font-bold">
+                        <span>🥭 Product Image (Fill)</span>
+                        <span className="absolute top-2 right-2 bg-green-700 text-white text-[9px] px-1.5 py-0.5 rounded-full">
+                          ইন স্টক
+                        </span>
+                      </div>
+                      <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
+                        <div>
+                          <h5 className="font-bold text-sm text-green-950 truncate line-clamp-1">
+                            {item.name}
+                          </h5>
+                          <p className="text-xs font-black text-amber-700 mt-0.5">{item.price}</p>
+                          <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{item.dates}</p>
+                        </div>
+                        <div className="pt-2 border-t border-gray-100 flex items-center justify-between text-xs">
+                          <span className="text-[11px] text-green-800 font-bold flex items-center gap-1">
+                            <FaEye className="text-[10px]" /> বিস্তারিত
+                          </span>
+                          <span
+                            className={`px-3 py-1 text-[11px] text-white font-bold rounded-lg shadow-sm ${
+                              productCardPreset === "modern"
+                                ? "bg-emerald-600 rounded-lg"
+                                : productCardPreset === "elevated"
+                                ? "bg-gradient-to-r from-amber-500 to-green-600 rounded-full"
+                                : productCardPreset === "bordered"
+                                ? "bg-emerald-700 rounded-md"
+                                : "bg-gradient-to-r from-green-600 to-emerald-600 rounded-full"
+                            }`}
+                          >
+                            প্রি-অর্ডার
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Live Preview Button */}
+                <div className="pt-2 flex justify-center">
+                  <div className="px-6 py-2.5 bg-gradient-to-r from-amber-500 via-green-600 to-emerald-700 text-white font-extrabold text-xs sm:text-sm rounded-xl shadow-lg flex items-center gap-2">
+                    <span>{productShowMoreBtnText || "Show More Products"}</span>
+                    <FaChevronDown className="text-[10px]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </form>
       )}
 

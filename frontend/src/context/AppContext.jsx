@@ -161,6 +161,16 @@ export function AppProvider({ children }) {
               { text: "কেমিক্যাল ফ্রি", icon: "leaf" },
               { text: "০১৭৪৯-৭৭৫০৩০", icon: "phone" },
             ],
+            // Product Section Settings
+            productSectionTitle: "আমের জাত ও মূল্য",
+            productSectionTitleIcon: "🥭",
+            productSectionSubtitle:
+              "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।",
+            productCardPreset: "classic",
+            productDisplayMode: "auto",
+            productCustomIds: [],
+            productShowMoreBtnText: "Show More Products",
+            productCollapseBtnText: "Collapse Products",
           };
     } catch {
       return {};

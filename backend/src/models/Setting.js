@@ -220,6 +220,42 @@ const settingSchema = new mongoose.Schema(
         { text: "০১৭৪৯-৭৭৫০৩০", icon: "phone" },
       ],
     },
+    // Product Section Settings
+    productSectionTitle: {
+      type: String,
+      default: "আমের জাত ও মূল্য",
+    },
+    productSectionTitleIcon: {
+      type: String,
+      default: "🥭",
+    },
+    productSectionSubtitle: {
+      type: String,
+      default:
+        "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।",
+    },
+    productCardPreset: {
+      type: String,
+      enum: ["classic", "modern", "elevated", "bordered"],
+      default: "classic",
+    },
+    productDisplayMode: {
+      type: String,
+      enum: ["auto", "custom"],
+      default: "auto",
+    },
+    productCustomIds: {
+      type: [String],
+      default: [],
+    },
+    productShowMoreBtnText: {
+      type: String,
+      default: "Show More Products",
+    },
+    productCollapseBtnText: {
+      type: String,
+      default: "Collapse Products",
+    },
   },
   { timestamps: true, versionKey: false }
 );
