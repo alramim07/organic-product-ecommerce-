@@ -322,6 +322,12 @@ export default function AdminSettings() {
           { text: "০১৭৪৯-৭৭৫০৩০", icon: "phone" },
         ]
   );
+  const [heroTextMode, setHeroTextMode] = useState(settings.heroTextMode || "single"); // "single" | "multi"
+  const [heroHotlinePhone, setHeroHotlinePhone] = useState(
+    settings.heroHotlinePhone || settings.rawHotlinePhone || "০১৭৪৯-৭৭৫০৩০"
+  );
+  const [heroBadgeIconPickerOpen, setHeroBadgeIconPickerOpen] = useState(false);
+  const [heroPreviewDevice, setHeroPreviewDevice] = useState("desktop"); // "desktop" | "mobile"
 
   // Sync state if settings update from backend or initial load
   useEffect(() => {
@@ -376,6 +382,8 @@ export default function AdminSettings() {
       if (settings.heroTrustBadge2Text !== undefined) setHeroTrustBadge2Text(settings.heroTrustBadge2Text);
       if (settings.heroTrustBadge2Icon !== undefined) setHeroTrustBadge2Icon(settings.heroTrustBadge2Icon);
       if (settings.heroHighlights !== undefined && Array.isArray(settings.heroHighlights)) setHeroHighlights(settings.heroHighlights);
+      if (settings.heroTextMode !== undefined) setHeroTextMode(settings.heroTextMode);
+      if (settings.heroHotlinePhone !== undefined) setHeroHotlinePhone(settings.heroHotlinePhone);
     }
   }, [settings]);
 
@@ -622,6 +630,18 @@ export default function AdminSettings() {
     const updated = heroHighlights.filter((_, i) => i !== index);
     setHeroHighlights(updated);
     updateSettings({ heroHighlights: updated });
+  };
+
+  const handleHeroBadgeIconUpload = async (file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 64, 64, 0.9);
+      setHeroTopBadgeIcon(compressed);
+      updateSettings({ heroTopBadgeIcon: compressed });
+      setHeroBadgeIconPickerOpen(false);
+    } catch {
+      // fallback
+    }
   };
 
   // Password rules validation logic
@@ -890,6 +910,8 @@ export default function AdminSettings() {
       heroTrustBadge2Text,
       heroTrustBadge2Icon,
       heroHighlights,
+      heroTextMode,
+      heroHotlinePhone,
     });
 
     Swal.fire({
@@ -2800,7 +2822,7 @@ export default function AdminSettings() {
                   <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
                   <div>
                     <h4 className="text-sm font-black text-white">
-                      Live Header Preview (লাইভ প্রিভিউ)
+                      Live Header Preview
                     </h4>
                     <p className="text-xs text-gray-400">
                       Real-time interactive rendering of customer website header
@@ -3216,29 +3238,155 @@ export default function AdminSettings() {
                   <FaPaintBrush className="text-green-600" /> Hero Left Content & Badges
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Hero section-er baam pasher headline, subtitle, description ebong trust badges customize korun.
+                  Hero section-er baam pasher headline, subtitle, description ebong hotline number customize korun.
                 </p>
               </div>
 
-              {/* Top Badge: "কেমিক্যাল মুক্ত" */}
-              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-2">
+              {/* Text Mode Selector (Single vs Multi-slide Animated Texts) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Single Content Mode */}
+                <div
+                  onClick={() => {
+                    setHeroTextMode("single");
+                    updateSettings({ heroTextMode: "single" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    heroTextMode === "single"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="heroTextMode"
+                    checked={heroTextMode === "single"}
+                    onChange={() => {
+                      setHeroTextMode("single");
+                      updateSettings({ heroTextMode: "single" });
+                    }}
+                    className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-sm font-black text-gray-900 block">Single Text (Animation ছাড়া)</span>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      Just akta fixed headline, subtitle ebong description show korbe, kono slide animation chara.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Multi-slide Content Mode */}
+                <div
+                  onClick={() => {
+                    setHeroTextMode("multi");
+                    updateSettings({ heroTextMode: "multi" });
+                  }}
+                  className={`p-4 rounded-2xl border-2 cursor-pointer transition flex items-start gap-3.5 ${
+                    heroTextMode === "multi"
+                      ? "border-green-600 bg-green-50/70 shadow-sm ring-2 ring-green-500/20"
+                      : "border-gray-200 bg-white hover:border-gray-300"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="heroTextMode"
+                    checked={heroTextMode === "multi"}
+                    onChange={() => {
+                      setHeroTextMode("multi");
+                      updateSettings({ heroTextMode: "multi" });
+                    }}
+                    className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
+                  />
+                  <div>
+                    <span className="text-sm font-black text-gray-900 block">Multiple Texts (Animation সহ)</span>
+                    <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
+                      Carousel slide-er sathe sathe headline o subtitle transition animation soho change hobe.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top Badge with Interactive Icon Selection Palette */}
+              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
                 <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
                   Top Rounded Badge (যেমন: কেমিক্যাল মুক্ত)
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div className="sm:col-span-1">
-                    <label className="text-[11px] font-bold text-gray-600 block mb-1">Badge Icon (Emoji/Icon)</label>
-                    <input
-                      type="text"
-                      value={heroTopBadgeIcon}
-                      onChange={(e) => {
-                        setHeroTopBadgeIcon(e.target.value);
-                        updateSettings({ heroTopBadgeIcon: e.target.value });
-                      }}
-                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold"
-                      placeholder="🍃"
-                    />
+                    <label className="text-[11px] font-bold text-gray-600 block mb-1">
+                      Badge Icon (Emoji / Image)
+                    </label>
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setHeroBadgeIconPickerOpen(!heroBadgeIconPickerOpen)}
+                        className="w-full px-3 py-2 bg-gray-50 border border-gray-300 hover:border-green-500 rounded-xl text-xs font-black flex items-center justify-between cursor-pointer transition"
+                      >
+                        <span className="flex items-center gap-2">
+                          {heroTopBadgeIcon?.startsWith("data:") ||
+                          heroTopBadgeIcon?.startsWith("http") ||
+                          heroTopBadgeIcon?.startsWith("/") ? (
+                            <img
+                              src={heroTopBadgeIcon}
+                              alt="Badge Icon"
+                              className="w-5 h-5 object-contain rounded"
+                            />
+                          ) : (
+                            <span className="text-base">{heroTopBadgeIcon || "🍃"}</span>
+                          )}
+                          <span className="text-gray-600 font-semibold text-[11px]">Select Icon</span>
+                        </span>
+                        <FaSlidersH className="text-gray-400 text-xs" />
+                      </button>
+
+                      {/* Icon Selection Palette Popover */}
+                      {heroBadgeIconPickerOpen && (
+                        <div className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl shadow-2xl border border-gray-300 p-3 w-64 space-y-2.5">
+                          <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
+                            <span className="text-[11px] font-black text-gray-700">Choose Badge Icon</span>
+                            <button
+                              type="button"
+                              onClick={() => setHeroBadgeIconPickerOpen(false)}
+                              className="text-gray-400 hover:text-gray-600 text-xs"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                          {/* Emoji Grid */}
+                          <div className="grid grid-cols-5 gap-1.5">
+                            {["🍃", "🌿", "🥭", "⭐", "👑", "🔥", "✨", "💯", "🏷️", "✅", "📦", "🍎", "🌱", "🍋", "🥇"].map(
+                              (emoji, eIdx) => (
+                                <button
+                                  key={eIdx}
+                                  type="button"
+                                  onClick={() => {
+                                    setHeroTopBadgeIcon(emoji);
+                                    updateSettings({ heroTopBadgeIcon: emoji });
+                                    setHeroBadgeIconPickerOpen(false);
+                                  }}
+                                  className="w-9 h-9 rounded-lg hover:bg-yellow-100 text-lg flex items-center justify-center transition cursor-pointer"
+                                >
+                                  {emoji}
+                                </button>
+                              )
+                            )}
+                          </div>
+                          {/* Custom Icon Image Upload */}
+                          <div className="pt-2 border-t border-gray-100">
+                            <label className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-yellow-100 text-gray-700 text-[11px] font-bold rounded-lg cursor-pointer transition">
+                              <FaUpload className="text-[10px]" /> <span>Upload Custom Icon</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => handleHeroBadgeIconUpload(e.target.files?.[0])}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
+
                   <div className="sm:col-span-2">
                     <label className="text-[11px] font-bold text-gray-600 block mb-1">Badge Text</label>
                     <input
@@ -3324,122 +3472,172 @@ export default function AdminSettings() {
                     placeholder="তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন..."
                   />
                 </div>
-              </div>
 
-              {/* Trust Badges */}
-              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
-                <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
-                  Trust Badges (১০০% রেকমেন্ডেড & ৬+ গ্রাহক রিভিউ)
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-3 rounded-xl bg-green-50/60 border border-green-200 space-y-2">
-                    <span className="text-[11px] font-black text-green-900 block">Trust Badge 1</span>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={heroTrustBadge1Icon}
-                        onChange={(e) => {
-                          setHeroTrustBadge1Icon(e.target.value);
-                          updateSettings({ heroTrustBadge1Icon: e.target.value });
-                        }}
-                        className="w-14 px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-center font-bold"
-                        placeholder="✓"
-                      />
-                      <input
-                        type="text"
-                        value={heroTrustBadge1Text}
-                        onChange={(e) => {
-                          setHeroTrustBadge1Text(e.target.value);
-                          updateSettings({ heroTrustBadge1Text: e.target.value });
-                        }}
-                        className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
-                        placeholder="১০০% রেকমেন্ডেড"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-yellow-50/60 border border-yellow-200 space-y-2">
-                    <span className="text-[11px] font-black text-yellow-900 block">Trust Badge 2</span>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={heroTrustBadge2Icon}
-                        onChange={(e) => {
-                          setHeroTrustBadge2Icon(e.target.value);
-                          updateSettings({ heroTrustBadge2Icon: e.target.value });
-                        }}
-                        className="w-14 px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs text-center font-bold"
-                        placeholder="★"
-                      />
-                      <input
-                        type="text"
-                        value={heroTrustBadge2Text}
-                        onChange={(e) => {
-                          setHeroTrustBadge2Text(e.target.value);
-                          updateSettings({ heroTrustBadge2Text: e.target.value });
-                        }}
-                        className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
-                        placeholder="৬+ গ্রাহক রিভিউ"
-                      />
-                    </div>
-                  </div>
+                {/* Hotline Phone Number Input */}
+                <div className="pt-2 border-t border-gray-100">
+                  <label className="text-xs font-black text-gray-800 flex items-center gap-1.5 mb-1">
+                    <FaPhoneAlt className="text-green-600" /> Phone / Hotline Number (ব্যানারে প্রদর্শিত হটলাইন নম্বর)
+                  </label>
+                  <input
+                    type="text"
+                    value={heroHotlinePhone}
+                    onChange={(e) => {
+                      setHeroHotlinePhone(e.target.value);
+                      setRawHotlinePhone(e.target.value);
+                      updateSettings({
+                        heroHotlinePhone: e.target.value,
+                        rawHotlinePhone: e.target.value,
+                        hotlinePhone: e.target.value,
+                      });
+                    }}
+                    className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-black text-green-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+                    placeholder="০১৭৪৯-৭৭৫০৩০"
+                  />
+                  <p className="text-[11px] text-gray-400 mt-1">
+                    Hero banner-er niche features list-e ei hotline number ti show korbe
+                  </p>
                 </div>
               </div>
+            </div>
 
-              {/* Bottom Feature Badges / Highlights List */}
-              <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
-                <div className="flex items-center justify-between border-b border-gray-100 pb-2">
+            {/* Part 3: Live Hero Section Preview */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
                   <div>
-                    <label className="text-xs font-black text-gray-800 uppercase tracking-wide block">
-                      Bottom Highlights List (ফিচার ও হটলাইন)
-                    </label>
-                    <p className="text-[11px] text-gray-400">
-                      যেমন: সারা দেশ ডেলিভারি, কেমিক্যাল ফ্রি, ০১৭৪৯-৭৭৫০৩০
+                    <h4 className="text-sm font-black text-white">
+                      Live Hero Section Preview
+                    </h4>
+                    <p className="text-xs text-gray-400">
+                      Real-time interactive rendering of homepage hero section
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleAddHighlight}
-                    className="px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-bold rounded-xl shadow flex items-center gap-1 cursor-pointer"
-                  >
-                    <FaPlus className="text-[10px]" /> <span>Add Feature</span>
-                  </button>
                 </div>
 
-                <div className="space-y-2">
-                  {heroHighlights.map((hl, hlIdx) => (
-                    <div
-                      key={hlIdx}
-                      className="p-2.5 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-3 text-xs"
-                    >
-                      <select
-                        value={hl.icon || "truck"}
-                        onChange={(e) => handleUpdateHighlight(hlIdx, "icon", e.target.value)}
-                        className="px-2 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
-                      >
-                        <option value="truck">🚚 Truck / Delivery</option>
-                        <option value="leaf">🍃 Leaf / Organic</option>
-                        <option value="phone">📞 Phone / Hotline</option>
-                      </select>
+                {/* Device Switcher */}
+                <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-xl self-start sm:self-auto text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => setHeroPreviewDevice("desktop")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      heroPreviewDevice === "desktop"
+                        ? "bg-green-600 text-white shadow"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaDesktop /> <span>Desktop</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setHeroPreviewDevice("mobile")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      heroPreviewDevice === "mobile"
+                        ? "bg-green-600 text-white shadow"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaMobileAlt /> <span>Mobile</span>
+                  </button>
+                </div>
+              </div>
 
-                      <input
-                        type="text"
-                        value={hl.text || ""}
-                        onChange={(e) => handleUpdateHighlight(hlIdx, "text", e.target.value)}
-                        placeholder="Feature text e.g. সারা দেশ ডেলিভারি"
-                        className="flex-1 px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold"
-                      />
+              {/* Rendered Live Hero Preview */}
+              <div
+                className="relative rounded-2xl overflow-hidden border border-gray-800 bg-black min-h-[340px] flex items-center bg-cover bg-center p-4 sm:p-8"
+                style={{
+                  backgroundImage: `url(${
+                    heroBgMode === "single"
+                      ? heroSingleImage || "/assets/one.avif"
+                      : heroSlides[0]?.url || "/assets/one.avif"
+                  })`,
+                }}
+              >
+                {/* Dark Gradient Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/70 to-black/55" />
 
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveHighlight(hlIdx)}
-                        className="text-red-500 hover:text-red-700 font-bold p-1 cursor-pointer"
-                        title="Delete feature"
-                      >
-                        <FaTrash />
-                      </button>
+                {/* Content Grid */}
+                <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+                  {/* Left Column Preview */}
+                  <div className="lg:col-span-7 space-y-3 text-left">
+                    {/* Badge */}
+                    <div className="inline-flex items-center bg-yellow-500/90 rounded-full px-3 py-1 text-xs font-black text-green-950 shadow">
+                      {heroTopBadgeIcon?.startsWith("data:") ||
+                      heroTopBadgeIcon?.startsWith("http") ||
+                      heroTopBadgeIcon?.startsWith("/") ? (
+                        <img
+                          src={heroTopBadgeIcon}
+                          alt=""
+                          className="w-3.5 h-3.5 object-contain inline mr-1.5"
+                        />
+                      ) : (
+                        <span className="mr-1 text-green-900">{heroTopBadgeIcon || "🍃"}</span>
+                      )}
+                      <span>{heroTopBadgeText || "কেমিক্যাল মুক্ত"}</span>
                     </div>
-                  ))}
+
+                    {/* Headline */}
+                    <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight leading-tight">
+                      <span className="text-yellow-400">{heroMainTitlePart1 || "আমওয়ালা"}</span>{" "}
+                      <span>{heroMainTitlePart2 || "ভাইয়া"}</span>
+                    </h2>
+
+                    {/* Subtitle */}
+                    <p className="text-sm sm:text-lg font-bold text-yellow-300">
+                      {heroSubtitleText || "প্রিমিয়াম কোয়ালিটি"}
+                    </p>
+
+                    {/* Description */}
+                    <p className="text-xs text-gray-300 leading-relaxed max-w-md line-clamp-3">
+                      {heroDescriptionText ||
+                        "তাজা, রাসায়নিকমুক্ত ও সুগন্ধি আমের প্রি-অর্ডার এখনই করুন। রাজশাহী, চুয়াডাঙ্গা, নওগাঁর সেরা জাত সরাসরি আপনার দোরগোড়ায়।"}
+                    </p>
+
+                    {/* Trust Badges */}
+                    <div className="flex flex-wrap gap-2 pt-1 text-xs">
+                      <span className="px-2.5 py-1 rounded-lg bg-green-600/90 text-white font-bold flex items-center gap-1">
+                        <FaCheckCircle className="text-yellow-400 text-[10px]" /> ১০০% রেকমেন্ডেড
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-yellow-500/90 text-green-950 font-bold flex items-center gap-1">
+                        <FaStar className="text-green-800 text-[10px]" /> ৬+ গ্রাহক রিভিউ
+                      </span>
+                    </div>
+
+                    {/* Hotline Feature */}
+                    <div className="pt-1 text-[11px] text-gray-300 flex items-center gap-3">
+                      <span>🚚 সারা দেশ ডেলিভারি</span>
+                      <span>🍃 কেমিক্যাল ফ্রি</span>
+                      <span className="text-amber-300 font-bold">
+                        📞 {heroHotlinePhone || "০১৭৪৯-৭৭৫০৩০"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Right Column Mini Preview of Form */}
+                  <div className="lg:col-span-5 hidden sm:block">
+                    <div className="bg-white/95 rounded-2xl p-4 text-gray-800 shadow-2xl border border-amber-200 space-y-2 text-xs">
+                      <h5 className="font-black text-green-800 text-center border-b-2 border-yellow-400 pb-1 text-sm">
+                        🍋 অর্ডার ফর্ম
+                      </h5>
+                      <div className="h-7 bg-yellow-50 rounded-lg border border-amber-200 px-2 flex items-center text-gray-400 text-[11px]">
+                        আপনার নাম *
+                      </div>
+                      <div className="h-7 bg-yellow-50 rounded-lg border border-amber-200 px-2 flex items-center text-gray-400 text-[11px]">
+                        মোবাইল নম্বর *
+                      </div>
+                      <div className="h-7 bg-yellow-50 rounded-lg border border-amber-300 px-2 flex items-center justify-between text-gray-700 font-bold text-[11px]">
+                        <span>পছন্দের পণ্য নির্বাচন করুন *</span>
+                        <span>▼</span>
+                      </div>
+                      <div className="p-1.5 bg-green-50 rounded-lg border border-green-200 flex justify-between font-black text-green-900 text-[11px]">
+                        <span>সর্বমোট মূল্য:</span>
+                        <span>৳ 0</span>
+                      </div>
+                      <div className="h-7 bg-gradient-to-r from-yellow-500 to-green-600 rounded-lg flex items-center justify-center text-white font-black text-[11px] shadow">
+                        প্রি-অর্ডার নিশ্চিত করুন
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

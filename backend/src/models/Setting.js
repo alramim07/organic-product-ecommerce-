@@ -84,6 +84,15 @@ const settingSchema = new mongoose.Schema(
       enum: ["carousel", "single"],
       default: "carousel",
     },
+    heroTextMode: {
+      type: String,
+      enum: ["single", "multi"],
+      default: "single",
+    },
+    heroHotlinePhone: {
+      type: String,
+      default: "০১৭৪৯-৭৭৫০৩০",
+    },
     heroSingleImage: {
       type: String,
       default: "/assets/one.avif",

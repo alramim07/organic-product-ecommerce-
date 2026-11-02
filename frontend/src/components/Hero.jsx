@@ -55,6 +55,7 @@ export default function Hero({ onBookingSubmit }) {
 
   // Background Settings
   const bgMode = settings?.heroBgMode || "carousel"; // "carousel" | "single"
+  const textMode = settings?.heroTextMode || "single"; // "single" | "multi"
   const singleImage = settings?.heroSingleImage || "/assets/one.avif";
   const activeSlides =
     settings?.heroSlides && settings.heroSlides.length > 0
@@ -252,19 +253,31 @@ export default function Hero({ onBookingSubmit }) {
             className="text-center lg:text-left text-white"
           >
             <motion.div
-              key={`title-${currentSlide}`}
-              initial={{ opacity: 0, y: 20 }}
+              key={textMode === "multi" ? `title-${currentSlide}` : "single-title"}
+              initial={textMode === "multi" ? { opacity: 0, y: 20 } : false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               className="mb-4"
             >
               {/* Top Badge: "কেমিক্যাল মুক্ত" */}
               <div className="inline-flex items-center bg-yellow-500/90 backdrop-blur-sm rounded-full px-4 py-1.5 text-xs sm:text-sm font-black text-green-950 mb-3.5 shadow-md">
-                <span className="mr-1.5 text-green-900">{settings?.heroTopBadgeIcon || "🍃"}</span>
+                {settings?.heroTopBadgeIcon?.startsWith("data:") ||
+                settings?.heroTopBadgeIcon?.startsWith("http") ||
+                settings?.heroTopBadgeIcon?.startsWith("/") ? (
+                  <img
+                    src={settings.heroTopBadgeIcon}
+                    alt=""
+                    className="w-4 h-4 object-contain inline mr-1.5"
+                  />
+                ) : (
+                  <span className="mr-1.5 text-green-900">
+                    {settings?.heroTopBadgeIcon || "🍃"}
+                  </span>
+                )}
                 <span>
-                  {settings?.heroTopBadgeText ||
-                    (bgMode === "carousel" ? activeSlides[currentSlide]?.subtitle : "কেমিক্যাল মুক্ত") ||
-                    "কেমিক্যাল মুক্ত"}
+                  {textMode === "multi"
+                    ? activeSlides[currentSlide]?.subtitle || "কেমিক্যাল মুক্ত"
+                    : settings?.heroTopBadgeText || "কেমিক্যাল মুক্ত"}
                 </span>
               </div>
 
@@ -280,9 +293,9 @@ export default function Hero({ onBookingSubmit }) {
 
               {/* Hero Subtitle / Quality Highlight: "প্রিমিয়াম কোয়ালিটি" */}
               <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-yellow-300 mt-3 drop-shadow">
-                {settings?.heroSubtitleText ||
-                  (bgMode === "carousel" ? activeSlides[currentSlide]?.title : "প্রিমিয়াম কোয়ালিটি") ||
-                  "প্রিমিয়াম কোয়ালিটি"}
+                {textMode === "multi"
+                  ? activeSlides[currentSlide]?.title || "প্রিমিয়াম কোয়ালিটি"
+                  : settings?.heroSubtitleText || "প্রিমিয়াম কোয়ালিটি"}
               </p>
             </motion.div>
 
@@ -298,21 +311,26 @@ export default function Hero({ onBookingSubmit }) {
             <div className="flex flex-wrap justify-center lg:justify-start gap-3 sm:gap-4 mt-6">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-green-600/95 backdrop-blur-sm border border-green-400 text-white font-bold text-xs sm:text-sm shadow-md">
                 <FaCheckCircle className="text-yellow-400 text-base shrink-0" />
-                <span>{settings?.heroTrustBadge1Text || "১০০% রেকমেন্ডেড"}</span>
+                <span>১০০% রেকমেন্ডেড</span>
               </div>
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-yellow-500/95 backdrop-blur-sm border border-yellow-400 text-green-950 font-black text-xs sm:text-sm shadow-md">
                 <FaStar className="text-green-800 text-base shrink-0" />
-                <span>{settings?.heroTrustBadge2Text || "৬+ গ্রাহক রিভিউ"}</span>
+                <span>৬+ গ্রাহক রিভিউ</span>
               </div>
             </div>
 
-            {/* Bottom Highlights List */}
+            {/* Bottom Highlights with Dynamic Hotline Phone */}
             <div className="mt-6 flex flex-wrap gap-4 text-xs sm:text-sm text-gray-200 justify-center lg:justify-start">
-              {highlights.map((hl, idx) => (
-                <span key={idx} className="flex items-center font-bold">
-                  {renderHighlightIcon(hl.icon)} {hl.text}
-                </span>
-              ))}
+              <span className="flex items-center font-bold">
+                <FaTruck className="inline text-yellow-400 mr-1.5" /> সারা দেশ ডেলিভারি
+              </span>
+              <span className="flex items-center font-bold">
+                <FaLeaf className="inline text-green-400 mr-1.5" /> কেমিক্যাল ফ্রি
+              </span>
+              <span className="flex items-center font-bold">
+                <FaPhoneAlt className="inline text-amber-300 mr-1.5" />{" "}
+                {settings?.heroHotlinePhone || settings?.rawHotlinePhone || "০১৭৪৯-৭৭৫০৩০"}
+              </span>
             </div>
           </motion.div>
 

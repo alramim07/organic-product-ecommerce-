@@ -117,12 +117,9 @@ export default function ProductMultiSelector({
     <div className={`space-y-3 ${className}`} ref={dropdownRef}>
       {/* Trigger & Search Bar Box */}
       <div className="relative">
-        <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center justify-between">
+        <label className="block text-xs font-bold text-gray-700 mb-1">
           <span className="flex items-center gap-1.5 text-green-950 font-black">
-            <FaBoxes className="text-amber-500" /> পছন্দের পণ্য নির্বাচন করুন * (Select Products)
-          </span>
-          <span className="text-[11px] text-gray-500 font-normal">
-            একাধিক পণ্য যোগ করা যাবে
+            <FaBoxes className="text-amber-500" /> পছন্দের পণ্য নির্বাচন করুন *
           </span>
         </label>
 

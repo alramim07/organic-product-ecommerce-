@@ -98,6 +98,8 @@ export function AppProvider({ children }) {
             noticeText:
               "📢 রাজশাহীর বিখ্যাত হিমসাগর, গোপালভোগ আম এবং সুন্দরবনের খাঁটি মধুর প্রি-অর্ডার শুরু হয়েছে!",
             heroBgMode: "carousel",
+            heroTextMode: "single",
+            heroHotlinePhone: "০১৭৪৯-৭৭৫০৩০",
             heroSingleImage: "/assets/one.avif",
             heroSlides: [
               { url: "/assets/one.avif", title: "তাজা ও রসালো আম", subtitle: "সরাসরি বাগান থেকে" },
