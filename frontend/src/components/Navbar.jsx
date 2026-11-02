@@ -228,25 +228,6 @@ export default function Navbar() {
         </div>
       </motion.header>
 
-      {/* Floating Social Icons Bar (Desktop Left Edge) */}
-      <div className="hidden lg:flex fixed left-4 top-1/2 transform -translate-y-1/2 flex-col gap-3 z-40">
-        {floatingSocials.map((item, index) => (
-          <motion.a
-            key={index}
-            href={item.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.1 }}
-            whileHover={{ scale: 1.2, x: 5 }}
-            className={`${item.color} w-10 h-10 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all cursor-pointer`}
-          >
-            {item.icon}
-          </motion.a>
-        ))}
-      </div>
-
       {/* Mobile Menu Drawer */}
       <motion.div
         initial={{ opacity: 0, x: "-100%" }}
