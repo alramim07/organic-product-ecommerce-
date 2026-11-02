@@ -1,0 +1,29 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@theme {
+  --font-bangla: 'Noto Sans Bengali', 'Hind Siliguri', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  font-family: var(--font-bangla);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #4ade80;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #22c55e;
+}
