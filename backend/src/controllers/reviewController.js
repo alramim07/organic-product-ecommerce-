@@ -109,6 +109,11 @@ export const createReview = async (req, res) => {
         .slice(0, 4);
     }
 
+    const reviewStatus =
+      req.body.status && ["pending", "approved", "rejected"].includes(req.body.status)
+        ? req.body.status
+        : "pending";
+
     const newReview = await Review.create({
       productId: sanitizeText(productId),
       productName: sanitizeText(productName) || "পণ্য",
@@ -117,7 +122,7 @@ export const createReview = async (req, res) => {
       rating: Math.round(numRating),
       comment: cleanComment,
       images: cleanImages,
-      status: "pending", // Force pending for customer review moderation
+      status: reviewStatus,
       isVerified: true,
     });
 

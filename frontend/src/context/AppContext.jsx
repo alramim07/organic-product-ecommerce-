@@ -692,6 +692,9 @@ export function AppProvider({ children }) {
   const submitReview = async (reviewData) => {
     try {
       const res = await api.reviews.create(reviewData);
+      if (res && res.success && adminToken) {
+        fetchAdminReviews();
+      }
       return res;
     } catch (e) {
       console.error("Submit review error:", e);
