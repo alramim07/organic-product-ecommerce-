@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaCheckCircle,
@@ -11,15 +12,50 @@ import {
   FaCalendarAlt,
   FaShoppingBag,
 } from "react-icons/fa";
+import { useApp } from "../context/AppContext";
 
 export default function OrderInvoiceModal({ isOpen, onClose, order }) {
+  const { settings } = useApp();
   const printRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.classList.add("order-invoice-open");
+    } else {
+      document.body.classList.remove("order-invoice-open");
+      document.body.classList.remove("printing-order-invoice");
+    }
+    return () => {
+      document.body.classList.remove("order-invoice-open");
+      document.body.classList.remove("printing-order-invoice");
+    };
+  }, [isOpen]);
 
   if (!isOpen || !order) return null;
 
   const handlePrint = () => {
+    document.body.classList.add("printing-order-invoice");
     window.print();
+    setTimeout(() => {
+      document.body.classList.remove("printing-order-invoice");
+    }, 1500);
   };
+
+  const brandLogo =
+    settings?.websiteLogo ||
+    settings?.logo ||
+    settings?.websiteFavicon ||
+    "";
+
+  const brandName =
+    settings?.siteName ||
+    settings?.businessName ||
+    "আমওয়ালা ভাইয়া";
+
+  const hotlinePhone =
+    settings?.hotlinePhone ||
+    settings?.rawHotlinePhone ||
+    "০১৭৪৯-৭৭৫০৩০";
 
   const items = order.items && order.items.length > 0 ? order.items : [
     {
@@ -45,28 +81,38 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
         day: "numeric",
       });
 
-  return (
+  return createPortal(
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-white">
+      <div className="order-invoice-portal fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm overflow-y-auto print:p-0 print:bg-white print:static print:overflow-visible">
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="bg-white rounded-3xl shadow-2xl max-w-xl w-full overflow-hidden border border-amber-200 my-8 print:shadow-none print:border-none print:my-0 print:max-w-none print:w-full"
+          className="order-invoice-card bg-white rounded-3xl shadow-2xl max-w-xl w-full overflow-hidden border border-amber-200 my-8 print:shadow-none print:border-none print:my-0 print:max-w-none print:w-full"
         >
           {/* Printable Invoice Container */}
-          <div ref={printRef} className="p-6 sm:p-8 space-y-6 print:p-8">
+          <div ref={printRef} className="p-6 sm:p-8 space-y-6 print:p-6 print:space-y-4">
             {/* Header / Brand */}
-            <div className="flex items-start justify-between border-b border-amber-200 pb-5">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md">
-                  <FaLeaf />
-                </div>
+            <div className="flex items-center justify-between border-b border-amber-200 pb-5 print:pb-3">
+              <div className="flex items-center gap-3.5">
+                {brandLogo ? (
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border border-amber-200 bg-white flex items-center justify-center shrink-0 shadow-sm print:border-gray-300 print:shadow-none">
+                    <img
+                      src={brandLogo}
+                      alt={brandName}
+                      className="w-full h-full object-contain p-1"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md shrink-0 print:bg-emerald-600">
+                    <FaLeaf className="text-white text-2xl" />
+                  </div>
+                )}
                 <div>
-                  <h3 className="text-xl font-black text-green-900 tracking-tight">
-                    আমওয়ালা ভাইয়া
+                  <h3 className="text-xl font-black text-green-900 tracking-tight print:text-2xl">
+                    {brandName}
                   </h3>
-                  <p className="text-xs text-amber-700 font-semibold">
+                  <p className="text-xs text-amber-700 font-semibold print:text-gray-600">
                     অর্ডার ইনভয়েস ও রসিদ (Customer Invoice)
                   </p>
                 </div>
@@ -84,7 +130,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </div>
 
             {/* Success Banner */}
-            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center gap-3 print:border-gray-200">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 flex items-center gap-3 print:border-emerald-300 print:py-2.5">
               <FaCheckCircle className="text-emerald-600 text-2xl shrink-0" />
               <div>
                 <p className="text-xs font-black text-emerald-900">
@@ -97,7 +143,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </div>
 
             {/* Invoice Meta Grid */}
-            <div className="grid grid-cols-2 gap-4 bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60 text-xs">
+            <div className="grid grid-cols-2 gap-4 bg-amber-50/60 p-4 rounded-2xl border border-amber-200/60 text-xs print:bg-gray-50 print:border-gray-200">
               <div>
                 <span className="text-gray-500 block text-[10px] uppercase font-bold">
                   ইনভয়েস / অর্ডার নম্বর
@@ -115,7 +161,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </div>
 
             {/* Customer Details */}
-            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2 text-xs">
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-200 space-y-2 text-xs print:bg-white print:border-gray-200">
               <h4 className="font-black text-gray-900 uppercase text-[11px] tracking-wide border-b border-gray-200 pb-1">
                 গ্রাহকের তথ্য (Customer Details)
               </h4>
@@ -146,9 +192,9 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </div>
 
             {/* Itemized Table */}
-            <div className="overflow-x-auto rounded-2xl border border-gray-200">
+            <div className="overflow-x-auto rounded-2xl border border-gray-200 print:overflow-visible">
               <table className="w-full text-xs text-left">
-                <thead className="bg-gradient-to-r from-amber-100/80 to-yellow-100/80 text-green-950 font-black border-b border-amber-200">
+                <thead className="bg-gradient-to-r from-amber-100/80 to-yellow-100/80 text-green-950 font-black border-b border-amber-200 print:bg-amber-100">
                   <tr>
                     <th className="py-2.5 px-3">পণ্য (Product)</th>
                     <th className="py-2.5 px-3 text-center">দর (Price)</th>
@@ -160,7 +206,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
                   {items.map((item, idx) => (
                     <tr key={idx} className="hover:bg-amber-50/40">
                       <td className="py-2.5 px-3 font-bold text-gray-900">
-                        {item.productName}
+                        {item.productName || item.name || order.mangoName || "আম"}
                       </td>
                       <td className="py-2.5 px-3 text-center text-gray-700">
                         ৳ {item.price}
@@ -178,7 +224,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </div>
 
             {/* Grand Total */}
-            <div className="bg-gradient-to-r from-green-50 to-amber-50 p-4 rounded-2xl border border-green-200 flex items-center justify-between">
+            <div className="bg-gradient-to-r from-green-50 to-amber-50 p-4 rounded-2xl border border-green-200 flex items-center justify-between print:bg-green-50/60 print:border-green-300">
               <div>
                 <span className="text-xs font-bold text-gray-600 block">
                   পরিশোধের ধরণ: ক্যাশ অন ডেলিভারি (COD)
@@ -198,8 +244,8 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
             </div>
 
             {/* Print Note */}
-            <p className="text-[10px] text-center text-gray-400 border-t border-gray-100 pt-3">
-              হটলাইন: ০১৭৪৯-৭৭৫০৩০ | ওয়েবসাইট: ammwala.com | ধন্যবাদ আমওয়ালা ভাইয়ার সাথে থাকার জন্য!
+            <p className="text-[10px] text-center text-gray-400 border-t border-gray-100 pt-3 print:text-gray-500">
+              হটলাইন: {hotlinePhone} | ওয়েবসাইট: {typeof window !== "undefined" ? window.location.host : "ammwala.com"} | ধন্যবাদ {brandName}-র সাথে থাকার জন্য!
             </p>
           </div>
 
@@ -222,6 +268,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
           </div>
         </motion.div>
       </div>
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }

@@ -54,3 +54,52 @@ html {
   filter: brightness(1.08);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.18);
 }
+
+/* Print Styles for Clean 1-Page Customer Invoice */
+@media print {
+  /* Hide the rest of the application so only the invoice prints on 1 page */
+  body.order-invoice-open > #root,
+  body.printing-order-invoice > #root {
+    display: none !important;
+  }
+
+  body.order-invoice-open,
+  body.printing-order-invoice {
+    background: #ffffff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .order-invoice-portal {
+    position: static !important;
+    display: block !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    inset: auto !important;
+  }
+
+  .order-invoice-card {
+    box-shadow: none !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Force browsers to print backgrounds, logos and borders */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  @page {
+    size: auto;
+    margin: 10mm;
+  }
+}
