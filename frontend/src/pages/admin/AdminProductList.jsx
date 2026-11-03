@@ -44,6 +44,37 @@ export default function AdminProductList() {
     });
   };
 
+  // Filter counts
+  const inStockCount = products.filter(
+    (p) =>
+      p.stock_status?.toLowerCase().includes("in stock") ||
+      p.stock_status?.includes("ইন স্টক")
+  ).length;
+
+  const preOrderCount = products.filter(
+    (p) =>
+      p.stock_status?.toLowerCase().includes("pre-order") ||
+      p.stock_status?.includes("প্রি-অর্ডার")
+  ).length;
+
+  const limitedCount = products.filter(
+    (p) =>
+      p.stock_status?.toLowerCase().includes("limited") ||
+      p.stock_status?.includes("সীমিত")
+  ).length;
+
+  const outOfStockCount = products.filter(
+    (p) =>
+      p.stock_status?.toLowerCase().includes("out of stock") ||
+      p.stock_status?.includes("স্টক শেষ") ||
+      p.stock_status?.includes("আউট অব স্টক")
+  ).length;
+
+  const draftCount = products.filter((p) => p.publication_status === "draft").length;
+  const publishedCount = products.filter(
+    (p) => p.publication_status === "published" || !p.publication_status
+  ).length;
+
   // Filtered products
   const filteredProducts = products.filter((p) => {
     const matchesSearch =
@@ -58,7 +89,17 @@ export default function AdminProductList() {
           p.stock_status?.includes("ইন স্টক"))) ||
       (statusFilter === "pre_order" &&
         (p.stock_status?.toLowerCase().includes("pre-order") ||
-          p.stock_status?.includes("প্রি-অর্ডার")));
+          p.stock_status?.includes("প্রি-অর্ডার"))) ||
+      (statusFilter === "limited_stock" &&
+        (p.stock_status?.toLowerCase().includes("limited") ||
+          p.stock_status?.includes("সীমিত"))) ||
+      (statusFilter === "out_of_stock" &&
+        (p.stock_status?.toLowerCase().includes("out of stock") ||
+          p.stock_status?.includes("স্টক শেষ") ||
+          p.stock_status?.includes("আউট অব স্টক"))) ||
+      (statusFilter === "draft" && p.publication_status === "draft") ||
+      (statusFilter === "published" &&
+        (p.publication_status === "published" || !p.publication_status));
 
     return matchesSearch && matchesStatus;
   });
@@ -176,8 +217,12 @@ export default function AdminProductList() {
             className="w-full sm:w-auto px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer"
           >
             <option value="all">All Products ({products.length})</option>
-            <option value="in_stock">In Stock</option>
-            <option value="pre_order">Pre-Order</option>
+            <option value="in_stock">In Stock ({inStockCount})</option>
+            <option value="pre_order">Pre-Order ({preOrderCount})</option>
+            <option value="limited_stock">Limited Stock ({limitedCount})</option>
+            <option value="out_of_stock">Out of Stock ({outOfStockCount})</option>
+            <option value="published">Published ({publishedCount})</option>
+            <option value="draft">Drafts ({draftCount})</option>
           </select>
         </div>
       </div>
@@ -312,7 +357,20 @@ export default function AdminProductList() {
                       </td>
                       <td className="py-3 px-4">
                         <div className="space-y-1">
-                          <span className="px-2.5 py-0.5 bg-green-50 border border-green-200 text-green-800 font-bold text-xs rounded-full inline-block">
+                          <span
+                            className={`px-2.5 py-0.5 border font-bold text-xs rounded-full inline-block ${
+                              p.stock_status?.includes("সীমিত") ||
+                              p.stock_status?.toLowerCase().includes("limited")
+                                ? "bg-amber-50 border-amber-300 text-amber-900"
+                                : p.stock_status?.includes("স্টক শেষ") ||
+                                  p.stock_status?.toLowerCase().includes("out of stock")
+                                ? "bg-red-50 border-red-300 text-red-800"
+                                : p.stock_status?.includes("প্রি-অর্ডার") ||
+                                  p.stock_status?.toLowerCase().includes("pre-order")
+                                ? "bg-blue-50 border-blue-300 text-blue-800"
+                                : "bg-green-50 border-green-200 text-green-800"
+                            }`}
+                          >
                             {p.stock_status || "In Stock"}
                           </span>
                           {p.publication_status === "draft" && (
