@@ -484,7 +484,7 @@ export default function SingleProductPage() {
                     : pos === "top-left"
                     ? [
                         { text: "১০০% কেমিক্যালমুক্ত", type: "normal", color: "green" },
-                        ...(product.discount_percent
+                        ...(Number(product.discount_percent) > 0
                           ? [
                               {
                                 text: `${product.discount_percent}% ছাড়`,
@@ -497,6 +497,8 @@ export default function SingleProductPage() {
                     : pos === "top-right"
                     ? [{ text: "প্রিমিয়াম গ্রেড", type: "normal", color: "amber" }]
                     : []
+                ).filter(
+                  (b) => b.type !== "discount" || Number(product.discount_percent) > 0
                 );
 
                 const statusBadges = [];
@@ -655,38 +657,49 @@ export default function SingleProductPage() {
               </div>
 
               {/* Price Block */}
-              <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border border-yellow-200 flex items-center justify-between flex-wrap gap-3">
-                <div>
-                  <span className="text-xs text-gray-500 font-medium block">
-                    প্রতি {product.unit || "কেজি"} মূল্য
-                  </span>
-                  <div className="flex items-baseline gap-3 flex-wrap">
-                    <span className="text-3xl sm:text-4xl font-black text-green-800">
-                      ৳ {product.price_per_unit || product.price_per_kg}
-                    </span>
-                    {Number(product.regular_price_per_unit || product.regular_price_per_kg) >
-                      Number(product.price_per_unit || product.price_per_kg) && (
-                      <>
-                        <span className="text-lg text-gray-400 line-through font-semibold">
-                          ৳ {product.regular_price_per_unit || product.regular_price_per_kg}
+              {(() => {
+                const sellPriceNum = Number(
+                  String(product.price_per_unit ?? product.price_per_kg ?? product.price ?? 0)
+                    .replace(/[^\d.]/g, "")
+                ) || 0;
+                const regPriceNum = Number(
+                  String(product.regular_price_per_unit ?? product.regular_price_per_kg ?? 0)
+                    .replace(/[^\d.]/g, "")
+                ) || 0;
+                const hasDiscountOffer = regPriceNum > sellPriceNum && sellPriceNum > 0;
+                const savingsAmount = hasDiscountOffer ? regPriceNum - sellPriceNum : 0;
+
+                return (
+                  <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border border-yellow-200 flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                      <span className="text-xs text-gray-500 font-medium block">
+                        প্রতি {product.unit || "কেজি"} মূল্য
+                      </span>
+                      <div className="flex items-baseline gap-3 flex-wrap">
+                        <span className="text-3xl sm:text-4xl font-black text-green-800">
+                          ৳ {sellPriceNum || product.price_per_unit || product.price_per_kg}
                         </span>
-                        <span className="text-xs text-green-700 font-bold bg-green-100 px-2.5 py-0.5 rounded-full">
-                          প্রতি {product.unit || "কেজিতে"} ৳
-                          {Number(product.regular_price_per_unit || product.regular_price_per_kg) -
-                            Number(product.price_per_unit || product.price_per_kg)}{" "}
-                          সাশ্রয়
-                        </span>
-                      </>
-                    )}
+                        {hasDiscountOffer && (
+                          <>
+                            <span className="text-lg text-gray-400 line-through font-semibold">
+                              ৳ {regPriceNum}
+                            </span>
+                            <span className="text-xs text-green-700 font-bold bg-green-100 px-2.5 py-0.5 rounded-full">
+                              প্রতি {product.unit || "কেজিতে"} ৳{savingsAmount} সাশ্রয়
+                            </span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-xs text-gray-500">সর্বনিম্ন অর্ডার</span>
+                      <span className="text-sm font-bold text-amber-900 block">
+                        {product.min_order || (product.min_order_kg ? `${product.min_order_kg} ${product.unit || "কেজি"} বক্স` : `৫ ${product.unit || "কেজি"} বক্স`)}
+                      </span>
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <span className="text-xs text-gray-500">সর্বনিম্ন অর্ডার</span>
-                  <span className="text-sm font-bold text-amber-900 block">
-                    {product.min_order || (product.min_order_kg ? `${product.min_order_kg} ${product.unit || "কেজি"} বক্স` : `৫ ${product.unit || "কেজি"} বক্স`)}
-                  </span>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* Regional Schedule Info Banner (Optional & Fully Configurable) */}
               {product.show_region_schedule !== false && product.regionDates && (
@@ -733,9 +746,11 @@ export default function SingleProductPage() {
                         <p className="text-green-800 font-black text-lg mt-0.5">
                           ৳ {pkg.price}
                         </p>
-                        <p className="text-[11px] text-gray-400 line-through">
-                          ৳ {pkg.originalPrice}
-                        </p>
+                        {Number(pkg.originalPrice) > Number(pkg.price) && (
+                          <p className="text-[11px] text-gray-400 line-through">
+                            ৳ {pkg.originalPrice}
+                          </p>
+                        )}
                       </button>
                     );
                   })}

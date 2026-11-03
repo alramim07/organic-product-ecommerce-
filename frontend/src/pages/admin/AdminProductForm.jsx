@@ -583,13 +583,15 @@ export default function AdminProductForm() {
     );
   };
   const addPackage = () => {
+    const curSell = Number(pricePerUnit) || 180;
+    const curReg = hasDiscount && Number(regularPricePerUnit) > curSell ? Number(regularPricePerUnit) : curSell;
     setPackages((prev) => [
       ...prev,
       {
         kg: (prev.length + 1) * 5,
         label: `${(prev.length + 1) * 5} ${unit} মেগা প্যাক`,
-        price: (Number(pricePerUnit) || 180) * (prev.length + 1) * 5,
-        originalPrice: (Number(regularPricePerUnit) || 210) * (prev.length + 1) * 5,
+        price: curSell * (prev.length + 1) * 5,
+        originalPrice: hasDiscount ? curReg * (prev.length + 1) * 5 : curSell * (prev.length + 1) * 5,
         badge: "স্পেশাল",
       },
     ]);
@@ -730,7 +732,13 @@ export default function AdminProductForm() {
           rating: Number(rating) || 5.0,
           total_reviews: Number(totalReviews) || 0,
           is_featured: isFeatured,
-          packages: packages,
+          packages: (packages || []).map((pkg) => ({
+            ...pkg,
+            originalPrice:
+              hasDiscount && Number(pkg.originalPrice) > Number(pkg.price)
+                ? Number(pkg.originalPrice)
+                : Number(pkg.price),
+          })),
           taste_specs: tasteSpecs,
           highlights: highlights,
           tab1_icon: (tab1Icon || "").trim(),
@@ -850,7 +858,13 @@ export default function AdminProductForm() {
       rating: Number(rating) || 5.0,
       total_reviews: Number(totalReviews) || 0,
       is_featured: isFeatured,
-      packages: packages,
+      packages: (packages || []).map((pkg) => ({
+        ...pkg,
+        originalPrice:
+          hasDiscount && Number(pkg.originalPrice) > Number(pkg.price)
+            ? Number(pkg.originalPrice)
+            : Number(pkg.price),
+      })),
       taste_specs: tasteSpecs,
       highlights: highlights,
       tab1_icon: tab1Icon,
@@ -948,7 +962,13 @@ export default function AdminProductForm() {
       rating: Number(rating) || 5.0,
       total_reviews: Number(totalReviews) || 0,
       is_featured: isFeatured,
-      packages: packages,
+      packages: (packages || []).map((pkg) => ({
+        ...pkg,
+        originalPrice:
+          hasDiscount && Number(pkg.originalPrice) > Number(pkg.price)
+            ? Number(pkg.originalPrice)
+            : Number(pkg.price),
+      })),
       taste_specs: tasteSpecs,
       highlights: highlights,
       tab1_icon: (tab1Icon || "").trim(),
@@ -2139,16 +2159,18 @@ export default function AdminProductForm() {
                           className="w-20 bg-white border border-green-300 rounded-lg px-2 py-0.5 text-sm font-black text-green-800 focus:outline-none"
                         />
                       </div>
-                      <div className="flex items-center gap-1 text-gray-400 line-through">
-                        <span className="text-xs">৳</span>
-                        <input
-                          type="number"
-                          value={pkg.originalPrice || ""}
-                          onChange={(e) => handlePackageChange(idx, "originalPrice", Number(e.target.value))}
-                          placeholder="রেগুলার"
-                          className="w-16 bg-white border border-gray-200 rounded-lg px-1.5 py-0.5 text-xs text-gray-400 line-through focus:outline-none"
-                        />
-                      </div>
+                      {hasDiscount && (
+                        <div className="flex items-center gap-1 text-gray-400 line-through">
+                          <span className="text-xs">৳</span>
+                          <input
+                            type="number"
+                            value={pkg.originalPrice || ""}
+                            onChange={(e) => handlePackageChange(idx, "originalPrice", Number(e.target.value))}
+                            placeholder="রেগুলার"
+                            className="w-16 bg-white border border-gray-200 rounded-lg px-1.5 py-0.5 text-xs text-gray-400 line-through focus:outline-none"
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

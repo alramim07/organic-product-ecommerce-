@@ -271,12 +271,15 @@ export default function MangoVarieties({ onSelectMango }) {
   // Top-left corner displays Stock Out or Limited tag at the very top above other tags
   const renderProductBadges = (mango) => {
     const stockInfo = getProductStockInfo(mango);
-    const badgesList =
+    const rawBadges =
       Array.isArray(mango.image_badges) && mango.image_badges.length > 0
         ? mango.image_badges
         : Array.isArray(mango.imageBadges) && mango.imageBadges.length > 0
         ? mango.imageBadges
         : [];
+    const badgesList = rawBadges.filter(
+      (b) => b.type !== "discount" || Number(mango.discount_percent) > 0
+    );
 
     return (
       <>
