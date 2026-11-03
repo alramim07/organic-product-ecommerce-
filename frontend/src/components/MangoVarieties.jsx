@@ -123,8 +123,18 @@ export default function MangoVarieties({ onSelectMango }) {
   const showMoreBtnText = settings?.productShowMoreBtnText || "Show More Products";
   const collapseBtnText = settings?.productCollapseBtnText || "Collapse Products";
 
-  // Base Products List
-  const allAvailable = products || [];
+  // Base Products List - Filter ONLY published products for public catalog
+  const allAvailable = (products || []).filter((p) => {
+    if (p.publication_status === "draft") return false;
+    if (
+      p.publication_status === "scheduled" &&
+      p.scheduled_at &&
+      new Date(p.scheduled_at) > new Date()
+    ) {
+      return false;
+    }
+    return p.publication_status === "published" || !p.publication_status;
+  });
 
   // Filter or arrange products based on displayMode
   let displayList = [];

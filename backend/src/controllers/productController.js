@@ -4,7 +4,7 @@ import Product from "../models/Product.js";
 // @route   GET /api/products
 // @access  Public
 export const getProducts = async (req, res) => {
-  const { category, search, stock_status } = req.query;
+  const { category, search, stock_status, publication_status } = req.query;
 
   const query = {};
 
@@ -14,6 +14,10 @@ export const getProducts = async (req, res) => {
 
   if (stock_status) {
     query.stock_status = stock_status;
+  }
+
+  if (publication_status) {
+    query.publication_status = publication_status;
   }
 
   if (search) {

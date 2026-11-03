@@ -30,8 +30,16 @@ export default function ProductMultiSelector({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Filter out of stock products
+  // Filter out of stock, draft, and future-scheduled products
   const availableProducts = (products || []).filter((p) => {
+    if (p.publication_status === "draft") return false;
+    if (
+      p.publication_status === "scheduled" &&
+      p.scheduled_at &&
+      new Date(p.scheduled_at) > new Date()
+    ) {
+      return false;
+    }
     const status = (p.stock_status || "").toLowerCase();
     return (
       status !== "স্টক আউট" &&
