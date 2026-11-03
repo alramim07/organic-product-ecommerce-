@@ -193,8 +193,18 @@ export default function Footer() {
   const returnPolicyText = settings?.footerReturnPolicyText || "৭ দিনের রিটার্ন পলিসি";
   const returnPolicyLink = settings?.footerReturnPolicyLink || "#";
 
-  // 10. Copyright & Developer Credits
-  const copyrightText = settings?.footerCopyrightText || "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত";
+  // 10. Copyright & Developer Credits (Auto Dynamic Year)
+  const rawCopyright = settings?.footerCopyrightText || "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত";
+  const processedCopyright = rawCopyright.includes("{year}")
+    ? rawCopyright.replace(/{year}/gi, currentYear)
+    : rawCopyright;
+  const startsWithCopyright = processedCopyright.trim().startsWith("©");
+  const includesYear = processedCopyright.includes(String(currentYear));
+
+  const displayCopyright = startsWithCopyright
+    ? (includesYear ? processedCopyright : `© ${currentYear} ${processedCopyright.replace(/^©\s*/, "")}`)
+    : (includesYear ? `© ${processedCopyright}` : `© ${currentYear} ${processedCopyright}`);
+
   const privacyText = settings?.footerPrivacyPolicyText || "গোপনীয়তা নীতি";
   const privacyLink = settings?.footerPrivacyPolicyLink || "#";
   const termsText = settings?.footerTermsText || "সেবার শর্তাবলী";
@@ -501,7 +511,7 @@ export default function Footer() {
         {/* Bottom Copyright & Credits (NO Admin Dashboard link, English DevHome credit) */}
         <div className="text-center pt-6 border-t border-white/10 space-y-2">
           <p className="text-gray-400 text-sm">
-            © {currentYear} {copyrightText} |
+            {displayCopyright} |
             <a
               href={privacyLink || "#"}
               className="hover:text-yellow-400 transition-colors ml-1"

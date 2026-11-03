@@ -8738,8 +8738,9 @@ export default function AdminSettings() {
                     placeholder="আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
                     className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
                   />
-                  <p className="text-[10px] text-gray-400 mt-1">
-                    Automatically rendered on the website with © {new Date().getFullYear()}.
+                  <p className="text-[11px] text-emerald-700 font-semibold mt-1.5 flex items-center gap-1.5">
+                    <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>স্বয়ংক্রিয় সাল চালু: ওয়েবসাইটে প্রতি বছর অটোমেটিক বর্তমান সাল (© {new Date().getFullYear()}) রেন্ডার হবে। আপনি চাইলে টেক্সটের যেকোনো জায়গায় <code>&#123;year&#125;</code> ভ্যারিয়েবলও ব্যবহার করতে পারেন।</span>
                   </p>
                 </div>
 
@@ -9021,7 +9022,10 @@ export default function AdminSettings() {
                   {/* Copyright (NO admin link, English DevHome) */}
                   <div className="pt-3 border-t border-white/10 text-center text-[11px] text-gray-400 space-y-1">
                     <p>
-                      © {new Date().getFullYear()} {footerCopyrightText} | {footerPrivacyPolicyText} | {footerTermsText}
+                      {footerCopyrightText.includes("{year}")
+                        ? footerCopyrightText.replace(/{year}/gi, new Date().getFullYear())
+                        : `© ${new Date().getFullYear()} ${footerCopyrightText.replace(/^©\s*/, "")}`}{" "}
+                      | {footerPrivacyPolicyText} | {footerTermsText}
                     </p>
                     <p className="text-gray-500 text-[10px]">
                       {footerDeveloperCreditText} <span className="text-yellow-400 font-bold">{footerDeveloperName}</span>
@@ -9181,7 +9185,11 @@ export default function AdminSettings() {
 
                       {/* Copyright */}
                       <div className="pt-2 border-t border-white/10 text-center text-[9px] text-gray-400 space-y-0.5">
-                        <p>© {new Date().getFullYear()} {footerCopyrightText}</p>
+                        <p>
+                          {footerCopyrightText.includes("{year}")
+                            ? footerCopyrightText.replace(/{year}/gi, new Date().getFullYear())
+                            : `© ${new Date().getFullYear()} ${footerCopyrightText.replace(/^©\s*/, "")}`}
+                        </p>
                         <p>{footerDeveloperCreditText} <span className="text-yellow-400">{footerDeveloperName}</span></p>
                       </div>
                     </div>
