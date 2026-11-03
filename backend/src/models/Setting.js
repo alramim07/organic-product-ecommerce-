@@ -533,6 +533,22 @@ const settingSchema = new mongoose.Schema(
         { text: "✨ অনলাইন অর্ডার ২৪/৭", show: true },
       ],
     },
+    footerFeatures: {
+      type: [
+        {
+          icon: { type: String, default: "truck" },
+          title: { type: String, default: "" },
+          desc: { type: String, default: "" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { icon: "truck", title: "সারাদেশ ডেলিভারি", desc: "দ্রুত ও নিরাপদ", show: true },
+        { icon: "leaf", title: "গুনগত মান", desc: "১০০% সতেজ ও বিশুদ্ধ", show: true },
+        { icon: "headset", title: "২৪/৭ সাপোর্ট", desc: "যেকোনো সময় যোগাযোগ", show: true },
+        { icon: "medal", title: "প্রিমিয়াম কোয়ালিটি", desc: "বাগান থেকে সরাসরি", show: true },
+      ],
+    },
     footerPaymentTitle: {
       type: String,
       default: "পেমেন্ট মেথড:",

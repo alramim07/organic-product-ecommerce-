@@ -49,6 +49,10 @@ export default function Footer() {
     if (iconVal === "clock") return <FaClock className="text-yellow-400" />;
     if (iconVal === "shield") return <FaShieldAlt className="text-green-400" />;
     if (iconVal === "credit-card") return <FaCreditCard className="text-yellow-500" />;
+    if (iconVal === "truck") return <FaTruck className="text-yellow-500" />;
+    if (iconVal === "leaf") return <FaLeaf className="text-yellow-500" />;
+    if (iconVal === "headset") return <FaHeadset className="text-yellow-500" />;
+    if (iconVal === "medal") return <FaMedal className="text-yellow-500" />;
 
     return <span>{iconVal}</span>;
   };
@@ -159,13 +163,16 @@ export default function Footer() {
           { text: "✨ অনলাইন অর্ডার ২৪/৭", show: true },
         ];
 
-  // 7. Feature highlights
-  const featuresList = [
-    { icon: <FaTruck />, title: "সারাদেশ ডেলিভারি", desc: "দ্রুত ও নিরাপদ" },
-    { icon: <FaLeaf />, title: "গুনগত মান", desc: "১০০% সতেজ ও বিশুদ্ধ" },
-    { icon: <FaHeadset />, title: "২৪/৭ সাপোর্ট", desc: "যেকোনো সময় যোগাযোগ" },
-    { icon: <FaMedal />, title: "প্রিমিয়াম কোয়ালিটি", desc: "বাগান থেকে সরাসরি" },
-  ];
+  // 7. Feature highlights (সারাদেশ ডেলিভারি, গুনগত মান, ইত্যাদি)
+  const featuresList =
+    Array.isArray(settings?.footerFeatures) && settings.footerFeatures.length > 0
+      ? settings.footerFeatures
+      : [
+          { icon: "truck", title: "সারাদেশ ডেলিভারি", desc: "দ্রুত ও নিরাপদ", show: true },
+          { icon: "leaf", title: "গুনগত মান", desc: "১০০% সতেজ ও বিশুদ্ধ", show: true },
+          { icon: "headset", title: "২৪/৭ সাপোর্ট", desc: "যেকোনো সময় যোগাযোগ", show: true },
+          { icon: "medal", title: "প্রিমিয়াম কোয়ালিটি", desc: "বাগান থেকে সরাসরি", show: true },
+        ];
 
   // 8. Payment Methods
   const paymentTitle = settings?.footerPaymentTitle || "পেমেন্ট মেথড:";
@@ -437,15 +444,17 @@ export default function Footer() {
           viewport={{ once: true }}
           className="grid grid-cols-2 md:grid-cols-4 gap-4 py-8 border-t border-b border-white/10 my-8"
         >
-          {featuresList.map((item, idx) => (
-            <div key={idx} className="text-center space-y-2">
-              <div className="text-3xl text-yellow-500 flex justify-center">
-                {item.icon}
+          {featuresList
+            .filter((item) => item.show !== false)
+            .map((item, idx) => (
+              <div key={idx} className="text-center space-y-2">
+                <div className="text-3xl text-yellow-500 flex justify-center">
+                  {renderIcon(item.icon, "⭐")}
+                </div>
+                <h5 className="font-semibold text-sm">{item.title}</h5>
+                <p className="text-xs text-gray-400">{item.desc}</p>
               </div>
-              <h5 className="font-semibold text-sm">{item.title}</h5>
-              <p className="text-xs text-gray-400">{item.desc}</p>
-            </div>
-          ))}
+            ))}
         </motion.div>
 
         {/* Payment Methods & Return Policy */}
