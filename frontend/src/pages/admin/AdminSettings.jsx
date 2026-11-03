@@ -6945,7 +6945,7 @@ export default function AdminSettings() {
                           {/* Target Product Selector Dropdown */}
                           <div>
                             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                              Target Product (পণ্য নির্বাচন করুন) <span className="text-red-500">*</span>
+                              Target Product <span className="text-red-500">*</span>
                             </label>
                             <select
                               value={activeRev.productId || ""}
@@ -8485,7 +8485,7 @@ export default function AdminSettings() {
                           ) : (
                             <span>{footerReturnPolicyIcon || "🛡️"}</span>
                           )}
-                          <span className="text-[10px] text-gray-500">(আইকন পরিবর্তন)</span>
+                          <span className="text-[10px] text-gray-500">(Change Icon)</span>
                         </button>
 
                         {activeFooterIconPicker === "return" && (
@@ -8527,7 +8527,7 @@ export default function AdminSettings() {
                             {/* Upload Custom Icon Option */}
                             <div className="pt-1 border-t border-gray-100">
                               <label className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-yellow-100 text-gray-700 text-[11px] font-bold rounded-lg cursor-pointer transition">
-                                <FaUpload className="text-[10px]" /> <span>ছবি আপলোড (Custom Icon)</span>
+                                <FaUpload className="text-[10px]" /> <span>Upload Custom Icon</span>
                                 <input
                                   type="file"
                                   accept="image/*"
@@ -8548,7 +8548,7 @@ export default function AdminSettings() {
                         type="text"
                         value={footerReturnPolicyText}
                         onChange={(e) => setFooterReturnPolicyText(e.target.value)}
-                        placeholder="৭ দিনের রিটার্ন পলিসি"
+                        placeholder="7 Days Return Policy"
                         className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg font-bold text-gray-800"
                       />
                     </div>
@@ -8560,7 +8560,7 @@ export default function AdminSettings() {
                         type="text"
                         value={footerReturnPolicyLink}
                         onChange={(e) => setFooterReturnPolicyLink(e.target.value)}
-                        placeholder="# বা /policy"
+                        placeholder="# or /policy"
                         className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg font-mono text-gray-600"
                       />
                     </div>
@@ -9584,7 +9584,7 @@ export default function AdminSettings() {
               {/* Field 0: Target Product Selection */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Target Product (পণ্য নির্বাচন করুন) <span className="text-red-500">*</span>
+                  Target Product <span className="text-red-500">*</span>
                 </label>
                 <select
                   value={newRevProductId}
