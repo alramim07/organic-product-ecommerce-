@@ -23,6 +23,7 @@ import {
 import Swal from "sweetalert2";
 import { productsData } from "../data/products";
 import { useApp } from "../context/AppContext";
+import OrderInvoiceModal from "../components/OrderInvoiceModal";
 
 export default function SingleProductPage() {
   const { id } = useParams();
@@ -51,6 +52,16 @@ export default function SingleProductPage() {
     products[0] ||
     productsData[2];
 
+  // Stock status helpers
+  const isPreOrder = Boolean(
+    product?.stock_status?.includes("প্রি-অর্ডার") ||
+    product?.stock_status?.toLowerCase().includes("pre-order")
+  );
+  const isOutOfStock = Boolean(
+    product?.stock_status === "স্টক শেষ" ||
+    product?.stock_status?.toLowerCase().includes("out of stock")
+  );
+
   // Component states
   const [selectedImage, setSelectedImage] = useState(product?.image || "/assets/mangoes/m3.jpg");
   const [selectedPackage, setSelectedPackage] = useState(
@@ -68,6 +79,10 @@ export default function SingleProductPage() {
   const [customerNote, setCustomerNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Downloadable & Printable Invoice Modal state
+  const [showInvoiceModal, setShowInvoiceModal] = useState(false);
+  const [createdOrder, setCreatedOrder] = useState(null);
 
   // Scroll to top, set title/meta, and reset state when product changes
   useEffect(() => {
@@ -115,9 +130,18 @@ export default function SingleProductPage() {
     window.open(url, "_blank");
   };
 
-  // Handle Instant Booking submission (saves dynamically to AppContext/localStorage)
-  const handleBookingSubmit = (e) => {
+  // Handle Instant Booking submission with OrderInvoiceModal
+  const handleBookingSubmit = async (e) => {
     e.preventDefault();
+    if (isOutOfStock) {
+      Swal.fire({
+        icon: "error",
+        title: "স্টক শেষ",
+        text: "দুঃখিত, এই পণ্যটির স্টক বর্তমানে শেষ হয়ে গেছে।",
+      });
+      return;
+    }
+
     if (!customerName.trim() || !customerPhone.trim() || !customerAddress.trim()) {
       Swal.fire({
         icon: "warning",
@@ -130,16 +154,26 @@ export default function SingleProductPage() {
 
     setIsSubmitting(true);
 
-    setTimeout(() => {
-      // Add booking dynamically to admin state
-      const createdBooking = addBooking({
+    try {
+      const orderPayload = {
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
         customerAddress: customerAddress.trim(),
-        mangoId: product.id,
+        items: [
+          {
+            productId: product._id || product.id,
+            productName: product.name_bn,
+            unit: product.unit || "কেজি",
+            packageLabel: selectedPackage?.label || "৫ কেজি",
+            quantity: quantity,
+            price: packagePrice,
+            total: subtotal,
+          },
+        ],
+        mangoId: product._id || product.id,
         mangoName: product.name_bn,
-        packageLabel: selectedPackage?.label || "৫ কেজি",
-        packageKg: selectedPackage?.kg || 5,
+        packageLabel: `${selectedPackage?.label || "৫ কেজি"} (${quantity} টি)`,
+        packageKg: (selectedPackage?.kg || 5) * quantity,
         quantity,
         deliveryArea,
         deliveryCharge,
@@ -147,37 +181,28 @@ export default function SingleProductPage() {
         totalAmount,
         deliveryDate: deliveryDate || new Date().toISOString().split("T")[0],
         paymentMethod,
-        customerNote: customerNote.trim(),
-      });
+        customerNote: customerNote.trim() || (isPreOrder ? "প্রি-অর্ডার পণ্য" : "রেগুলার অর্ডার"),
+      };
 
-      setIsSubmitting(false);
-
-      Swal.fire({
-        icon: "success",
-        title: "অর্ডার সফলভাবে গ্রহণ করা হয়েছে!",
-        html: `
-          <div class="text-left text-sm space-y-2 mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
-            <p><strong>অর্ডার আইডি:</strong> ${createdBooking.id}</p>
-            <p><strong>আমের জাত:</strong> ${product.name_bn}</p>
-            <p><strong>প্যাকেজ:</strong> ${selectedPackage?.label || "৫ কেজি"} (${quantity} টি)</p>
-            <p><strong>গ্রাহক:</strong> ${customerName} (${customerPhone})</p>
-            <p><strong>ঠিকানা:</strong> ${customerAddress}</p>
-            <p><strong>সর্বমোট বিল:</strong> ৳ ${totalAmount} (${
-          paymentMethod === "cod" ? "ক্যাশ অন ডেলিভারি" : "বিকাশ/নগদ"
-        })</p>
-          </div>
-          <p class="mt-3 text-xs text-gray-500">আমাদের প্রতিনিধি শীঘ্রই আপনার নম্বরে কল করে অর্ডার নিশ্চিত করবেন।</p>
-        `,
-        confirmButtonText: "ধন্যবাদ",
-        confirmButtonColor: "#16a34a",
-      });
+      const savedBooking = await addBooking(orderPayload);
+      setCreatedOrder(savedBooking || { ...orderPayload, id: `BK-${Date.now().toString().slice(-4)}` });
+      setShowInvoiceModal(true);
 
       // Reset form
       setCustomerName("");
       setCustomerPhone("");
       setCustomerAddress("");
       setCustomerNote("");
-    }, 500);
+    } catch (err) {
+      console.error("Order submit error:", err);
+      Swal.fire({
+        icon: "error",
+        title: "অর্ডার ব্যর্থ হয়েছে",
+        text: "দুঃখিত, অর্ডারটি সম্পন্ন করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const scrollToCheckout = () => {
@@ -187,10 +212,25 @@ export default function SingleProductPage() {
     }
   };
 
-  // Other related products (excluding current)
-  const relatedProducts = productsData
-    .filter((p) => p.id !== product.id)
-    .slice(0, 4);
+  // Recommended Products Logic:
+  // 1. Same category products
+  // 2. If finished/less than 4, recommend similar products from other categories
+  const publishedProducts = products.filter((p) => p.publication_status !== "draft");
+  const pool = publishedProducts.length > 0 ? publishedProducts : productsData;
+
+  const currentIdentifier = String(product._id || product.id || "");
+  const eligibleProducts = pool.filter(
+    (p) => String(p._id || p.id) !== currentIdentifier && p.slug !== product.slug
+  );
+
+  const sameCategoryProducts = eligibleProducts.filter(
+    (p) => p.category && product.category && p.category === product.category
+  );
+  const otherCategoryProducts = eligibleProducts.filter(
+    (p) => !p.category || p.category !== product.category
+  );
+
+  const recommendedProducts = [...sameCategoryProducts, ...otherCategoryProducts].slice(0, 4);
 
   return (
     <div className="bg-gradient-to-b from-amber-50/50 via-white to-green-50/30 pt-24 pb-20">
@@ -573,9 +613,18 @@ export default function SingleProductPage() {
                 <button
                   type="button"
                   onClick={scrollToCheckout}
-                  className="w-full bg-gradient-to-r from-yellow-500 to-green-600 hover:from-yellow-600 hover:to-green-700 text-white py-3.5 px-6 rounded-2xl font-black text-base shadow-lg hover:shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-95"
+                  disabled={isOutOfStock}
+                  className={`w-full py-3.5 px-6 rounded-2xl font-black text-base shadow-lg transition-all flex items-center justify-center gap-2 ${
+                    isOutOfStock
+                      ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      : "bg-gradient-to-r from-yellow-500 to-green-600 hover:from-yellow-600 hover:to-green-700 text-white hover:shadow-xl transform active:scale-95 cursor-pointer"
+                  }`}
                 >
-                  ⚡ এখনই অর্ডার করুন
+                  {isOutOfStock
+                    ? "স্টক শেষ (Out of Stock)"
+                    : isPreOrder
+                    ? "⚡ প্রি-অর্ডার সম্পূর্ণ করুন"
+                    : "⚡ এখনই অর্ডার করুন"}
                 </button>
                 <button
                   type="button"
@@ -902,224 +951,297 @@ export default function SingleProductPage() {
           </div>
         </div>
 
-        {/* Embedded Quick Checkout Section */}
-        <section
-          id="quick-checkout"
-          className="mt-16 bg-gradient-to-br from-green-900 via-green-800 to-amber-900 text-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-2xl relative overflow-hidden"
-        >
-          {/* Decorative Leaf Icon */}
-          <FaLeaf className="absolute -right-10 -bottom-10 text-white/5 text-[220px] pointer-events-none transform rotate-12" />
-
-          <div className="relative z-10 max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-              <span className="px-4 py-1 bg-yellow-400 text-green-950 font-extrabold text-xs rounded-full uppercase tracking-wider inline-block mb-3">
-                সরাসরি অর্ডার ফর্ম
+        {/* Embedded Quick Checkout Section or Out of Stock Notification */}
+        {isOutOfStock ? (
+          <section
+            id="quick-checkout"
+            className="mt-16 bg-gradient-to-br from-gray-900 via-stone-900 to-zinc-900 text-white rounded-3xl p-8 sm:p-12 shadow-2xl relative overflow-hidden border border-red-500/30 text-center"
+          >
+            <div className="max-w-xl mx-auto space-y-4">
+              <div className="w-16 h-16 mx-auto bg-red-500/20 text-red-400 rounded-full flex items-center justify-center text-3xl font-black">
+                ✕
+              </div>
+              <span className="px-4 py-1.5 bg-red-500/20 text-red-300 font-bold text-xs rounded-full uppercase tracking-wider inline-block">
+                স্টক শেষ (Out of Stock)
               </span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold">
-                {product.name_bn} প্রি-অর্ডার সম্পূর্ণ করুন
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-white">
+                {product.name_bn} এর স্টক বর্তমানে শেষ
               </h2>
-              <p className="text-gray-300 text-sm mt-2">
-                নিচের ফর্মটি পূরণ করে অর্ডার সাবমিট করুন। কোনো অগ্রিম পেমেন্ট ছাড়াই অর্ডার করতে পারবেন।
+              <p className="text-gray-300 text-sm leading-relaxed">
+                দুঃখিত, এই মৌসুমের জন্য এই পণ্যটির স্টক শেষ হয়ে গেছে। পরবর্তী লটের স্টক সম্পর্কে জানতে অথবা বিশেষ প্রয়োজনে আমাদের সাথে সরাসরি যোগাযোগ করতে পারেন।
               </p>
+              <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
+                <a
+                  href={`tel:${settings?.contactPhone || "01749775030"}`}
+                  className="px-6 py-3 bg-white text-gray-900 hover:bg-yellow-400 font-bold text-sm rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer"
+                >
+                  <FaPhoneAlt /> সরাসরি কল করুন
+                </a>
+                <button
+                  type="button"
+                  onClick={handleWhatsAppOrder}
+                  className="px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl shadow-lg transition flex items-center gap-2 cursor-pointer"
+                >
+                  <FaWhatsapp className="text-lg" /> হোয়াটসঅ্যাপে বার্তা দিন
+                </button>
+              </div>
             </div>
+          </section>
+        ) : (
+          <section
+            id="quick-checkout"
+            className="mt-16 bg-gradient-to-br from-green-900 via-green-800 to-amber-900 text-white rounded-3xl p-6 sm:p-10 md:p-12 shadow-2xl relative overflow-hidden"
+          >
+            {/* Decorative Leaf Icon */}
+            <FaLeaf className="absolute -right-10 -bottom-10 text-white/5 text-[220px] pointer-events-none transform rotate-12" />
 
-            {/* Selected Package Summary Pill */}
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 mb-6 border border-white/20 flex items-center justify-between flex-wrap gap-3">
-              <div className="flex items-center gap-3">
-                <img
-                  src={product.image}
-                  alt={product.name_bn}
-                  className="w-14 h-14 rounded-xl object-cover border border-yellow-300"
-                />
-                <div>
-                  <h4 className="font-bold text-yellow-300 text-base">{product.name_bn}</h4>
-                  <p className="text-xs text-gray-300">
-                    প্যাকেজ: {selectedPackage?.label || "৫ কেজি"} ({quantity} টি)
-                  </p>
+            <div className="relative z-10 max-w-3xl mx-auto">
+              <div className="text-center mb-8">
+                <span className="px-4 py-1 bg-yellow-400 text-green-950 font-extrabold text-xs rounded-full uppercase tracking-wider inline-block mb-3">
+                  {isPreOrder ? "প্রি-অর্ডার ফর্ম" : "সরাসরি অর্ডার ফর্ম"}
+                </span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold">
+                  {product.name_bn} {isPreOrder ? "প্রি-অর্ডার সম্পূর্ণ করুন" : "অর্ডার সম্পূর্ণ করুন"}
+                </h2>
+                <p className="text-gray-300 text-sm mt-2">
+                  {isPreOrder
+                    ? "নিচের ফর্মটি পূরণ করে আপনার প্রি-অর্ডারটি সম্পন্ন করুন। ফ্রেশ বাগান থেকে সংগ্রহের পর ডেলিভারি দেওয়া হবে।"
+                    : "নিচের ফর্মটি পূরণ করে অর্ডার সাবমিট করুন। কোনো প্রকার অগ্রিম হিডেন চার্জ ছাড়াই ক্যাশ অন ডেলিভারিতে অর্ডার করতে পারবেন।"}
+                </p>
+              </div>
+
+              {/* Selected Package Summary Pill */}
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 mb-6 border border-white/20 flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={product.image}
+                    alt={product.name_bn}
+                    className="w-14 h-14 rounded-xl object-cover border border-yellow-300"
+                  />
+                  <div>
+                    <h4 className="font-bold text-yellow-300 text-base">{product.name_bn}</h4>
+                    <p className="text-xs text-gray-300">
+                      প্যাকেজ: {selectedPackage?.label || "৫ কেজি"} ({quantity} টি)
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="text-xs text-gray-300 block">মোট প্রদেয় বিল</span>
+                  <span className="text-2xl font-black text-yellow-400">৳ {totalAmount}</span>
                 </div>
               </div>
-              <div className="text-right">
-                <span className="text-xs text-gray-300 block">মোট প্রদেয় বিল</span>
-                <span className="text-2xl font-black text-yellow-400">৳ {totalAmount}</span>
-              </div>
-            </div>
 
-            {/* Order Form */}
-            <form onSubmit={handleBookingSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Name */}
+              {/* Order Form */}
+              <form onSubmit={handleBookingSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Name */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-200 mb-1">
+                      আপনার নাম *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      placeholder="আপনার পূর্ণ নাম লিখুন"
+                      className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                    />
+                  </div>
+
+                  {/* Phone */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-200 mb-1">
+                      মোবাইল নম্বর *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={customerPhone}
+                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      placeholder="০১৭১১-XXXXXX"
+                      className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                    />
+                  </div>
+                </div>
+
+                {/* Delivery Address */}
                 <div>
                   <label className="block text-xs font-semibold text-gray-200 mb-1">
-                    আপনার নাম *
+                    সম্পূর্ণ ডেলিভারি ঠিকানা *
+                  </label>
+                  <textarea
+                    required
+                    rows="2"
+                    value={customerAddress}
+                    onChange={(e) => setCustomerAddress(e.target.value)}
+                    placeholder="বাড়ি/ফ্ল্যাট নম্বর, রোড, এলাকা, থানা ও জেলা উল্লেখ করুন"
+                    className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                  ></textarea>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Desired Date */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-200 mb-1">
+                      {isPreOrder ? "প্রত্যাশিত ডেলিভারির তারিখ (ঐচ্ছিক)" : "আম গ্রহণের সম্ভাব্য তারিখ"}
+                    </label>
+                    <input
+                      type="date"
+                      value={deliveryDate}
+                      onChange={(e) => setDeliveryDate(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                    />
+                  </div>
+
+                  {/* Payment Method */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-200 mb-1">
+                      পেমেন্ট মেথড
+                    </label>
+                    <select
+                      value={paymentMethod}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                    >
+                      <option value="cod">ক্যাশ অন ডেলিভারি (আম হাতে পেয়ে মূল্য দিন)</option>
+                      <option value="bkash">বিকাশ / নগদ (অর্ডার নিশ্চিতের পর)</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Note */}
+                <div>
+                  <label className="block text-xs font-semibold text-gray-200 mb-1">
+                    বিশেষ কোনো নির্দেশনা (ঐচ্ছিক)
                   </label>
                   <input
                     type="text"
-                    required
-                    value={customerName}
-                    onChange={(e) => setCustomerName(e.target.value)}
-                    placeholder="আপনার পূর্ণ নাম লিখুন"
-                    className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                    value={customerNote}
+                    onChange={(e) => setCustomerNote(e.target.value)}
+                    placeholder="যেমন: আধাপাকা আম পাঠাবেন / গিফট বক্স প্যাকিং ইত্যাদি"
+                    className="w-full px-4 py-2.5 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-xs focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
                   />
                 </div>
 
-                {/* Phone */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-200 mb-1">
-                    মোবাইল নম্বর *
-                  </label>
-                  <input
-                    type="tel"
-                    required
-                    value={customerPhone}
-                    onChange={(e) => setCustomerPhone(e.target.value)}
-                    placeholder="০১৭১১-XXXXXX"
-                    className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Delivery Address */}
-              <div>
-                <label className="block text-xs font-semibold text-gray-200 mb-1">
-                  সম্পূর্ণ ডেলিভারি ঠিকানা *
-                </label>
-                <textarea
-                  required
-                  rows="2"
-                  value={customerAddress}
-                  onChange={(e) => setCustomerAddress(e.target.value)}
-                  placeholder="বাড়ি/ফ্ল্যাট নম্বর, রোড, এলাকা, থানা ও জেলা উল্লেখ করুন"
-                  className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
-                ></textarea>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Desired Date */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-200 mb-1">
-                    আম গ্রহণের সম্ভাব্য তারিখ
-                  </label>
-                  <input
-                    type="date"
-                    value={deliveryDate}
-                    onChange={(e) => setDeliveryDate(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
-                  />
-                </div>
-
-                {/* Payment Method */}
-                <div>
-                  <label className="block text-xs font-semibold text-gray-200 mb-1">
-                    পেমেন্ট মেথড
-                  </label>
-                  <select
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-white/95 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
+                {/* Submit CTA */}
+                <div className="pt-4">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-green-950 font-black py-4 px-8 rounded-2xl text-lg shadow-xl hover:shadow-2xl transition duration-300 transform active:scale-98 cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <option value="cod">ক্যাশ অন ডেলিভারি (আম হাতে পেয়ে মূল্য দিন)</option>
-                    <option value="bkash">বিকাশ / নগদ (অর্ডার নিশ্চিতের পর)</option>
-                  </select>
+                    {isSubmitting ? (
+                      <span>অর্ডার প্রসেস হচ্ছে...</span>
+                    ) : (
+                      <span>
+                        {isPreOrder ? "প্রি-অর্ডার সম্পূর্ণ করুন" : "অর্ডার সম্পূর্ণ করুন"} (৳ {totalAmount})
+                      </span>
+                    )}
+                  </button>
+                  <p className="text-center text-xs text-gray-300 mt-2">
+                    🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ। কোনো প্রকার অগ্রিম হিডেন চার্জ নেই।
+                  </p>
                 </div>
-              </div>
+              </form>
+            </div>
+          </section>
+        )}
 
-              {/* Note */}
+        {/* Recommended Products Section (Dynamic recommendations based on category and pool) */}
+        {recommendedProducts.length > 0 && (
+          <div className="mt-20">
+            <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
               <div>
-                <label className="block text-xs font-semibold text-gray-200 mb-1">
-                  বিশেষ কোনো নির্দেশনা (ঐচ্ছিক)
-                </label>
-                <input
-                  type="text"
-                  value={customerNote}
-                  onChange={(e) => setCustomerNote(e.target.value)}
-                  placeholder="যেমন: আধাপাকা আম পাঠাবেন / গিফট বক্স প্যাকিং ইত্যাদি"
-                  className="w-full px-4 py-2.5 rounded-xl bg-white/95 text-gray-800 placeholder-gray-400 text-xs focus:outline-none focus:ring-2 focus:ring-yellow-400 border border-transparent"
-                />
-              </div>
-
-              {/* Submit CTA */}
-              <div className="pt-4">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-300 hover:to-amber-400 text-green-950 font-black py-4 px-8 rounded-2xl text-lg shadow-xl hover:shadow-2xl transition duration-300 transform active:scale-98 cursor-pointer flex items-center justify-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <span>অর্ডার প্রসেস হচ্ছে...</span>
-                  ) : (
-                    <span>অর্ডার নিশ্চিত করুন (৳ {totalAmount})</span>
-                  )}
-                </button>
-                <p className="text-center text-xs text-gray-300 mt-2">
-                  🔒 আপনার তথ্য সম্পূর্ণ নিরাপদ। কোনো প্রকার অগ্রিম হিডেন চার্জ নেই।
+                <span className="text-xs font-bold uppercase tracking-wider text-green-700 bg-green-100 px-3 py-1 rounded-full inline-block mb-1">
+                  {product.category ? `${product.category} ও সংশ্লিষ্ট পণ্য` : "সংশ্লিষ্ট আইটেম"}
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-extrabold text-green-900">
+                  ✨ আপনার জন্য রেকমেন্ডেড পণ্য
+                </h3>
+                <p className="text-gray-600 text-sm mt-1">
+                  আপনার পছন্দের ক্যাটাগরির সাথে মিল রেখে সাজানো সেরা কিছু বাছাইকৃত পণ্য
                 </p>
               </div>
-            </form>
-          </div>
-        </section>
-
-        {/* Related Products / অন্যান্য আমের জাত */}
-        <div className="mt-20">
-          <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
-            <div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold text-green-900">
-                🥭 অন্যান্য জনপ্রিয় আমের জাত
-              </h3>
-              <p className="text-gray-600 text-sm mt-1">
-                রাজশাহী ও চাঁপাইনবাবগঞ্জের সেরা বাগানের আরও কিছু সুস্বাদু আম
-              </p>
-            </div>
-            <Link
-              to="/#varieties"
-              className="text-green-700 hover:text-green-900 font-bold text-sm flex items-center gap-1.5 transition"
-            >
-              সবগুলো জাত দেখুন <FaChevronRight className="text-xs" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {relatedProducts.map((rel) => (
-              <motion.div
-                key={rel.id}
-                whileHover={{ y: -5 }}
-                className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-yellow-200 transition-all flex flex-col justify-between"
+              <Link
+                to="/#varieties"
+                onClick={() => {
+                  setTimeout(() => {
+                    const el = document.getElementById("varieties");
+                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+                  }, 150);
+                }}
+                className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition cursor-pointer"
               >
-                <div className="relative h-44 overflow-hidden bg-gray-100">
-                  <img
-                    src={rel.image}
-                    alt={rel.name_bn}
-                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = "/assets/mangoes/m1.jpg";
-                    }}
-                  />
-                  <span className="absolute top-2 left-2 bg-green-600/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
-                    {rel.origin || "রাজশাহী"}
-                  </span>
-                </div>
-                <div className="p-4 flex-1 flex flex-col justify-between">
-                  <div>
-                    <h4 className="font-bold text-green-900 text-lg">{rel.name_bn}</h4>
-                    <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">{rel.subtitle_bn}</p>
-                    <p className="text-green-700 font-black text-base mt-2">
-                      ৳ {rel.price_per_kg} / কেজি
-                    </p>
-                  </div>
-                  <div className="pt-4 border-t border-gray-100 mt-3 flex items-center gap-2">
-                    <Link
-                      to={`/product/${rel.id}`}
-                      className="w-full text-center py-2 bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-500 hover:to-yellow-500 text-green-950 font-bold text-xs rounded-xl shadow transition"
-                    >
-                      বিস্তারিত ও অর্ডার
-                    </Link>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+                আরো প্রোডাক্ট দেখুন <FaChevronRight className="text-xs" />
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {recommendedProducts.map((rel) => {
+                const relPrice = rel.price_per_unit || rel.price_per_kg || rel.price || 0;
+                const relUnit = rel.unit || "কেজি";
+                const relLink = `/product/${rel.slug || rel._id || rel.id}`;
+                return (
+                  <motion.div
+                    key={rel._id || rel.id}
+                    whileHover={{ y: -5 }}
+                    className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl border border-yellow-200 transition-all flex flex-col justify-between"
+                  >
+                    <div className="relative h-48 overflow-hidden bg-gray-100">
+                      <img
+                        src={rel.image || "/assets/mangoes/m1.jpg"}
+                        alt={rel.name_bn || rel.name}
+                        className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "/assets/mangoes/m1.jpg";
+                        }}
+                      />
+                      {rel.category && (
+                        <span className="absolute top-2 left-2 bg-green-700/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
+                          {rel.category}
+                        </span>
+                      )}
+                      {rel.stock_status && (
+                        <span className="absolute top-2 right-2 bg-yellow-400 text-green-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
+                          {rel.stock_status}
+                        </span>
+                      )}
+                    </div>
+                    <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div>
+                        <h4 className="font-bold text-green-900 text-lg">{rel.name_bn || rel.name}</h4>
+                        <p className="text-xs text-gray-500 line-clamp-1 mt-0.5">
+                          {rel.subtitle_bn || rel.origin || "খাঁটি ও তাজা"}
+                        </p>
+                        <p className="text-green-700 font-black text-base mt-2">
+                          ৳ {relPrice} / {relUnit}
+                        </p>
+                      </div>
+                      <div className="pt-4 border-t border-gray-100 mt-3 flex items-center gap-2">
+                        <Link
+                          to={relLink}
+                          className="w-full text-center py-2 bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-500 hover:to-yellow-500 text-green-950 font-bold text-xs rounded-xl shadow transition"
+                        >
+                          বিস্তারিত ও অর্ডার
+                        </Link>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
           </div>
-        </div>
+        )}
       </div>
+
+      {/* Order Invoice Download & Print Modal */}
+      <OrderInvoiceModal
+        isOpen={showInvoiceModal}
+        onClose={() => setShowInvoiceModal(false)}
+        order={createdOrder}
+      />
     </div>
   );
 }

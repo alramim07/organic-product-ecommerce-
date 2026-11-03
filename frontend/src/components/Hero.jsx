@@ -449,7 +449,7 @@ export default function Hero({ onBookingSubmit }) {
                   type="submit"
                   className="btn w-full bg-gradient-to-r from-yellow-500 via-amber-500 to-green-600 hover:from-yellow-600 hover:to-green-700 text-white font-black text-base border-none shadow-lg mt-2 cursor-pointer transition transform hover:scale-[1.01]"
                 >
-                  প্রি-অর্ডার নিশ্চিত করুন
+                  অর্ডার নিশ্চিত করুন
                 </button>
               </form>
             </div>
