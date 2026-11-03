@@ -8523,9 +8523,6 @@ export default function AdminSettings() {
                   <h4 className="text-xs font-black text-green-950 uppercase flex items-center gap-1.5">
                     <FaMedal className="text-yellow-600" /> Feature Highlights Bar
                   </h4>
-                  <p className="text-[11px] text-gray-500">
-                    Customize the 4 key service highlights (e.g. Nationwide Delivery, Premium Quality, 24/7 Support).
-                  </p>
                 </div>
                 <button
                   type="button"
@@ -8548,7 +8545,7 @@ export default function AdminSettings() {
                     className="p-3 bg-white rounded-xl border border-gray-200 space-y-2.5 shadow-2xs relative"
                   >
                     <div className="flex items-center justify-between border-b border-gray-100 pb-1.5">
-                      <span className="text-[11px] font-black text-gray-700">ফিচার #{idx + 1}</span>
+                      <span className="text-[11px] font-black text-gray-700">Feature #{idx + 1}</span>
                       <div className="flex items-center gap-1.5">
                         <input
                           type="checkbox"
