@@ -4614,7 +4614,7 @@ export default function AdminSettings() {
                         {/* Hotline Phone Number Input */}
                         <div className="pt-2 border-t border-gray-100">
                           <label className="text-xs font-black text-gray-800 flex items-center gap-1.5 mb-1">
-                            <FaPhoneAlt className="text-green-600" /> Phone / Hotline Number (ব্যানারে প্রদর্শিত হটলাইন নম্বর)
+                            <FaPhoneAlt className="text-green-600" /> Phone / Hotline Number
                           </label>
                           <input
                             type="text"
@@ -4631,9 +4631,6 @@ export default function AdminSettings() {
                             className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-black text-green-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
                             placeholder="০১৭৪৯-৭৭৫০৩০"
                           />
-                          <p className="text-[11px] text-gray-400 mt-1">
-                            Hero banner-er niche features list-e ei hotline number ti show korbe
-                          </p>
                         </div>
                       </div>
                     </div>
