@@ -13,13 +13,19 @@ import { useApp } from "../../context/AppContext";
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
-  const { loginAdmin, isAuthenticated } = useApp();
+  const { loginAdmin, isAuthenticated, settings } = useApp();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (settings?.businessName) {
+      document.title = `${settings.businessName} - Admin Login`;
+    }
+  }, [settings?.businessName]);
 
   // If already logged in, redirect to admin safely via useEffect
   useEffect(() => {
@@ -62,11 +68,29 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md bg-white/95 backdrop-blur-xl rounded-3xl p-8 sm:p-10 shadow-2xl border border-yellow-200/50 relative z-10">
         {/* Brand Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-green-600 rounded-2xl shadow-lg mb-3">
-            <FaLeaf className="text-white text-3xl" />
-          </div>
+          {settings?.websiteLogo || settings?.logo || settings?.websiteFavicon ? (
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl shadow-lg mb-3 overflow-hidden bg-white border border-yellow-200 p-1.5">
+              <img
+                src={settings?.websiteLogo || settings?.logo || settings?.websiteFavicon}
+                alt={settings?.businessName || "Business Logo"}
+                className="w-full h-full object-contain"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                  const fallback = e.target.parentElement?.querySelector(".fallback-leaf");
+                  if (fallback) fallback.classList.remove("hidden");
+                }}
+              />
+              <div className="fallback-leaf hidden w-full h-full bg-gradient-to-br from-yellow-400 to-green-600 rounded-xl flex items-center justify-center text-white text-3xl">
+                <FaLeaf />
+              </div>
+            </div>
+          ) : (
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-yellow-400 to-green-600 rounded-2xl shadow-lg mb-3">
+              <FaLeaf className="text-white text-3xl" />
+            </div>
+          )}
           <h1 className="text-2xl sm:text-3xl font-extrabold text-green-900">
-            Ammwala Admin Portal
+            {settings?.businessName || settings?.siteName || "Ammwala Admin Portal"}
           </h1>
           <p className="text-xs text-gray-500 mt-1">
             Sign in to manage catalog, orders, and website settings
