@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaEye, FaChevronDown, FaChevronUp, FaPercentage, FaLeaf } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaEye,
+  FaChevronDown,
+  FaChevronUp,
+  FaPercentage,
+  FaLeaf,
+  FaTimesCircle,
+  FaFire,
+} from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../context/AppContext";
 
@@ -163,7 +172,84 @@ export default function MangoVarieties({ onSelectMango }) {
     }
   };
 
+  // Stock Status & Button Behavior Helper
+  const getProductStockInfo = (mango) => {
+    const rawStatus = (mango?.stock_status || "").toString().toLowerCase();
+
+    const isOut =
+      rawStatus.includes("স্টক শেষ") ||
+      rawStatus.includes("out of stock") ||
+      rawStatus.includes("স্টক আউট") ||
+      rawStatus === "out";
+
+    const isLimited =
+      rawStatus.includes("সীমিত") ||
+      rawStatus.includes("limited");
+
+    const isPreOrder =
+      rawStatus.includes("প্রি-অর্ডার") ||
+      rawStatus.includes("pre-order");
+
+    if (isOut) {
+      return {
+        isOut: true,
+        isLimited: false,
+        isPreOrder: false,
+        isInStock: false,
+        tagText: "স্টক শেষ",
+        buttonText: "অনুপলব্ধ",
+        disabled: true,
+      };
+    }
+
+    if (isLimited) {
+      return {
+        isOut: false,
+        isLimited: true,
+        isPreOrder: false,
+        isInStock: false,
+        tagText: "সীমিত স্টক",
+        buttonText: "অর্ডার করুন",
+        disabled: false,
+      };
+    }
+
+    if (isPreOrder) {
+      return {
+        isOut: false,
+        isLimited: false,
+        isPreOrder: true,
+        isInStock: false,
+        tagText: null,
+        buttonText: "প্রি-অর্ডার করুন",
+        disabled: false,
+      };
+    }
+
+    // Default In Stock
+    return {
+      isOut: false,
+      isLimited: false,
+      isPreOrder: false,
+      isInStock: true,
+      tagText: null,
+      buttonText: "অর্ডার করুন",
+      disabled: false,
+    };
+  };
+
   const handlePreOrder = (mango) => {
+    const stockInfo = getProductStockInfo(mango);
+    if (stockInfo.isOut) {
+      Swal.fire({
+        icon: "error",
+        title: "স্টক শেষ",
+        text: `দুঃখিত, "${mango.name_bn || mango.name}" এর স্টক শেষ হয়ে গেছে।`,
+        confirmButtonColor: "#ef4444",
+      });
+      return;
+    }
+
     const bookingSection = document.getElementById("second-booking") || document.getElementById("order");
     if (bookingSection) {
       bookingSection.scrollIntoView({ behavior: "smooth" });
@@ -182,72 +268,122 @@ export default function MangoVarieties({ onSelectMango }) {
   };
 
   // Render Dynamic Image Badges on Card Image
+  // Top-left corner displays Stock Out or Limited tag at the very top above other tags
   const renderProductBadges = (mango) => {
+    const stockInfo = getProductStockInfo(mango);
     const badgesList =
       Array.isArray(mango.image_badges) && mango.image_badges.length > 0
         ? mango.image_badges
         : Array.isArray(mango.imageBadges) && mango.imageBadges.length > 0
         ? mango.imageBadges
-        : null;
+        : [];
 
-    if (badgesList && badgesList.length > 0) {
-      return (
-        <>
-          {["top-left", "top-right", "bottom-left", "bottom-right"].map((pos) => {
-            const isLeft = pos.includes("left");
-            const isTop = pos.includes("top");
-            const cornerBadges = badgesList.filter((b) => {
-              const bPos = b.position || (b.side === "right" ? "top-right" : "top-left");
-              return bPos === pos;
-            });
-
-            if (cornerBadges.length === 0) return null;
-
-            return (
-              <div
-                key={pos}
-                className={`absolute ${isTop ? "top-2.5" : "bottom-2.5"} ${
-                  isLeft ? "left-2.5 items-start" : "right-2.5 items-end"
-                } flex flex-col gap-1 z-10 pointer-events-none`}
-              >
-                {cornerBadges.map((b, i) => (
-                  <span
-                    key={b.id || i}
-                    style={{
-                      fontSize: b.fontSize ? `${Math.min(13, Math.max(9, Math.round(b.fontSize * 0.85)))}px` : "10px",
-                    }}
-                    className={`px-2.5 py-0.5 backdrop-blur-sm text-white font-black rounded-full shadow-md flex items-center gap-1 pointer-events-auto leading-tight ${
-                      b.type === "discount" || b.color === "red"
-                        ? "bg-red-500/95"
-                        : b.color === "amber"
-                        ? "bg-amber-500/95"
-                        : b.color === "blue"
-                        ? "bg-blue-600/95"
-                        : b.color === "purple"
-                        ? "bg-purple-600/95"
-                        : "bg-green-600/95"
-                    }`}
-                  >
-                    {b.type === "discount" ? (
-                      <FaPercentage className="text-yellow-200 text-[9px]" />
-                    ) : (
-                      <FaLeaf className="text-yellow-300 text-[9px]" />
-                    )}
-                    <span>{b.text}</span>
-                  </span>
-                ))}
-              </div>
-            );
-          })}
-        </>
-      );
-    }
-
-    // Default tag if product has no custom tags configured
     return (
-      <span className="absolute top-2.5 left-2.5 bg-yellow-400 text-green-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1 z-10">
-        🥭 {mango.stock_status || "বাগান ফ্রেশ"}
-      </span>
+      <>
+        {/* Top-Left Corner Badges: Stock Out / Limited Tag goes at the VERY TOP of the tag list */}
+        <div className="absolute top-2.5 left-2.5 items-start flex flex-col gap-1 z-20 pointer-events-none">
+          {stockInfo.isOut && (
+            <span className="px-2.5 py-0.5 bg-red-600 text-white font-black text-[10px] rounded-full shadow-lg flex items-center gap-1 pointer-events-auto border border-red-300">
+              <FaTimesCircle className="text-[10px]" />
+              <span>স্টক শেষ</span>
+            </span>
+          )}
+
+          {stockInfo.isLimited && (
+            <span className="px-2.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-[10px] rounded-full shadow-lg flex items-center gap-1 pointer-events-auto border border-amber-300">
+              <FaFire className="text-yellow-200 text-[10px]" />
+              <span>সীমিত স্টক</span>
+            </span>
+          )}
+
+          {badgesList
+            .filter((b) => {
+              const bPos = b.position || (b.side === "right" ? "top-right" : "top-left");
+              return bPos === "top-left";
+            })
+            .map((b, i) => (
+              <span
+                key={b.id || i}
+                style={{
+                  fontSize: b.fontSize ? `${Math.min(13, Math.max(9, Math.round(b.fontSize * 0.85)))}px` : "10px",
+                }}
+                className={`px-2.5 py-0.5 backdrop-blur-sm text-white font-black rounded-full shadow-md flex items-center gap-1 pointer-events-auto leading-tight ${
+                  b.type === "discount" || b.color === "red"
+                    ? "bg-red-500/95"
+                    : b.color === "amber"
+                    ? "bg-amber-500/95"
+                    : b.color === "blue"
+                    ? "bg-blue-600/95"
+                    : b.color === "purple"
+                    ? "bg-purple-600/95"
+                    : "bg-green-600/95"
+                }`}
+              >
+                {b.type === "discount" ? (
+                  <FaPercentage className="text-yellow-200 text-[9px]" />
+                ) : (
+                  <FaLeaf className="text-yellow-300 text-[9px]" />
+                )}
+                <span>{b.text}</span>
+              </span>
+            ))}
+        </div>
+
+        {/* Other Corner Positions: top-right, bottom-left, bottom-right */}
+        {["top-right", "bottom-left", "bottom-right"].map((pos) => {
+          const isLeft = pos.includes("left");
+          const isTop = pos.includes("top");
+          const cornerBadges = badgesList.filter((b) => {
+            const bPos = b.position || (b.side === "right" ? "top-right" : "top-left");
+            return bPos === pos;
+          });
+
+          if (cornerBadges.length === 0) return null;
+
+          return (
+            <div
+              key={pos}
+              className={`absolute ${isTop ? "top-2.5" : "bottom-2.5"} ${
+                isLeft ? "left-2.5 items-start" : "right-2.5 items-end"
+              } flex flex-col gap-1 z-10 pointer-events-none`}
+            >
+              {cornerBadges.map((b, i) => (
+                <span
+                  key={b.id || i}
+                  style={{
+                    fontSize: b.fontSize ? `${Math.min(13, Math.max(9, Math.round(b.fontSize * 0.85)))}px` : "10px",
+                  }}
+                  className={`px-2.5 py-0.5 backdrop-blur-sm text-white font-black rounded-full shadow-md flex items-center gap-1 pointer-events-auto leading-tight ${
+                    b.type === "discount" || b.color === "red"
+                      ? "bg-red-500/95"
+                      : b.color === "amber"
+                      ? "bg-amber-500/95"
+                      : b.color === "blue"
+                      ? "bg-blue-600/95"
+                      : b.color === "purple"
+                      ? "bg-purple-600/95"
+                      : "bg-green-600/95"
+                  }`}
+                >
+                  {b.type === "discount" ? (
+                    <FaPercentage className="text-yellow-200 text-[9px]" />
+                  ) : (
+                    <FaLeaf className="text-yellow-300 text-[9px]" />
+                  )}
+                  <span>{b.text}</span>
+                </span>
+              ))}
+            </div>
+          );
+        })}
+
+        {/* Fallback default tag if product has no custom tags and neither out nor limited */}
+        {badgesList.length === 0 && !stockInfo.isOut && !stockInfo.isLimited && (
+          <span className="absolute top-2.5 left-2.5 bg-yellow-400 text-green-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1 z-10">
+            🥭 {mango.stock_status || "বাগান ফ্রেশ"}
+          </span>
+        )}
+      </>
     );
   };
 
@@ -289,6 +425,7 @@ export default function MangoVarieties({ onSelectMango }) {
               mango.harvest_schedule ||
               mango.subtitle_bn ||
               "চুয়াডাঙ্গা, নওগাঁ ও রাজশাহীর বাগান থেকে সংগৃহীত।";
+            const stockInfo = getProductStockInfo(mango);
 
             return (
               <motion.div
@@ -352,10 +489,17 @@ export default function MangoVarieties({ onSelectMango }) {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handlePreOrder(mango)}
-                          className="text-xs px-4 py-2 bg-gradient-to-r from-amber-500 to-green-600 hover:from-amber-600 hover:to-green-700 text-white font-black rounded-full shadow-md transition cursor-pointer"
+                          disabled={stockInfo.isOut}
+                          onClick={() => !stockInfo.isOut && handlePreOrder(mango)}
+                          className={`text-xs px-4 py-2 font-black rounded-full shadow-md transition ${
+                            stockInfo.isOut
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
+                              : stockInfo.isPreOrder
+                              ? "bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-green-950 cursor-pointer"
+                              : "bg-gradient-to-r from-amber-500 to-green-600 hover:from-amber-600 hover:to-green-700 text-white cursor-pointer"
+                          }`}
                         >
-                          প্রি-অর্ডার করুন
+                          {stockInfo.buttonText}
                         </button>
                       </div>
                     </div>
@@ -411,10 +555,15 @@ export default function MangoVarieties({ onSelectMango }) {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handlePreOrder(mango)}
-                          className="text-xs px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition cursor-pointer shadow-none"
+                          disabled={stockInfo.isOut}
+                          onClick={() => !stockInfo.isOut && handlePreOrder(mango)}
+                          className={`text-xs px-4 py-2 font-bold rounded-lg transition ${
+                            stockInfo.isOut
+                              ? "bg-gray-200 text-gray-400 cursor-not-allowed shadow-none"
+                              : "bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-none"
+                          }`}
                         >
-                          প্রি-অর্ডার
+                          {stockInfo.buttonText}
                         </button>
                       </div>
                     </div>
@@ -471,10 +620,15 @@ export default function MangoVarieties({ onSelectMango }) {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handlePreOrder(mango)}
-                          className="text-xs px-4 py-2 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-500 hover:to-amber-500 text-gray-950 font-black rounded-xl shadow-lg transition cursor-pointer"
+                          disabled={stockInfo.isOut}
+                          onClick={() => !stockInfo.isOut && handlePreOrder(mango)}
+                          className={`text-xs px-4 py-2 font-black rounded-xl shadow-lg transition ${
+                            stockInfo.isOut
+                              ? "bg-zinc-800 text-zinc-500 cursor-not-allowed shadow-none"
+                              : "bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 hover:from-yellow-500 hover:to-amber-500 text-gray-950 cursor-pointer"
+                          }`}
                         >
-                          প্রি-অর্ডার করুন
+                          {stockInfo.buttonText}
                         </button>
                       </div>
                     </div>
@@ -534,10 +688,15 @@ export default function MangoVarieties({ onSelectMango }) {
                         </Link>
                         <button
                           type="button"
-                          onClick={() => handlePreOrder(mango)}
-                          className="text-xs px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-black rounded-2xl shadow-md border-b-4 border-emerald-950 active:border-b-0 transition cursor-pointer"
+                          disabled={stockInfo.isOut}
+                          onClick={() => !stockInfo.isOut && handlePreOrder(mango)}
+                          className={`text-xs px-4 py-2 font-black rounded-2xl shadow-md transition ${
+                            stockInfo.isOut
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none border-none"
+                              : "bg-emerald-700 hover:bg-emerald-800 text-white border-b-4 border-emerald-950 active:border-b-0 cursor-pointer"
+                          }`}
                         >
-                          প্রি-অর্ডার করুন
+                          {stockInfo.buttonText}
                         </button>
                       </div>
                     </div>

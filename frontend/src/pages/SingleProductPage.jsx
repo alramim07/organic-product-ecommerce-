@@ -302,7 +302,7 @@ export default function SingleProductPage() {
               {["top-left", "top-right", "bottom-left", "bottom-right"].map((pos) => {
                 const isLeft = pos.includes("left");
                 const isTop = pos.includes("top");
-                const badges = (
+                const rawBadges = (
                   product.image_badges && product.image_badges.length > 0
                     ? product.image_badges.filter((b) => {
                         const bPos =
@@ -327,6 +327,28 @@ export default function SingleProductPage() {
                     ? [{ text: "প্রিমিয়াম গ্রেড", type: "normal", color: "amber" }]
                     : []
                 );
+
+                const statusBadges = [];
+                if (pos === "top-left") {
+                  if (isOutOfStock) {
+                    statusBadges.push({
+                      text: "স্টক শেষ",
+                      type: "out",
+                      color: "red",
+                    });
+                  } else if (
+                    product?.stock_status?.includes("সীমিত") ||
+                    product?.stock_status?.toLowerCase().includes("limited")
+                  ) {
+                    statusBadges.push({
+                      text: "সীমিত স্টক",
+                      type: "limited",
+                      color: "amber",
+                    });
+                  }
+                }
+
+                const badges = [...statusBadges, ...rawBadges];
 
                 if (badges.length === 0) return null;
 
