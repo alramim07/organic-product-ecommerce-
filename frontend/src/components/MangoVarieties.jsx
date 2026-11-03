@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { FaCalendarAlt, FaEye, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaCalendarAlt, FaEye, FaChevronDown, FaChevronUp, FaPercentage, FaLeaf } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../context/AppContext";
 
@@ -171,6 +171,76 @@ export default function MangoVarieties({ onSelectMango }) {
     }
   };
 
+  // Render Dynamic Image Badges on Card Image
+  const renderProductBadges = (mango) => {
+    const badgesList =
+      Array.isArray(mango.image_badges) && mango.image_badges.length > 0
+        ? mango.image_badges
+        : Array.isArray(mango.imageBadges) && mango.imageBadges.length > 0
+        ? mango.imageBadges
+        : null;
+
+    if (badgesList && badgesList.length > 0) {
+      return (
+        <>
+          {["top-left", "top-right", "bottom-left", "bottom-right"].map((pos) => {
+            const isLeft = pos.includes("left");
+            const isTop = pos.includes("top");
+            const cornerBadges = badgesList.filter((b) => {
+              const bPos = b.position || (b.side === "right" ? "top-right" : "top-left");
+              return bPos === pos;
+            });
+
+            if (cornerBadges.length === 0) return null;
+
+            return (
+              <div
+                key={pos}
+                className={`absolute ${isTop ? "top-2.5" : "bottom-2.5"} ${
+                  isLeft ? "left-2.5 items-start" : "right-2.5 items-end"
+                } flex flex-col gap-1 z-10 pointer-events-none`}
+              >
+                {cornerBadges.map((b, i) => (
+                  <span
+                    key={b.id || i}
+                    style={{
+                      fontSize: b.fontSize ? `${Math.min(13, Math.max(9, Math.round(b.fontSize * 0.85)))}px` : "10px",
+                    }}
+                    className={`px-2.5 py-0.5 backdrop-blur-sm text-white font-black rounded-full shadow-md flex items-center gap-1 pointer-events-auto leading-tight ${
+                      b.type === "discount" || b.color === "red"
+                        ? "bg-red-500/95"
+                        : b.color === "amber"
+                        ? "bg-amber-500/95"
+                        : b.color === "blue"
+                        ? "bg-blue-600/95"
+                        : b.color === "purple"
+                        ? "bg-purple-600/95"
+                        : "bg-green-600/95"
+                    }`}
+                  >
+                    {b.type === "discount" ? (
+                      <FaPercentage className="text-yellow-200 text-[9px]" />
+                    ) : (
+                      <FaLeaf className="text-yellow-300 text-[9px]" />
+                    )}
+                    <span>{b.text}</span>
+                  </span>
+                ))}
+              </div>
+            );
+          })}
+        </>
+      );
+    }
+
+    // Default tag if product has no custom tags configured
+    return (
+      <span className="absolute top-2.5 left-2.5 bg-yellow-400 text-green-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1 z-10">
+        🥭 {mango.stock_status || "বাগান ফ্রেশ"}
+      </span>
+    );
+  };
+
   return (
     <section id="varieties" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-t from-yellow-50 via-white to-amber-50">
       <div className="max-w-7xl mx-auto">
@@ -238,9 +308,7 @@ export default function MangoVarieties({ onSelectMango }) {
                             e.target.src = "/assets/mangoes/m1.jpg";
                           }}
                         />
-                        <span className="absolute top-2.5 left-2.5 bg-yellow-400 text-green-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1">
-                          🥭 বাগান ফ্রেশ
-                        </span>
+                        {renderProductBadges(mango)}
                         <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <span className="bg-white/95 text-green-950 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5">
                             <FaEye /> বিস্তারিত দেখুন
@@ -302,9 +370,7 @@ export default function MangoVarieties({ onSelectMango }) {
                           e.target.src = "/assets/mangoes/m1.jpg";
                         }}
                       />
-                      <span className="absolute top-2.5 right-2.5 bg-slate-900/85 backdrop-blur text-white text-[10px] font-bold px-2.5 py-0.5 rounded shadow">
-                        {mango.stock_status || "ইন স্টক"}
-                      </span>
+                      {renderProductBadges(mango)}
                       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <span className="bg-white/95 text-slate-900 font-bold text-xs py-1 px-3 rounded shadow flex items-center gap-1">
                           <FaEye /> বিস্তারিত
@@ -364,9 +430,7 @@ export default function MangoVarieties({ onSelectMango }) {
                           e.target.src = "/assets/mangoes/m1.jpg";
                         }}
                       />
-                      <span className="absolute top-2.5 left-2.5 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 font-black text-[10px] px-2.5 py-0.5 rounded-full shadow flex items-center gap-1">
-                        👑 প্রিমিয়াম
-                      </span>
+                      {renderProductBadges(mango)}
                       <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <span className="bg-gray-950 text-amber-300 border border-amber-400 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5">
                           <FaEye /> বিস্তারিত দেখুন
@@ -426,9 +490,7 @@ export default function MangoVarieties({ onSelectMango }) {
                             e.target.src = "/assets/mangoes/m1.jpg";
                           }}
                         />
-                        <span className="absolute top-2.5 left-2.5 bg-emerald-700 text-white font-black text-[10px] px-3 py-0.5 rounded-full shadow flex items-center gap-1">
-                          🌿 ১০০% অর্গানিক
-                        </span>
+                        {renderProductBadges(mango)}
                         <div className="absolute inset-0 bg-black/25 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                           <span className="bg-white/95 text-emerald-900 font-bold text-xs py-1.5 px-3.5 rounded-full shadow flex items-center gap-1.5">
                             <FaEye /> বিস্তারিত

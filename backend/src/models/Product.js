@@ -79,6 +79,17 @@ const productSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    image_badges: [
+      {
+        id: { type: String, default: "" },
+        text: { type: String, default: "" },
+        type: { type: String, default: "normal" },
+        color: { type: String, default: "green" },
+        position: { type: String, default: "top-left" },
+        side: { type: String, default: "left" },
+        fontSize: { type: Number, default: 12 },
+      },
+    ],
     origin: {
       type: String,
       default: "",
