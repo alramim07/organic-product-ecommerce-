@@ -229,8 +229,12 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
                 <span className="text-xs font-bold text-gray-600 block">
                   পরিশোধের ধরণ: ক্যাশ অন ডেলিভারি (COD)
                 </span>
-                <span className="text-[11px] text-gray-400">
-                  পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন
+                <span className="text-[11px] text-gray-500 font-semibold">
+                  {order.deliveryCharge === 0 || order.deliveryArea === "free"
+                    ? "🎉 ডেলিভারি চার্জ: ফ্রি ডেলিভারি (৳০)"
+                    : order.deliveryCharge
+                    ? `ডেলিভারি চার্জ: ৳${order.deliveryCharge}`
+                    : "পণ্য হাতে পেয়ে মূল্য পরিশোধ করুন"}
                 </span>
               </div>
               <div className="text-right">

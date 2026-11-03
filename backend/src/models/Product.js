@@ -222,6 +222,22 @@ const productSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    is_free_delivery: {
+      type: Boolean,
+      default: false,
+    },
+    delivery_charge_type: {
+      type: String,
+      default: "global",
+    },
+    delivery_charge_dhaka: {
+      type: Number,
+      default: null,
+    },
+    delivery_charge_outside: {
+      type: Number,
+      default: null,
+    },
     rating: {
       type: Number,
       default: 4.9,

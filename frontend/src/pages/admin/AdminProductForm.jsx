@@ -79,7 +79,7 @@ const defaultStorageSteps = [
 export default function AdminProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { products, categories, addProduct, updateProduct } = useApp();
+  const { products, categories, settings, addProduct, updateProduct } = useApp();
 
   const isEdit = Boolean(id);
   const existingProduct = isEdit
@@ -93,6 +93,12 @@ export default function AdminProductForm() {
   const [category, setCategory] = useState("mango");
   const [unit, setUnit] = useState("কেজি");
   const [isFeatured, setIsFeatured] = useState(false);
+
+  // Delivery Location & Charges
+  const [isFreeDelivery, setIsFreeDelivery] = useState(false);
+  const [deliveryChargeType, setDeliveryChargeType] = useState("global"); // "global" | "custom"
+  const [deliveryChargeDhaka, setDeliveryChargeDhaka] = useState("");
+  const [deliveryChargeOutside, setDeliveryChargeOutside] = useState("");
 
   // Main Product Info (Blank by default for Add New Product)
   const [nameBn, setNameBn] = useState("");
@@ -317,6 +323,10 @@ export default function AdminProductForm() {
     setCategory("mango");
     setUnit("কেজি");
     setIsFeatured(false);
+    setIsFreeDelivery(false);
+    setDeliveryChargeType("global");
+    setDeliveryChargeDhaka("");
+    setDeliveryChargeOutside("");
     setNameBn("");
     setNameEn("");
     setSubtitleBn("");
@@ -376,6 +386,21 @@ export default function AdminProductForm() {
         setCategory(existingProduct.category || "mango");
         setUnit(existingProduct.unit || "কেজি");
         setIsFeatured(Boolean(existingProduct.is_featured));
+        setIsFreeDelivery(Boolean(existingProduct.is_free_delivery));
+        setDeliveryChargeType(
+          existingProduct.delivery_charge_type ||
+          (existingProduct.delivery_charge_dhaka !== undefined && existingProduct.delivery_charge_dhaka !== null ? "custom" : "global")
+        );
+        setDeliveryChargeDhaka(
+          existingProduct.delivery_charge_dhaka !== undefined && existingProduct.delivery_charge_dhaka !== null
+            ? existingProduct.delivery_charge_dhaka
+            : ""
+        );
+        setDeliveryChargeOutside(
+          existingProduct.delivery_charge_outside !== undefined && existingProduct.delivery_charge_outside !== null
+            ? existingProduct.delivery_charge_outside
+            : ""
+        );
         setNameBn(existingProduct.name_bn || "");
         setNameEn(existingProduct.name_en || "");
         setSubtitleBn(existingProduct.subtitle_bn || "");
@@ -732,6 +757,20 @@ export default function AdminProductForm() {
           rating: Number(rating) || 5.0,
           total_reviews: Number(totalReviews) || 0,
           is_featured: isFeatured,
+          is_free_delivery: Boolean(isFreeDelivery),
+          delivery_charge_type: deliveryChargeType,
+          delivery_charge_dhaka:
+            isFreeDelivery
+              ? 0
+              : deliveryChargeType === "custom" && deliveryChargeDhaka !== ""
+              ? Number(deliveryChargeDhaka)
+              : null,
+          delivery_charge_outside:
+            isFreeDelivery
+              ? 0
+              : deliveryChargeType === "custom" && deliveryChargeOutside !== ""
+              ? Number(deliveryChargeOutside)
+              : null,
           packages: (packages || []).map((pkg) => ({
             ...pkg,
             originalPrice:
@@ -858,6 +897,20 @@ export default function AdminProductForm() {
       rating: Number(rating) || 5.0,
       total_reviews: Number(totalReviews) || 0,
       is_featured: isFeatured,
+      is_free_delivery: Boolean(isFreeDelivery),
+      delivery_charge_type: deliveryChargeType,
+      delivery_charge_dhaka:
+        isFreeDelivery
+          ? 0
+          : deliveryChargeType === "custom" && deliveryChargeDhaka !== ""
+          ? Number(deliveryChargeDhaka)
+          : null,
+      delivery_charge_outside:
+        isFreeDelivery
+          ? 0
+          : deliveryChargeType === "custom" && deliveryChargeOutside !== ""
+          ? Number(deliveryChargeOutside)
+          : null,
       packages: (packages || []).map((pkg) => ({
         ...pkg,
         originalPrice:
@@ -962,6 +1015,20 @@ export default function AdminProductForm() {
       rating: Number(rating) || 5.0,
       total_reviews: Number(totalReviews) || 0,
       is_featured: isFeatured,
+      is_free_delivery: Boolean(isFreeDelivery),
+      delivery_charge_type: deliveryChargeType,
+      delivery_charge_dhaka:
+        isFreeDelivery
+          ? 0
+          : deliveryChargeType === "custom" && deliveryChargeDhaka !== ""
+          ? Number(deliveryChargeDhaka)
+          : null,
+      delivery_charge_outside:
+        isFreeDelivery
+          ? 0
+          : deliveryChargeType === "custom" && deliveryChargeOutside !== ""
+          ? Number(deliveryChargeOutside)
+          : null,
       packages: (packages || []).map((pkg) => ({
         ...pkg,
         originalPrice:
@@ -2175,6 +2242,148 @@ export default function AdminProductForm() {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* ========================================================================= */}
+            {/* Delivery Location & Charges (ডেলিভারি লোকেশন ও চার্জ)                    */}
+            {/* ========================================================================= */}
+            <div className="bg-white/95 border-2 border-amber-200 rounded-3xl p-5 sm:p-6 shadow-sm space-y-4">
+              <div className="flex items-center justify-between border-b border-amber-100 pb-3 flex-wrap gap-2">
+                <div className="flex items-center gap-2.5">
+                  <span className="p-2 bg-green-100 text-green-700 rounded-xl text-base shadow-xs">
+                    <FaTruck />
+                  </span>
+                  <div>
+                    <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                      Delivery Location & Charges (ডেলিভারি লোকেশন ও চার্জ)
+                    </h4>
+                    <p className="text-[11px] text-gray-500">
+                      Configure delivery options or enable 100% Free Delivery for this product.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Free Delivery Quick Badge */}
+                <span
+                  className={`text-xs font-black px-3 py-1 rounded-full border transition-all ${
+                    isFreeDelivery
+                      ? "bg-emerald-100 text-emerald-800 border-emerald-300 shadow-sm"
+                      : "bg-gray-100 text-gray-600 border-gray-200"
+                  }`}
+                >
+                  {isFreeDelivery ? "🎉 Free Delivery Active" : "Paid Delivery"}
+                </span>
+              </div>
+
+              {/* Free Delivery Master Toggle */}
+              <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="flex items-start sm:items-center gap-3">
+                  <input
+                    type="checkbox"
+                    id="freeDeliveryCheckbox"
+                    checked={isFreeDelivery}
+                    onChange={(e) => setIsFreeDelivery(e.target.checked)}
+                    className="w-5 h-5 text-green-600 rounded focus:ring-green-500 cursor-pointer accent-green-600 mt-0.5 sm:mt-0"
+                  />
+                  <label htmlFor="freeDeliveryCheckbox" className="cursor-pointer select-none">
+                    <span className="text-sm font-extrabold text-green-950 block">
+                      Free Delivery (ফ্রি ডেলিভারি প্রযোজ্য)
+                    </span>
+                    <span className="text-xs text-gray-600">
+                      When enabled, delivery charge will be ৳0 and "Free Delivery" will be shown in the storefront Delivery Location section.
+                    </span>
+                  </label>
+                </div>
+
+                <div className="shrink-0 self-end sm:self-center">
+                  <span
+                    className={`inline-block px-3 py-1 rounded-xl text-xs font-black uppercase ${
+                      isFreeDelivery
+                        ? "bg-green-600 text-white shadow-sm"
+                        : "bg-gray-200 text-gray-700"
+                    }`}
+                  >
+                    {isFreeDelivery ? "ফ্রি ডেলিভারি" : "রেগুলার ডেলিভারি"}
+                  </span>
+                </div>
+              </div>
+
+              {/* If Free Delivery is Active -> Show Preview Notification */}
+              {isFreeDelivery ? (
+                <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-medium space-y-1">
+                  <p className="font-extrabold text-emerald-950 flex items-center gap-1.5 text-sm">
+                    <FaCheckCircle className="text-emerald-600" /> এই পণ্যের জন্য ফ্রি ডেলিভারি সক্রিয় করা হয়েছে!
+                  </p>
+                  <p className="text-emerald-800">
+                    গ্রাহক প্রোডাক্ট পেজে কোনো ডেলিভারি চার্জ (যেমন ৳১২০ বা ৳১৫০) দেখতে পাবে না। "ডেলিভারি লোকেশন:" সেকশনে সরাসরি <strong>🎉 ফ্রি ডেলিভারি (৳০)</strong> শো করবে এবং মোট বিলে কোনো ডেলিভারি ফি যুক্ত হবে না।
+                  </p>
+                </div>
+              ) : (
+                /* Delivery Charge Selection: Store Default vs Custom */
+                <div className="space-y-3 pt-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3 text-xs font-bold text-gray-700">
+                    <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded-xl border border-gray-200 hover:border-green-400 transition">
+                      <input
+                        type="radio"
+                        name="deliveryChargeType"
+                        value="global"
+                        checked={deliveryChargeType === "global"}
+                        onChange={() => setDeliveryChargeType("global")}
+                        className="text-green-600 focus:ring-green-500 accent-green-600"
+                      />
+                      <span>Store Default Rates (ঢাকা: ৳{settings?.deliveryFeeDhaka || 120}, বাইরে: ৳{settings?.deliveryFeeOutside || 150})</span>
+                    </label>
+
+                    <label className="flex items-center gap-2 cursor-pointer bg-white px-3 py-2 rounded-xl border border-gray-200 hover:border-green-400 transition">
+                      <input
+                        type="radio"
+                        name="deliveryChargeType"
+                        value="custom"
+                        checked={deliveryChargeType === "custom"}
+                        onChange={() => setDeliveryChargeType("custom")}
+                        className="text-green-600 focus:ring-green-500 accent-green-600"
+                      />
+                      <span>Custom Delivery Charges for this Product</span>
+                    </label>
+                  </div>
+
+                  {deliveryChargeType === "custom" && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 p-4 bg-gray-50 rounded-2xl border border-gray-200 animate-fadeIn">
+                      <div>
+                        <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                          Inside Dhaka Delivery Charge (ঢাকা শহর ডেলিভারি চার্জ):
+                        </label>
+                        <div className="flex items-center bg-white border border-gray-300 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-green-500">
+                          <span className="text-gray-400 font-bold mr-1 text-xs">৳</span>
+                          <input
+                            type="number"
+                            value={deliveryChargeDhaka}
+                            onChange={(e) => setDeliveryChargeDhaka(e.target.value)}
+                            placeholder={String(settings?.deliveryFeeDhaka || 120)}
+                            className="w-full bg-transparent text-xs font-bold text-gray-900 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                          Outside Dhaka Delivery Charge (ঢাকার বাইরে ডেলিভারি চার্জ):
+                        </label>
+                        <div className="flex items-center bg-white border border-gray-300 rounded-xl px-3 py-2 focus-within:ring-2 focus-within:ring-green-500">
+                          <span className="text-gray-400 font-bold mr-1 text-xs">৳</span>
+                          <input
+                            type="number"
+                            value={deliveryChargeOutside}
+                            onChange={(e) => setDeliveryChargeOutside(e.target.value)}
+                            placeholder={String(settings?.deliveryFeeOutside || 150)}
+                            className="w-full bg-transparent text-xs font-bold text-gray-900 focus:outline-none"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>

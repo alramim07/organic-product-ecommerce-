@@ -312,11 +312,28 @@ export default function SingleProductPage() {
     }
   };
 
-  // Calculations from dynamic settings
-  const deliveryCharge =
-    deliveryArea === "dhaka"
-      ? settings?.deliveryFeeDhaka || 120
-      : settings?.deliveryFeeOutside || 150;
+  // Calculations from dynamic product & settings
+  const isFreeDelivery = Boolean(product?.is_free_delivery);
+  const dhakaFee =
+    !isFreeDelivery &&
+    product?.delivery_charge_dhaka !== undefined &&
+    product?.delivery_charge_dhaka !== null &&
+    product?.delivery_charge_dhaka !== ""
+      ? Number(product.delivery_charge_dhaka)
+      : (settings?.deliveryFeeDhaka || 120);
+
+  const outsideFee =
+    !isFreeDelivery &&
+    product?.delivery_charge_outside !== undefined &&
+    product?.delivery_charge_outside !== null &&
+    product?.delivery_charge_outside !== ""
+      ? Number(product.delivery_charge_outside)
+      : (settings?.deliveryFeeOutside || 150);
+
+  const deliveryCharge = isFreeDelivery
+    ? 0
+    : (deliveryArea === "dhaka" ? dhakaFee : outsideFee);
+
   const packagePrice = selectedPackage
     ? selectedPackage.price
     : (product?.price_per_kg || 220) * 5;
@@ -325,7 +342,10 @@ export default function SingleProductPage() {
 
   // Handle WhatsApp Order
   const handleWhatsAppOrder = () => {
-    const message = `হ্যালো আমওয়ালা ভাইয়া! আমি "${product.name_bn}" এর (${selectedPackage?.label || "৫ কেজি"} x ${quantity} টি) অর্ডার করতে চাই। মোট আনুমানিক মূল্য: ৳${totalAmount}। বিস্তারিত জানাবেন প্লিজ।`;
+    const deliveryText = isFreeDelivery
+      ? "ফ্রি ডেলিভারি (৳০)"
+      : `৳${deliveryCharge} (${deliveryArea === "dhaka" ? "ঢাকা শহর" : "ঢাকার বাইরে"})`;
+    const message = `হ্যালো আমওয়ালা ভাইয়া! আমি "${product.name_bn}" এর (${selectedPackage?.label || "৫ কেজি"} x ${quantity} টি) অর্ডার করতে চাই। ডেলিভারি: ${deliveryText}। মোট আনুমানিক মূল্য: ৳${totalAmount}। বিস্তারিত জানাবেন প্লিজ।`;
     const waNum = settings?.whatsappNumber || "8801749775030";
     const url = `https://wa.me/${waNum}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");
@@ -376,7 +396,7 @@ export default function SingleProductPage() {
         packageLabel: `${selectedPackage?.label || "৫ কেজি"} (${quantity} টি)`,
         packageKg: (selectedPackage?.kg || 5) * quantity,
         quantity,
-        deliveryArea,
+        deliveryArea: isFreeDelivery ? "free" : deliveryArea,
         deliveryCharge,
         subtotal,
         totalAmount,
@@ -827,30 +847,49 @@ export default function SingleProductPage() {
                   <label className="block text-xs font-bold text-gray-700 mb-2">
                     ডেলিভারি লোকেশন:
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setDeliveryArea("dhaka")}
-                      className={`px-3 py-2 text-xs rounded-xl border font-bold transition ${
-                        deliveryArea === "dhaka"
-                          ? "bg-green-600 text-white border-green-600 shadow"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-yellow-400"
-                      }`}
-                    >
-                      ঢাকা শহর (৳১২০)
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDeliveryArea("outside")}
-                      className={`px-3 py-2 text-xs rounded-xl border font-bold transition ${
-                        deliveryArea === "outside"
-                          ? "bg-green-600 text-white border-green-600 shadow"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-yellow-400"
-                      }`}
-                    >
-                      ঢাকার বাইরে (৳১৫০)
-                    </button>
-                  </div>
+                  {isFreeDelivery ? (
+                    <div className="flex items-center justify-between p-3 bg-gradient-to-r from-emerald-50 to-green-50 border-2 border-emerald-400 rounded-2xl text-emerald-900 shadow-sm animate-fadeIn">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">🎉</span>
+                        <div>
+                          <span className="text-xs font-black text-emerald-800 block">
+                            ফ্রি ডেলিভারি (Free Delivery)
+                          </span>
+                          <span className="text-[11px] font-semibold text-emerald-600">
+                            এই পণ্যে কোনো ডেলিভারি চার্জ নেই (৳০)
+                          </span>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-1 bg-emerald-600 text-white font-extrabold text-[11px] rounded-full shadow-xs">
+                        ফ্রি
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryArea("dhaka")}
+                        className={`px-3 py-2 text-xs rounded-xl border font-bold transition cursor-pointer ${
+                          deliveryArea === "dhaka"
+                            ? "bg-green-600 text-white border-green-600 shadow"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-yellow-400"
+                        }`}
+                      >
+                        ঢাকা শহর (৳{dhakaFee})
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDeliveryArea("outside")}
+                        className={`px-3 py-2 text-xs rounded-xl border font-bold transition cursor-pointer ${
+                          deliveryArea === "outside"
+                            ? "bg-green-600 text-white border-green-600 shadow"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-yellow-400"
+                        }`}
+                      >
+                        ঢাকার বাইরে (৳{outsideFee})
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -858,7 +897,7 @@ export default function SingleProductPage() {
               <div className="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-between">
                 <div>
                   <span className="text-xs text-gray-500">
-                    {selectedPackage?.label || "৫ কেজি"} x {quantity} টি + ডেলিভারি চার্জ (৳{deliveryCharge})
+                    {selectedPackage?.label || "৫ কেজি"} x {quantity} টি + ডেলিভারি চার্জ ({isFreeDelivery ? "ফ্রি / ৳০" : `৳${deliveryCharge}`})
                   </span>
                   <p className="text-xs font-semibold text-green-700">
                     ক্যাশ অন ডেলিভারিতে সম্পূর্ণ বিল পরিশোধযোগ্য
