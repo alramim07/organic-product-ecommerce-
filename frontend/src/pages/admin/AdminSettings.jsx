@@ -8431,7 +8431,7 @@ export default function AdminSettings() {
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-white rounded-xl border border-gray-200">
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        আইকন (Emoji / Text)
+                        Icon
                       </label>
                       <div className="relative">
                         <button
