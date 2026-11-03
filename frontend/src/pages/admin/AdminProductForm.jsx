@@ -109,6 +109,8 @@ export default function AdminProductForm() {
   const [stockQuantity, setStockQuantity] = useState("");
   const [harvestSchedule, setHarvestSchedule] = useState("");
   const [regionDates, setRegionDates] = useState("");
+  const [showRegionSchedule, setShowRegionSchedule] = useState(false);
+  const [regionScheduleTitle, setRegionScheduleTitle] = useState("আঞ্চলিক পাকা ও ডেলিভারি শিডিউল:");
   const [showPreorderCalendar, setShowPreorderCalendar] = useState(false);
 
   // Pricing & Auto-counted Discount
@@ -143,9 +145,15 @@ export default function AdminProductForm() {
   // Tab 1: Specs & Taste (Icon + Title separate)
   const [tab1Icon, setTab1Icon] = useState("🥭");
   const [tab1Title, setTab1Title] = useState("বৈশিষ্ট্য ও স্বাদ");
+  const [descriptionTitle, setDescriptionTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tasteSpecs, setTasteSpecs] = useState([]);
   const [highlights, setHighlights] = useState([]);
+
+  // SEO & Product Meta Info
+  const [metaTitle, setMetaTitle] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [metaKeywords, setMetaKeywords] = useState("");
 
   // Tab 2: Packaging & Shipping (Icon + Title separate)
   const [tab2Icon, setTab2Icon] = useState("📦");
@@ -301,6 +309,8 @@ export default function AdminProductForm() {
     setStockQuantity("");
     setHarvestSchedule("");
     setRegionDates("");
+    setShowRegionSchedule(false);
+    setRegionScheduleTitle("আঞ্চলিক পাকা ও ডেলিভারি শিডিউল:");
     setShowPreorderCalendar(false);
     setRegularPricePerUnit("");
     setDiscountPercent(0);
@@ -318,6 +328,7 @@ export default function AdminProductForm() {
     setPackages([]);
     setTab1Icon("🥭");
     setTab1Title("বৈশিষ্ট্য ও স্বাদ");
+    setDescriptionTitle("");
     setDescription("");
     setTasteSpecs([]);
     setHighlights([]);
@@ -330,6 +341,9 @@ export default function AdminProductForm() {
     setTab3Icon("💡");
     setTab3Title("পাকা ও সংরক্ষণ নিয়ম");
     setStorageSteps(defaultStorageSteps);
+    setMetaTitle("");
+    setMetaDescription("");
+    setMetaKeywords("");
     setActiveTab("tab1");
     isInitialMount.current = true;
   };
@@ -352,6 +366,14 @@ export default function AdminProductForm() {
         setStockStatus(existingProduct.stock_status || "ইন স্টক");
         setHarvestSchedule(existingProduct.harvest_schedule || "");
         setRegionDates(existingProduct.regionDates || "");
+        setShowRegionSchedule(
+          existingProduct.show_region_schedule !== undefined
+            ? Boolean(existingProduct.show_region_schedule)
+            : Boolean(existingProduct.regionDates)
+        );
+        setRegionScheduleTitle(
+          existingProduct.region_schedule_title || "আঞ্চলিক পাকা ও ডেলিভারি শিডিউল:"
+        );
 
         const regPrice =
           existingProduct.regular_price_per_unit ||
@@ -389,6 +411,7 @@ export default function AdminProductForm() {
 
         setImageBadges(existingProduct.image_badges || []);
         setPackages(existingProduct.packages || []);
+        setDescriptionTitle(existingProduct.description_title || "");
         setDescription(existingProduct.description || "");
 
         // Tab icons & titles
@@ -443,6 +466,10 @@ export default function AdminProductForm() {
         if (existingProduct._id || existingProduct.id) {
           setSavedDraftId(existingProduct._id || existingProduct.id);
         }
+
+        setMetaTitle(existingProduct.meta_title || "");
+        setMetaDescription(existingProduct.meta_description || "");
+        setMetaKeywords(existingProduct.meta_keywords || "");
       }
     } else {
       // User navigated to Add New Product route (/admin/products/add) -> Reset cleanly!
@@ -665,11 +692,14 @@ export default function AdminProductForm() {
             stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
           origin: origin,
           harvest_schedule: harvestSchedule,
+          show_region_schedule: showRegionSchedule,
+          region_schedule_title: regionScheduleTitle,
           regionDates: regionDates,
           min_order: minOrder,
           image: image,
           gallery: gallery.length > 0 ? gallery : image ? [image] : [],
           image_badges: imageBadges,
+          description_title: descriptionTitle,
           description: description,
           rating: Number(rating) || 5.0,
           total_reviews: Number(totalReviews) || 0,
@@ -686,6 +716,9 @@ export default function AdminProductForm() {
           tab3_icon: (tab3Icon || "").trim(),
           tab3_title: (tab3Title || "").trim(),
           storage_steps: storageSteps,
+          meta_title: metaTitle,
+          meta_description: metaDescription,
+          meta_keywords: metaKeywords,
           publication_status: draftStatus,
           scheduled_at: null,
         };
@@ -726,11 +759,14 @@ export default function AdminProductForm() {
     stockQuantity,
     origin,
     harvestSchedule,
+    showRegionSchedule,
+    regionScheduleTitle,
     regionDates,
     minOrder,
     image,
     gallery,
     imageBadges,
+    descriptionTitle,
     description,
     rating,
     totalReviews,
@@ -747,7 +783,73 @@ export default function AdminProductForm() {
     tab3Icon,
     tab3Title,
     storageSteps,
+    metaTitle,
+    metaDescription,
+    metaKeywords,
   ]);
+
+  // WordPress-style Live Preview in New Tab
+  const handleLivePreview = () => {
+    const selectedCatObj = categories.find((c) => c.slug === category);
+    const livePreviewData = {
+      _id: savedDraftId || id || "preview-temp",
+      id: savedDraftId || id || "preview-temp",
+      name_bn: nameBn.trim() || "টেস্ট প্রোডাক্ট",
+      name_en: nameEn || nameBn || "Test Product",
+      subtitle_bn: subtitleBn,
+      slug: cleanSlug || "preview",
+      category: category,
+      category_bn: selectedCatObj ? selectedCatObj.name_bn : "আম",
+      unit: unit,
+      price: `৳ ${pricePerUnit || 0}/${unit}`,
+      price_per_unit: Number(pricePerUnit) || 0,
+      price_per_kg: Number(pricePerUnit) || 0,
+      regular_price_per_unit: Number(regularPricePerUnit) || 0,
+      regular_price_per_kg: Number(regularPricePerUnit) || 0,
+      discount_percent: Number(discountPercent) || 0,
+      stock_status: stockStatus,
+      stock_quantity: stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
+      origin: origin,
+      harvest_schedule: harvestSchedule,
+      show_region_schedule: showRegionSchedule,
+      region_schedule_title: regionScheduleTitle,
+      regionDates: regionDates,
+      min_order: minOrder,
+      image: image || "/assets/mangoes/m1.jpg",
+      gallery: gallery.length > 0 ? gallery : image ? [image] : ["/assets/mangoes/m1.jpg"],
+      image_badges: imageBadges,
+      description: description,
+      description_title: descriptionTitle,
+      rating: Number(rating) || 5.0,
+      total_reviews: Number(totalReviews) || 0,
+      is_featured: isFeatured,
+      packages: packages,
+      taste_specs: tasteSpecs,
+      highlights: highlights,
+      tab1_icon: tab1Icon,
+      tab1_title: tab1Title,
+      tab2_icon: tab2Icon,
+      tab2_title: tab2Title,
+      packaging_description: packagingDescription,
+      packaging_steps: packagingSteps,
+      tab3_icon: tab3Icon,
+      tab3_title: tab3Title,
+      storage_steps: storageSteps,
+      meta_title: metaTitle,
+      meta_description: metaDescription,
+      meta_keywords: metaKeywords,
+      publication_status: publicationStatus,
+    };
+
+    try {
+      sessionStorage.setItem("live_product_preview", JSON.stringify(livePreviewData));
+    } catch (e) {
+      console.warn("Could not save to sessionStorage", e);
+    }
+
+    const previewTarget = cleanSlug || savedDraftId || id || "preview";
+    window.open(`/product/${previewTarget}?preview=true`, "_blank");
+  };
 
   // Save / Publish / Schedule / Draft Handler
   const handleSaveProduct = async (e, explicitStatus = null) => {
@@ -807,11 +909,14 @@ export default function AdminProductForm() {
       stock_quantity: stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
       origin: origin,
       harvest_schedule: harvestSchedule,
+      show_region_schedule: showRegionSchedule,
+      region_schedule_title: regionScheduleTitle,
       regionDates: regionDates,
       min_order: minOrder,
       image: image,
       gallery: gallery.length > 0 ? gallery : image ? [image] : [],
       image_badges: imageBadges,
+      description_title: descriptionTitle,
       description: description,
       rating: Number(rating) || 5.0,
       total_reviews: Number(totalReviews) || 0,
@@ -828,6 +933,9 @@ export default function AdminProductForm() {
       tab3_icon: (tab3Icon || "").trim(),
       tab3_title: (tab3Title || "").trim(),
       storage_steps: storageSteps,
+      meta_title: metaTitle,
+      meta_description: metaDescription,
+      meta_keywords: metaKeywords,
       publication_status: targetStatus,
       scheduled_at: targetStatus === "scheduled" ? scheduledAt : null,
     };
@@ -1068,6 +1176,17 @@ export default function AdminProductForm() {
               </div>
             )}
           </div>
+
+          {/* WordPress-style Live Preview in New Tab */}
+          <button
+            type="button"
+            onClick={handleLivePreview}
+            className="px-3.5 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+            title="Open Live Preview in a new tab"
+          >
+            <FaEye className="text-xs text-blue-600" />
+            <span>Live Preview</span>
+          </button>
 
           {/* Publish / Update Button */}
           <button
@@ -1834,19 +1953,66 @@ export default function AdminProductForm() {
               </div>
             </div>
 
-            {/* Regional Ripening Schedule Banner */}
-            <div className="p-3 bg-green-50/80 rounded-2xl border border-green-200 text-xs text-green-900 flex items-center gap-2">
-              <FaCalendarAlt className="text-green-700 shrink-0 text-sm" />
-              <div className="flex-1">
-                <span className="font-bold">আঞ্চলিক পাকা ও ডেলিভারি শিডিউল: </span>
-                <input
-                  type="text"
-                  value={regionDates}
-                  onChange={(e) => setRegionDates(e.target.value)}
-                  placeholder="চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে, রাজশাহী: ২২ মে"
-                  className="w-full bg-white/80 border border-green-300 rounded-lg px-2.5 py-1 text-xs text-gray-800 focus:outline-none mt-1"
-                />
+            {/* Regional Ripening Schedule Banner (Optional & Configurable) */}
+            <div
+              className={`p-3.5 rounded-2xl border transition-all ${
+                showRegionSchedule
+                  ? "bg-green-50/90 border-green-300 shadow-sm"
+                  : "bg-gray-50/80 border-gray-200"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={showRegionSchedule}
+                    onChange={(e) => setShowRegionSchedule(e.target.checked)}
+                    className="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                    <FaCalendarAlt className="text-green-700 text-xs" />
+                    <span>আঞ্চলিক পাকা ও ডেলিভারি শিডিউল যুক্ত করুন (ঐচ্ছিক)</span>
+                  </span>
+                </label>
+                <span
+                  className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full border ${
+                    showRegionSchedule
+                      ? "bg-green-100 text-green-800 border-green-300"
+                      : "bg-gray-200 text-gray-600 border-gray-300"
+                  }`}
+                >
+                  {showRegionSchedule ? "সক্রিয় / Visible" : "লুকানো / Hidden"}
+                </span>
               </div>
+
+              {showRegionSchedule && (
+                <div className="space-y-2 mt-2.5 pt-2.5 border-t border-green-200/60 animate-fadeIn">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">
+                      শিরোনাম / হেডিং (Editable Heading):
+                    </label>
+                    <input
+                      type="text"
+                      value={regionScheduleTitle}
+                      onChange={(e) => setRegionScheduleTitle(e.target.value)}
+                      placeholder="আঞ্চলিক পাকা ও ডেলিভারি শিডিউল:"
+                      className="w-full bg-white border border-green-300 rounded-lg px-2.5 py-1 text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-500 uppercase block mb-1">
+                      তারিখ ও অঞ্চলের তালিকা:
+                    </label>
+                    <input
+                      type="text"
+                      value={regionDates}
+                      onChange={(e) => setRegionDates(e.target.value)}
+                      placeholder="চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে, রাজশাহী: ২২ মে"
+                      className="w-full bg-white border border-green-300 rounded-lg px-2.5 py-1 text-xs text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Package Size Selection Cards */}
@@ -2012,14 +2178,35 @@ export default function AdminProductForm() {
                 </div>
               </div>
 
-              {/* Self-Hosted TinyMCE Rich Text Editor for Product Description */}
-              <div>
-                <label className="text-xs font-bold text-gray-700 mb-2 block flex items-center gap-2">
-                  <span>পণ্যের বিস্তারিত বিবরণ (Self-hosted TinyMCE Rich Editor):</span>
+              {/* Dynamic Description Heading & Self-Hosted TinyMCE Rich Text Editor */}
+              <div className="space-y-3">
+                <div className="p-3.5 bg-green-50/50 rounded-2xl border border-green-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex-1">
+                    <label className="text-xs font-bold text-green-950 flex items-center gap-1.5 mb-1">
+                      <FaEdit className="text-green-700 text-xs" />
+                      <span>বিবরণ সেকশন শিরোনাম (Description Heading on Live Page):</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={descriptionTitle}
+                      onChange={(e) => setDescriptionTitle(e.target.value)}
+                      placeholder={`যেমন: ${nameBn || "পণ্য"} সম্পর্কে বিস্তারিত`}
+                      className="w-full bg-white border border-green-300 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+                    />
+                  </div>
+                  <div className="text-[11px] text-gray-500 sm:max-w-[220px]">
+                    লাইভ পেজে বিবরণীর ওপরে এই শিরোনামটি প্রদর্শিত হবে। ফাঁকা রাখলে স্বয়ংক্রিয়ভাবে "{nameBn || "পণ্য"} সম্পর্কে বিস্তারিত" দেখাবে।
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <label className="text-xs font-bold text-gray-700 flex items-center gap-2">
+                    <span>পণ্যের বিস্তারিত বিবরণ (Self-hosted TinyMCE Rich Editor):</span>
+                  </label>
                   <span className="text-[10px] font-normal text-green-700 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
                     Formatting, Lists, Bold, Colors Available
                   </span>
-                </label>
+                </div>
                 <div className="rounded-2xl overflow-hidden border border-gray-300 shadow-sm bg-white">
                   <Editor
                     tinymceScriptSrc="/tinymce/tinymce.min.js"
@@ -2394,6 +2581,103 @@ export default function AdminProductForm() {
         </div>
       </div>
 
+      {/* Search Engine Optimization (SEO) & Meta Details */}
+      <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-gray-200 space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-100 pb-4">
+          <div>
+            <h3 className="text-base font-black text-gray-900 flex items-center gap-2">
+              <span className="text-lg">🔍</span>
+              <span>Search Engine Optimization (SEO & Meta Details)</span>
+            </h3>
+            <p className="text-xs text-gray-500 mt-0.5">
+              গুগল বা সোশ্যাল মিডিয়ায় আপনার এই পণ্যটির প্রিভিউ ও সার্চ র‍্যাঙ্কিং কেমন দেখাবে তা কাস্টমাইজ করুন।
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={handleLivePreview}
+            className="px-3.5 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-700 text-xs font-bold rounded-xl transition flex items-center gap-1.5 self-start sm:self-auto cursor-pointer"
+          >
+            <FaEye className="text-xs text-blue-600" />
+            <span>Live Preview</span>
+          </button>
+        </div>
+
+        {/* Google Search Result Live Preview Card */}
+        <div className="p-4 bg-gray-50/80 rounded-2xl border border-gray-200 space-y-1.5 max-w-2xl">
+          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">
+            Google Search Snippet Preview:
+          </span>
+          <div className="flex items-center gap-2 text-xs text-gray-700 truncate">
+            <span className="font-semibold text-gray-800">ammwala.com</span>
+            <span className="text-gray-400">› product ›</span>
+            <span className="text-gray-500 font-mono text-[11px] truncate">
+              {cleanSlug || "product-slug"}
+            </span>
+          </div>
+          <h4 className="text-base sm:text-lg font-semibold text-blue-800 hover:underline cursor-pointer truncate">
+            {metaTitle || `${nameBn || "Product Name"} | সেরা প্রিমিয়াম আম`}
+          </h4>
+          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+            {metaDescription ||
+              subtitleBn ||
+              "আমওয়ালা থেকে সরাসরি রাজশাহীর সেরা বাগানের কেমিক্যালমুক্ত মিষ্টি তাজা আম অর্ডার করুন। দ্রুত সারা দেশে হোম ডেলিভারি।"}
+          </p>
+        </div>
+
+        {/* SEO Meta Inputs */}
+        <div className="space-y-4">
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold text-gray-700">
+                SEO Meta Title (Browser & Search Engine Headline):
+              </label>
+              <span className={`text-[10px] font-bold ${metaTitle.length > 60 ? "text-amber-600" : "text-gray-400"}`}>
+                {metaTitle.length} / 60 chars
+              </span>
+            </div>
+            <input
+              type="text"
+              value={metaTitle}
+              onChange={(e) => setMetaTitle(e.target.value)}
+              placeholder={`যেমন: ${nameBn || "গোপালভোগ আম"} - সরাসরি রাজশাহীর বিষমুক্ত মিষ্টি আম`}
+              className="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-1">
+              <label className="text-xs font-bold text-gray-700">
+                SEO Meta Description (Google Search Snippet Description):
+              </label>
+              <span className={`text-[10px] font-bold ${metaDescription.length > 160 ? "text-amber-600" : "text-gray-400"}`}>
+                {metaDescription.length} / 160 chars
+              </span>
+            </div>
+            <textarea
+              rows="3"
+              value={metaDescription}
+              onChange={(e) => setMetaDescription(e.target.value)}
+              placeholder="গুগল সার্চ ফলাফলে পণ্যের লিঙ্কের নিচে যে বিবরণটি প্রদর্শিত হবে তা এখানে লিখুন..."
+              className="w-full bg-white border border-gray-300 rounded-xl p-3 text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-gray-700 block mb-1">
+              SEO Keywords / Meta Tags (Comma separated):
+            </label>
+            <input
+              type="text"
+              value={metaKeywords}
+              onChange={(e) => setMetaKeywords(e.target.value)}
+              placeholder="যেমন: গোপালভোগ আম, রাজশাহী আম, কেমিক্যালমুক্ত ফল, gopalbhog mango"
+              className="w-full bg-white border border-gray-300 rounded-xl px-3.5 py-2 text-xs font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Floating Bottom Action Bar */}
       <div className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-8 z-40 bg-white/95 backdrop-blur-md p-3 sm:px-6 rounded-2xl shadow-2xl border border-yellow-200 flex items-center justify-between gap-4">
         <div className="hidden sm:block">
@@ -2411,6 +2695,17 @@ export default function AdminProductForm() {
           >
             Cancel
           </Link>
+
+          {/* Live Preview Button */}
+          <button
+            type="button"
+            onClick={handleLivePreview}
+            className="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-800 font-bold text-xs rounded-xl shadow-sm transition flex items-center gap-1.5 cursor-pointer"
+            title="Open Live Preview in a new tab"
+          >
+            <FaEye className="text-xs text-blue-600" />
+            <span>Live Preview</span>
+          </button>
 
           {/* Save as Draft */}
           <button

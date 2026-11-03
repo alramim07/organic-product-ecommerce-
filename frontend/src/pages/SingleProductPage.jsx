@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   FaStar,
@@ -18,6 +18,7 @@ import {
   FaHeart,
   FaShareAlt,
   FaAward,
+  FaEye,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { productsData } from "../data/products";
@@ -25,11 +26,25 @@ import { useApp } from "../context/AppContext";
 
 export default function SingleProductPage() {
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { products, addBooking, settings } = useApp();
 
-  // Find product by slug or id from dynamic products
+  // Detect Live Preview Mode (WordPress-style instant live preview)
+  const isPreviewMode = searchParams.get("preview") === "true" || id === "preview";
+  let previewData = null;
+  if (isPreviewMode) {
+    try {
+      const stored = sessionStorage.getItem("live_product_preview");
+      if (stored) previewData = JSON.parse(stored);
+    } catch (e) {
+      console.warn("Could not parse preview data", e);
+    }
+  }
+
+  // Find product by preview data, slug, or ID from dynamic products
   const product =
+    previewData ||
     products.find((p) => p.slug && p.slug.trim().toLowerCase() === (id || "").trim().toLowerCase()) ||
     products.find((p) => String(p._id) === String(id) || String(p.id) === String(id)) ||
     products.find((p) => p.id === parseInt(id || "3")) ||
@@ -54,15 +69,32 @@ export default function SingleProductPage() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Scroll to top and reset state when product id changes
+  // Scroll to top, set title/meta, and reset state when product changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     if (product) {
       setSelectedImage(product.image);
       setSelectedPackage(product.packages ? product.packages[0] : null);
       setQuantity(1);
+
+      // Dynamic SEO Title & Description
+      const pageTitle = product.meta_title
+        ? `${product.meta_title} | ${settings?.siteName || "আমওয়ালা"}`
+        : `${product.name_bn || "প্রিমিয়াম কোয়ালিটি আম"} | ${settings?.siteName || "আমওয়ালা"}`;
+      document.title = pageTitle;
+
+      let metaDesc = document.querySelector('meta[name="description"]');
+      if (!metaDesc) {
+        metaDesc = document.createElement("meta");
+        metaDesc.name = "description";
+        document.head.appendChild(metaDesc);
+      }
+      metaDesc.content =
+        product.meta_description ||
+        product.subtitle_bn ||
+        "আমওয়ালা থেকে সরাসরি রাজশাহীর সেরা বাগানের কেমিক্যালমুক্ত মিষ্টি তাজা আম অর্ডার করুন।";
     }
-  }, [id, product]);
+  }, [id, product, settings?.siteName]);
 
   // Calculations from dynamic settings
   const deliveryCharge =
@@ -162,6 +194,30 @@ export default function SingleProductPage() {
 
   return (
     <div className="bg-gradient-to-b from-amber-50/50 via-white to-green-50/30 pt-24 pb-20">
+      {/* WordPress-style Live Preview Banner */}
+      {isPreviewMode && (
+        <div className="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white py-2.5 px-4 shadow-xl border-b border-blue-400/30 sticky top-16 z-40 mb-6 rounded-2xl max-w-7xl mx-auto">
+          <div className="flex items-center justify-between gap-3 text-xs flex-wrap">
+            <span className="flex items-center gap-2 font-bold">
+              <span className="w-2.5 h-2.5 rounded-full bg-yellow-400 animate-ping inline-block" />
+              <span>🔍 <strong>লাইভ প্রিভিউ মোড (Live Preview Mode):</strong> অ্যাডমিন প্যানেলে করা রিয়েল-টাইম পরিবর্তনগুলো এখানে দেখতে পাচ্ছেন।</span>
+            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] bg-white/20 px-2.5 py-0.5 rounded-full font-mono font-bold">
+                Status: {product.publication_status ? product.publication_status.toUpperCase() : "DRAFT"}
+              </span>
+              <button
+                type="button"
+                onClick={() => window.close()}
+                className="text-[11px] bg-white text-blue-900 hover:bg-yellow-300 px-2.5 py-0.5 rounded-full font-bold cursor-pointer transition"
+              >
+                Close Preview
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-sm text-gray-500 mb-6 flex-wrap">
@@ -380,14 +436,18 @@ export default function SingleProductPage() {
                 </div>
               </div>
 
-              {/* Regional Schedule Info Banner */}
-              <div className="mt-4 p-3 bg-green-50/80 rounded-xl border border-green-200 text-xs text-green-900 flex items-start gap-2">
-                <FaCalendarAlt className="mt-0.5 text-green-700 shrink-0 text-sm" />
-                <div>
-                  <strong className="font-bold">আঞ্চলিক পাকা ও ডেলিভারি শিডিউল: </strong>
-                  <span>{product.regionDates}</span>
+              {/* Regional Schedule Info Banner (Optional & Fully Configurable) */}
+              {product.show_region_schedule !== false && product.regionDates && (
+                <div className="mt-4 p-3.5 bg-green-50/80 rounded-2xl border border-green-200 text-xs text-green-900 flex items-start gap-2.5 shadow-sm">
+                  <FaCalendarAlt className="mt-0.5 text-green-700 shrink-0 text-sm" />
+                  <div>
+                    <strong className="font-bold">
+                      {product.region_schedule_title || "আঞ্চলিক পাকা ও ডেলিভারি শিডিউল: "}
+                    </strong>
+                    <span className="text-gray-800 ml-1">{product.regionDates}</span>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Package Selection */}
               <div className="mt-6">
@@ -605,17 +665,17 @@ export default function SingleProductPage() {
             {/* Tab 1: Specs & Overview */}
             {activeTab === "specs" && (
               <div className="space-y-8">
-                <div>
-                  <h3 className="text-xl font-bold text-green-900 mb-3">
-                    {product.name_bn} সম্পর্কে বিস্তারিত
+                <div className="bg-gradient-to-br from-amber-50/50 via-white to-green-50/30 p-5 sm:p-7 rounded-3xl border border-yellow-200/70 shadow-sm space-y-3 overflow-hidden break-words [overflow-wrap:anywhere]">
+                  <h3 className="text-xl font-black text-green-900 break-words">
+                    {product.description_title || `${product.name_bn || "পণ্য"} সম্পর্কে বিস্তারিত`}
                   </h3>
                   {product.description && /<[a-z][\s\S]*>/i.test(product.description) ? (
                     <div
-                      className="prose prose-green max-w-none text-gray-700 leading-relaxed text-base sm:text-lg"
+                      className="prose prose-green max-w-none text-gray-700 leading-relaxed text-base sm:text-lg break-words overflow-hidden [overflow-wrap:anywhere]"
                       dangerouslySetInnerHTML={{ __html: product.description }}
                     />
                   ) : (
-                    <p className="text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-line">
+                    <p className="text-gray-700 leading-relaxed text-base sm:text-lg whitespace-pre-line break-words overflow-hidden [overflow-wrap:anywhere]">
                       {product.description || "স্বাদ ও পুষ্টিগুণে ভরপুর আসল ও শতভাগ বিষমুক্ত ফল।"}
                     </p>
                   )}
@@ -663,13 +723,15 @@ export default function SingleProductPage() {
             {/* Tab 2: Packaging & Shipping */}
             {activeTab === "packaging" && (
               <div className="space-y-6 text-gray-700 leading-relaxed">
-                <h3 className="text-xl font-bold text-green-900">
-                  {product.tab2_title || "আমাদের বিশেষ ফ্রেশ ফ্রুট প্যাকেজিং প্রক্রিয়া"}
-                </h3>
-                <p className="whitespace-pre-line">
-                  {product.packaging_description ||
-                    "ফল অত্যন্ত সংবেদনশীল। পরিবহনের ঝাঁকুনিতে যেন ফলের কোনো ক্ষতি না হয়, সেজন্য আমরা আন্তর্জাতিক মানের ৫-স্তরবিশিষ্ট (5-ply) ভেন্টিলেটেড হার্ডবোর্ড কার্টন ও ক্রেট ব্যবহার করি।"}
-                </p>
+                <div className="bg-gradient-to-br from-amber-50/50 via-white to-green-50/30 p-5 sm:p-7 rounded-3xl border border-yellow-200/70 shadow-sm space-y-3 overflow-hidden break-words [overflow-wrap:anywhere]">
+                  <h3 className="text-xl font-black text-green-900 break-words">
+                    {product.tab2_title || "আমাদের বিশেষ ফ্রেশ ফ্রুট প্যাকেজিং প্রক্রিয়া"}
+                  </h3>
+                  <p className="whitespace-pre-line break-words overflow-hidden [overflow-wrap:anywhere]">
+                    {product.packaging_description ||
+                      "আম অত্যন্ত সংবেদনশীল ফল। পরিবহনের ঝাঁকুনিতে যেন ফলের কোনো ক্ষতি না হয়, সেজন্য আমরা আন্তর্জাতিক মানের ৫-স্তরবিশিষ্ট (5-ply) ভেন্টিলেটেড হার্ডবোর্ড কার্টন ও ক্রেট ব্যবহার করি।"}
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
                   {(product.packaging_steps && product.packaging_steps.length > 0
                     ? product.packaging_steps

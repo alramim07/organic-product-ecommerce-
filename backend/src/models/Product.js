@@ -37,6 +37,33 @@ const productSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
+    meta_title: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    meta_description: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    meta_keywords: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    show_region_schedule: {
+      type: Boolean,
+      default: true,
+    },
+    region_schedule_title: {
+      type: String,
+      default: "আঞ্চলিক পাকা ও ডেলিভারি শিডিউল:",
+    },
+    description_title: {
+      type: String,
+      default: "",
+    },
     category: {
       type: String,
       required: [true, "Category slug/key is required"],

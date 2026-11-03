@@ -3648,18 +3648,45 @@ export default function AdminSettings() {
                     </div>
 
                     {/* Menu Item Link / Target */}
-                    <div className="w-full md:w-44">
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase">
-                        Link / Section Anchor
-                      </label>
-                      <div className="flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-xl px-2 py-1.5">
+                    <div className="w-full md:w-52">
+                      <div className="flex items-center justify-between mb-0.5">
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase">
+                          Link / Section Anchor
+                        </label>
+                        {["#home", "#varieties", "#about", "#reviews", "#order"].includes(item.href) && (
+                          <span className="text-[9px] font-black px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-300">
+                            Fixed System Anchor
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`flex items-center gap-1.5 rounded-xl px-2.5 py-1.5 border transition ${
+                          ["#home", "#varieties", "#about", "#reviews", "#order"].includes(item.href)
+                            ? "bg-gray-100/90 border-gray-300 text-gray-500 cursor-not-allowed shadow-inner"
+                            : "bg-gray-50 border-gray-200 text-gray-800 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-500/20"
+                        }`}
+                        title={
+                          ["#home", "#varieties", "#about", "#reviews", "#order"].includes(item.href)
+                            ? "This is a fixed core section anchor for home page smooth scrolling (View-Only)."
+                            : "Enter custom section anchor or page URL"
+                        }
+                      >
                         <FaLink className="text-[10px] text-gray-400 shrink-0" />
                         <input
                           type="text"
                           value={item.href}
-                          onChange={(e) => handleUpdateMenuItem(index, "href", e.target.value)}
+                          readOnly={["#home", "#varieties", "#about", "#reviews", "#order"].includes(item.href)}
+                          onChange={(e) => {
+                            if (!["#home", "#varieties", "#about", "#reviews", "#order"].includes(item.href)) {
+                              handleUpdateMenuItem(index, "href", e.target.value);
+                            }
+                          }}
                           placeholder="#home or /page"
-                          className="w-full bg-transparent text-xs font-mono font-semibold text-gray-700 focus:outline-none"
+                          className={`w-full bg-transparent text-xs font-mono font-bold focus:outline-none ${
+                            ["#home", "#varieties", "#about", "#reviews", "#order"].includes(item.href)
+                              ? "text-gray-500 cursor-not-allowed select-all"
+                              : "text-gray-800"
+                          }`}
                         />
                       </div>
                     </div>
