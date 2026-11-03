@@ -1186,15 +1186,9 @@ export default function SingleProductPage() {
           <div className="mt-20">
             <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
               <div>
-                <span className="text-xs font-bold uppercase tracking-wider text-green-700 bg-green-100 px-3 py-1 rounded-full inline-block mb-1">
-                  {product.category ? `${product.category} ও সংশ্লিষ্ট পণ্য` : "সংশ্লিষ্ট আইটেম"}
-                </span>
                 <h3 className="text-2xl sm:text-3xl font-extrabold text-green-900">
                   ✨ আপনার জন্য রেকমেন্ডেড পণ্য
                 </h3>
-                <p className="text-gray-600 text-sm mt-1">
-                  আপনার পছন্দের ক্যাটাগরির সাথে মিল রেখে সাজানো সেরা কিছু বাছাইকৃত পণ্য
-                </p>
               </div>
               <Link
                 to="/#varieties"
