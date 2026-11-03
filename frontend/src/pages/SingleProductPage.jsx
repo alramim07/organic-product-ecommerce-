@@ -76,13 +76,13 @@ export default function SingleProductPage() {
 
   // If accessed with raw DB ID or non-clean param, replace address bar with clean slug
   useEffect(() => {
-    if (product && !isPreview) {
+    if (product && !isPreviewMode) {
       const cleanSlug = getProductSlug(product);
       if (cleanSlug && id !== cleanSlug && !window.location.search.includes("preview=true")) {
         navigate(`/product/${cleanSlug}`, { replace: true });
       }
     }
-  }, [product, id, isPreview, navigate]);
+  }, [product, id, isPreviewMode, navigate]);
 
   // Stock status helpers
   const isPreOrder = Boolean(
