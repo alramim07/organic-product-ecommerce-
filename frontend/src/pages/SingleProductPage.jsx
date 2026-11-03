@@ -937,18 +937,6 @@ export default function SingleProductPage() {
                   <FaWhatsapp className="text-xl" /> হোয়াটসঅ্যাপে অর্ডার
                 </button>
               </div>
-
-              <div className="flex items-center justify-between text-xs text-gray-500 pt-2 px-1">
-                <a
-                  href="tel:01749775030"
-                  className="hover:text-green-800 font-bold flex items-center gap-1.5"
-                >
-                  <FaPhoneAlt className="text-green-600" /> হটলাইন: ০১৭৪৯-৭৭৫০৩০
-                </a>
-                <span className="text-green-700 font-semibold">
-                  ✓ বাগান থেকে সরাসরি বাছাইকৃত ফ্রেশ আম
-                </span>
-              </div>
             </div>
           </div>
         </div>
