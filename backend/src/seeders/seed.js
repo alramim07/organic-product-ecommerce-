@@ -497,7 +497,7 @@ export const seedDatabase = async () => {
     // 1. Seed Admin User
     const adminEmail = process.env.ADMIN_EMAIL || "admin@test.com";
     const adminPassword = process.env.ADMIN_PASSWORD || "Test123@#";
-    let admin = await User.findOne({ email: adminEmail }).select("+password");
+    let admin = await User.findOne({ email: adminEmail });
     if (!admin) {
       await User.create({
         name: "Super Admin",
@@ -507,9 +507,7 @@ export const seedDatabase = async () => {
       });
       console.log(`👤 Admin created: ${adminEmail}`);
     } else {
-      admin.password = adminPassword;
-      await admin.save();
-      console.log(`👤 Admin password synchronized: ${adminEmail}`);
+      console.log(`👤 Admin verified: ${adminEmail}`);
     }
 
     // 2. Seed Categories

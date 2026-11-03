@@ -24,10 +24,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Security & Utility Middlewares
-app.use(helmet());
+app.use(
+  helmet({
+    crossOriginResourcePolicy: false,
+    contentSecurityPolicy: false,
+  })
+);
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173", "*"],
+    origin: (origin, callback) => {
+      // Support tunnel domains, localhost, and live previews cleanly
+      callback(null, true);
+    },
     credentials: true,
   })
 );

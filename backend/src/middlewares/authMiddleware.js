@@ -16,21 +16,15 @@ export const protectAdmin = async (req, res, next) => {
       );
       req.user = await User.findById(decoded.id).select("-password");
 
-      // Robust fallback if database re-seeded or memory server restarted
-      if (!req.user) {
-        req.user = await User.findOne({
-          $or: [
-            { email: process.env.ADMIN_EMAIL || "admin@test.com" },
-            { role: "superadmin" },
-            { role: "admin" },
-          ],
-        }).select("-password");
+      // Verify user has legitimate admin/superadmin role
+      if (!req.user && decoded.email) {
+        req.user = await User.findOne({ email: decoded.email }).select("-password");
       }
 
-      if (!req.user) {
+      if (!req.user || (req.user.role !== "admin" && req.user.role !== "superadmin")) {
         return res.status(401).json({
           success: false,
-          message: "ইউজার খুঁজে পাওয়া যায়নি। দয়া করে আবার লগইন করুন।",
+          message: "অননুমোদিত এক্সেস! ইউজার খুঁজে পাওয়া যায়নি বা অ্যাডমিন পারমিশন নেই।",
         });
       }
 
