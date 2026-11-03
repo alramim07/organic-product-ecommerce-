@@ -49,6 +49,10 @@ import {
   FaBoxes,
   FaChevronDown,
   FaChevronUp,
+  FaLeaf,
+  FaHeadset,
+  FaMedal,
+  FaCreditCard,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { toBengaliNumber } from "../../components/About";
@@ -7051,9 +7055,37 @@ export default function AdminSettings() {
                 </p>
               </div>
 
-              <span className="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 self-start sm:self-auto">
-                Website Footer
-              </span>
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                {/* Quick Desktop / Mobile Switcher in Section Header */}
+                <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl text-xs font-bold border border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setFooterPreviewDevice("desktop")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      footerPreviewDevice === "desktop"
+                        ? "bg-green-700 text-white shadow font-black"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <FaDesktop /> <span>Desktop Preview</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFooterPreviewDevice("mobile")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      footerPreviewDevice === "mobile"
+                        ? "bg-green-700 text-white shadow font-black"
+                        : "text-gray-600 hover:text-gray-900"
+                    }`}
+                  >
+                    <FaMobileAlt /> <span>Mobile Preview</span>
+                  </button>
+                </div>
+
+                <span className="px-3 py-1.5 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 hidden sm:inline-block">
+                  Website Footer
+                </span>
+              </div>
             </div>
 
             {/* Part 1: Brand & Logo Settings */}
@@ -7359,7 +7391,414 @@ export default function AdminSettings() {
               </div>
             </div>
 
-            {/* Part 2: About / Description Text */}
+            
+            {/* ========================================================================= */}
+            {/* Part 2: Live Interactive Footer Preview (লাইভ ফুটার প্রিভিউ - Desktop & Mobile) */}
+            {/* ========================================================================= */}
+            <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
+                  <div>
+                    <h4 className="text-sm font-black text-white flex items-center gap-2">
+                      Live Footer Section Preview (লাইভ ফুটার প্রিভিউ)
+                      <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                        {footerPreviewDevice === "desktop" ? "Desktop 1200px" : "Mobile 360px"}
+                      </span>
+                    </h4>
+                    <p className="text-xs text-gray-400">
+                      ওয়েবসাইটের ফুটার গ্রাহকদের সামনে ঠিক কেমন দেখাবে তা রিয়েল-টাইমে দেখুন
+                    </p>
+                  </div>
+                </div>
+
+                {/* Device Switcher */}
+                <div className="flex items-center gap-1 bg-gray-900 p-1 rounded-xl text-xs font-bold self-start sm:self-auto border border-gray-800">
+                  <button
+                    type="button"
+                    onClick={() => setFooterPreviewDevice("desktop")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      footerPreviewDevice === "desktop"
+                        ? "bg-green-600 text-white shadow font-black"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaDesktop /> <span>Desktop View</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setFooterPreviewDevice("mobile")}
+                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
+                      footerPreviewDevice === "mobile"
+                        ? "bg-green-600 text-white shadow font-black"
+                        : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <FaMobileAlt /> <span>Mobile View</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Rendered Live Preview */}
+              {footerPreviewDevice === "desktop" ? (
+                /* DESKTOP FOOTER PREVIEW */
+                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-green-950 via-green-900 to-amber-950 p-6 text-white space-y-6 shadow-inner overflow-hidden relative">
+                  {/* Top Floating Scroll-to-Top Button */}
+                  <div className="flex justify-center -mt-9 mb-2">
+                    <span className="w-8 h-8 rounded-full bg-gradient-to-r from-yellow-400 to-green-500 text-green-950 flex items-center justify-center shadow-lg font-black text-xs border border-white/20">
+                      <FaChevronUp />
+                    </span>
+                  </div>
+
+                  {/* 4-Col Grid */}
+                  <div className="grid grid-cols-4 gap-6 text-xs">
+                    {/* Col 1: Brand & About */}
+                    <div className="space-y-3">
+                      {footerBrandDisplay === "logo_only" && (footerLogo || websiteLogo) ? (
+                        <img
+                          src={footerLogo || websiteLogo}
+                          alt="Logo"
+                          className="h-10 w-auto max-w-[160px] object-contain rounded bg-white/5 p-1"
+                        />
+                      ) : (
+                        <div className="flex items-center space-x-2.5">
+                          {footerLogo || websiteLogo ? (
+                            <img
+                              src={footerLogo || websiteLogo}
+                              alt="Logo"
+                              className="w-10 h-10 object-contain rounded-full bg-white p-0.5"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center">
+                              <FaLeaf className="text-white text-lg" />
+                            </div>
+                          )}
+                          <div>
+                            <h4
+                              className="font-black text-sm"
+                              style={
+                                footerTitleColorType === "gradient"
+                                  ? {
+                                      backgroundImage: footerTitleColorVal,
+                                      WebkitBackgroundClip: "text",
+                                      WebkitTextFillColor: "transparent",
+                                    }
+                                  : { color: footerTitleColorVal }
+                              }
+                            >
+                              {footerBrandTitle || "আমওয়ালা ভাইয়া"}
+                            </h4>
+                            <p className="text-[10px] text-yellow-300">
+                              {footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                      <p className="text-gray-300 text-[11px] leading-relaxed line-clamp-3">
+                        {footerAboutText}
+                      </p>
+                      <div className="flex gap-2 pt-1">
+                        {footerSocialLinks
+                          .filter((s) => s.show !== false)
+                          .map((s, i) => (
+                            <span
+                              key={i}
+                              className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs hover:bg-white/20 transition cursor-default"
+                            >
+                              {s.icon === "facebook" && <FaFacebookF />}
+                              {s.icon === "instagram" && <FaInstagram />}
+                              {s.icon === "youtube" && <FaYoutube />}
+                              {s.icon === "whatsapp" && <FaWhatsapp />}
+                            </span>
+                          ))}
+                      </div>
+                    </div>
+
+                    {/* Col 2: Quick Links */}
+                    <div className="space-y-2.5">
+                      <h5 className="font-bold border-l-2 border-yellow-400 pl-2 text-white">
+                        {footerCol2Title || "দ্রুত লিংক"}
+                      </h5>
+                      <ul className="space-y-1.5 text-gray-300 text-[11px]">
+                        {footerQuickLinks.slice(0, 5).map((l, i) => (
+                          <li key={i} className="flex items-center gap-1.5">
+                            <span>{l.icon}</span>
+                            <span>{l.name}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Col 3: Mango Varieties */}
+                    <div className="space-y-2.5">
+                      <h5 className="font-bold border-l-2 border-yellow-400 pl-2 text-white">
+                        {footerCol3Title || "আমের জাত"}
+                      </h5>
+                      <div className="grid grid-cols-2 gap-1 text-[11px] text-gray-300">
+                        {footerMangoList.slice(0, 8).map((m, i) => (
+                          <div key={i} className="flex items-center gap-1 truncate">
+                            <span>{m.icon}</span>
+                            <span className="truncate">{m.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Col 4: Contact & Hours */}
+                    <div className="space-y-2.5 text-[11px]">
+                      <h5 className="font-bold border-l-2 border-yellow-400 pl-2 text-white">
+                        {footerCol4Title || "যোগাযোগ"}
+                      </h5>
+                      <ul className="space-y-1 text-gray-300">
+                        {footerContactItems.slice(0, 4).map((c, i) => (
+                          <li key={i} className="flex items-center gap-1.5 truncate">
+                            <span className="text-yellow-400">
+                              {c.icon === "phone" && <FaPhoneAlt className="text-[10px]" />}
+                              {c.icon === "whatsapp" && <FaWhatsapp className="text-[10px]" />}
+                              {c.icon === "envelope" && <FaEnvelope className="text-[10px]" />}
+                              {c.icon === "map-marker" && <FaMapMarkerAlt className="text-[10px]" />}
+                              {!["phone", "whatsapp", "envelope", "map-marker"].includes(c.icon) && (
+                                <span>{c.icon || "📞"}</span>
+                              )}
+                            </span>
+                            <span className="truncate">{c.text}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <div className="pt-2 border-t border-white/10 text-[10px]">
+                        <span className="font-bold text-yellow-400">
+                          {footerHoursIcon} {footerHoursTitle}
+                        </span>
+                        <p className="text-gray-300 mt-0.5">
+                          {footerHoursItems[0]?.text || "সোম-শনি: সকাল ৮টা - রাত ৮টা"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Feature Highlights Banner */}
+                  <div className="grid grid-cols-4 gap-3 py-4 border-t border-b border-white/10 text-center">
+                    <div className="space-y-1">
+                      <FaTruck className="text-lg text-yellow-400 mx-auto" />
+                      <h6 className="font-bold text-[11px] text-white">সারাদেশ ডেলিভারি</h6>
+                      <p className="text-[10px] text-gray-400">দ্রুত ও নিরাপদ</p>
+                    </div>
+                    <div className="space-y-1">
+                      <FaLeaf className="text-lg text-yellow-400 mx-auto" />
+                      <h6 className="font-bold text-[11px] text-white">গুণগত মান</h6>
+                      <p className="text-[10px] text-gray-400">১০০% সতেজ ও বিশুদ্ধ</p>
+                    </div>
+                    <div className="space-y-1">
+                      <FaHeadset className="text-lg text-yellow-400 mx-auto" />
+                      <h6 className="font-bold text-[11px] text-white">২৪/৭ সাপোর্ট</h6>
+                      <p className="text-[10px] text-gray-400">যেকোনো সময় যোগাযোগ</p>
+                    </div>
+                    <div className="space-y-1">
+                      <FaMedal className="text-lg text-yellow-400 mx-auto" />
+                      <h6 className="font-bold text-[11px] text-white">প্রিমিয়াম কোয়ালিটি</h6>
+                      <p className="text-[10px] text-gray-400">বাগান থেকে সরাসরি</p>
+                    </div>
+                  </div>
+
+                  {/* Payment & Return */}
+                  <div className="flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-yellow-400">{footerPaymentIcon}</span>
+                      <span className="text-gray-300 font-bold">{footerPaymentTitle}</span>
+                      <div className="flex gap-1.5">
+                        {footerPaymentMethods.map((m, i) => (
+                          <span
+                            key={i}
+                            className={`px-2 py-0.5 rounded text-[10px] font-bold shadow-xs ${m.bgColor}`}
+                          >
+                            {m.name}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {footerReturnPolicyShow && (
+                      <div className="flex items-center gap-1.5 text-green-300 font-bold">
+                        <span>{footerReturnPolicyIcon}</span>
+                        <span>{footerReturnPolicyText}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Copyright (NO admin link, English DevHome) */}
+                  <div className="pt-3 border-t border-white/10 text-center text-[11px] text-gray-400 space-y-1">
+                    <p>
+                      © {new Date().getFullYear()} {footerCopyrightText} | {footerPrivacyPolicyText} | {footerTermsText}
+                    </p>
+                    <p className="text-gray-500 text-[10px]">
+                      {footerDeveloperCreditText} <span className="text-yellow-400 font-bold">{footerDeveloperName}</span>
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                /* SMARTPHONE FRAME MOCKUP (MOBILE FOOTER PREVIEW) */
+                <div className="flex justify-center py-2">
+                  <div className="w-full max-w-[360px] rounded-[42px] border-[8px] border-gray-800 bg-gray-950 shadow-2xl overflow-hidden relative">
+                    {/* Dynamic Island / Notch */}
+                    <div className="h-6 bg-gray-950 flex justify-center items-center">
+                      <div className="w-24 h-4 bg-gray-900 rounded-full flex items-center justify-end pr-2 border border-gray-800">
+                        <div className="w-2 h-2 rounded-full bg-blue-900/60" />
+                      </div>
+                    </div>
+
+                    {/* Mobile Screen Content */}
+                    <div className="bg-gradient-to-br from-green-950 via-green-900 to-amber-950 p-4 text-white text-xs space-y-5 max-h-[580px] overflow-y-auto">
+                      {/* Top Scroll button */}
+                      <div className="flex justify-center -mt-6 mb-1">
+                        <span className="w-7 h-7 rounded-full bg-gradient-to-r from-yellow-400 to-green-500 text-green-950 flex items-center justify-center shadow-lg font-black text-[10px]">
+                          <FaChevronUp />
+                        </span>
+                      </div>
+
+                      {/* Brand Info */}
+                      <div className="space-y-2 text-center">
+                        {footerLogo || websiteLogo ? (
+                          <img
+                            src={footerLogo || websiteLogo}
+                            alt="Logo"
+                            className="w-12 h-12 object-contain rounded-full bg-white p-0.5 mx-auto shadow"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center mx-auto shadow">
+                            <FaLeaf className="text-white text-xl" />
+                          </div>
+                        )}
+                        <h4
+                          className="font-black text-base"
+                          style={
+                            footerTitleColorType === "gradient"
+                              ? {
+                                  backgroundImage: footerTitleColorVal,
+                                  WebkitBackgroundClip: "text",
+                                  WebkitTextFillColor: "transparent",
+                                }
+                              : { color: footerTitleColorVal }
+                          }
+                        >
+                          {footerBrandTitle || "আমওয়ালা ভাইয়া"}
+                        </h4>
+                        <p className="text-[10px] text-yellow-300">
+                          {footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"}
+                        </p>
+                        <p className="text-[10px] text-gray-300 line-clamp-3 leading-relaxed px-2">
+                          {footerAboutText}
+                        </p>
+
+                        <div className="flex justify-center gap-2 pt-1">
+                          {footerSocialLinks
+                            .filter((s) => s.show !== false)
+                            .map((s, i) => (
+                              <span
+                                key={i}
+                                className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs"
+                              >
+                                {s.icon === "facebook" && <FaFacebookF />}
+                                {s.icon === "instagram" && <FaInstagram />}
+                                {s.icon === "youtube" && <FaYoutube />}
+                                {s.icon === "whatsapp" && <FaWhatsapp />}
+                              </span>
+                            ))}
+                        </div>
+                      </div>
+
+                      {/* Quick links in mobile */}
+                      <div className="pt-2 border-t border-white/10 space-y-2">
+                        <span className="font-bold text-yellow-400 block text-xs">{footerCol2Title}</span>
+                        <div className="flex flex-wrap gap-1.5 text-[10px] text-gray-300">
+                          {footerQuickLinks.map((l, i) => (
+                            <span key={i} className="px-2.5 py-1 bg-white/5 rounded-lg border border-white/5">
+                              {l.icon} {l.name}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Mango varieties in mobile */}
+                      <div className="pt-2 border-t border-white/10 space-y-2">
+                        <span className="font-bold text-yellow-400 block text-xs">{footerCol3Title}</span>
+                        <div className="grid grid-cols-2 gap-1 text-[10px] text-gray-300">
+                          {footerMangoList.slice(0, 6).map((m, i) => (
+                            <div key={i} className="flex items-center gap-1 truncate">
+                              <span>{m.icon}</span>
+                              <span className="truncate">{m.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Contact & Hours */}
+                      <div className="pt-2 border-t border-white/10 space-y-2">
+                        <span className="font-bold text-yellow-400 block text-xs">{footerCol4Title}</span>
+                        <div className="space-y-1 text-[10px] text-gray-300">
+                          {footerContactItems.map((c, i) => (
+                            <p key={i} className="truncate">
+                              {c.text}
+                            </p>
+                          ))}
+                        </div>
+                        <p className="text-[10px] text-green-300 pt-1">
+                          {footerHoursIcon} {footerHoursItems[0]?.text || "সোম-শনি: সকাল ৮টা - রাত ৮টা"}
+                        </p>
+                      </div>
+
+                      {/* Feature Highlights 2x2 */}
+                      <div className="grid grid-cols-2 gap-2 pt-2 border-t border-white/10 text-center">
+                        <div className="p-2 bg-white/5 rounded-xl border border-white/5">
+                          <FaTruck className="text-yellow-400 mx-auto mb-0.5 text-xs" />
+                          <p className="font-bold text-[10px]">সারাদেশ ডেলিভারি</p>
+                          <p className="text-[8px] text-gray-400">দ্রুত ও নিরাপদ</p>
+                        </div>
+                        <div className="p-2 bg-white/5 rounded-xl border border-white/5">
+                          <FaLeaf className="text-yellow-400 mx-auto mb-0.5 text-xs" />
+                          <p className="font-bold text-[10px]">গুণগত মান</p>
+                          <p className="text-[8px] text-gray-400">১০০% সতেজ ও বিশুদ্ধ</p>
+                        </div>
+                        <div className="p-2 bg-white/5 rounded-xl border border-white/5">
+                          <FaHeadset className="text-yellow-400 mx-auto mb-0.5 text-xs" />
+                          <p className="font-bold text-[10px]">২৪/৭ সাপোর্ট</p>
+                          <p className="text-[8px] text-gray-400">যেকোনো সময় যোগাযোগ</p>
+                        </div>
+                        <div className="p-2 bg-white/5 rounded-xl border border-white/5">
+                          <FaMedal className="text-yellow-400 mx-auto mb-0.5 text-xs" />
+                          <p className="font-bold text-[10px]">প্রিমিয়াম কোয়ালিটি</p>
+                          <p className="text-[8px] text-gray-400">বাগান থেকে সরাসরি</p>
+                        </div>
+                      </div>
+
+                      {/* Payment & Return */}
+                      <div className="pt-2 border-t border-white/10 space-y-2 text-center">
+                        <div className="flex flex-wrap gap-1 justify-center">
+                          {footerPaymentMethods.map((m, i) => (
+                            <span key={i} className={`px-2 py-0.5 rounded text-[9px] font-bold ${m.bgColor}`}>
+                              {m.name}
+                            </span>
+                          ))}
+                        </div>
+                        {footerReturnPolicyShow && (
+                          <p className="text-[10px] text-green-300 font-bold">
+                            {footerReturnPolicyIcon} {footerReturnPolicyText}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Copyright */}
+                      <div className="pt-2 border-t border-white/10 text-center text-[9px] text-gray-400 space-y-0.5">
+                        <p>© {new Date().getFullYear()} {footerCopyrightText}</p>
+                        <p>{footerDeveloperCreditText} <span className="text-yellow-400">{footerDeveloperName}</span></p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+
+            {/* Part 3: About / Description Text */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
@@ -7376,7 +7815,7 @@ export default function AdminSettings() {
               />
             </div>
 
-            {/* Part 3: Social Media Links */}
+            {/* Part 4: Social Media Links */}
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
@@ -8028,279 +8467,6 @@ export default function AdminSettings() {
               </div>
             </div>
 
-            {/* Part 9: Live Interactive Footer Preview */}
-            <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
-                  <div>
-                    <h4 className="text-sm font-black text-white">
-                      Live Footer Section Preview
-                    </h4>
-                    <p className="text-xs text-gray-400">
-                      Real-time interactive rendering of customer storefront footer
-                    </p>
-                  </div>
-                </div>
-
-                {/* Device Switcher */}
-                <div className="flex items-center gap-1 bg-gray-800 p-1 rounded-xl text-xs font-bold self-start sm:self-auto">
-                  <button
-                    type="button"
-                    onClick={() => setFooterPreviewDevice("desktop")}
-                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
-                      footerPreviewDevice === "desktop"
-                        ? "bg-green-600 text-white shadow font-black"
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <FaDesktop /> <span>Desktop</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFooterPreviewDevice("mobile")}
-                    className={`px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition cursor-pointer ${
-                      footerPreviewDevice === "mobile"
-                        ? "bg-green-600 text-white shadow font-black"
-                        : "text-gray-400 hover:text-white"
-                    }`}
-                  >
-                    <FaMobileAlt /> <span>Mobile</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Rendered Live Preview */}
-              {footerPreviewDevice === "desktop" ? (
-                /* DESKTOP FOOTER PREVIEW */
-                <div className="rounded-2xl border border-gray-800 bg-gradient-to-br from-green-950 via-green-900 to-amber-950 p-6 text-white space-y-8 shadow-inner overflow-hidden">
-                  {/* 4-Col Grid */}
-                  <div className="grid grid-cols-4 gap-6 text-xs">
-                    {/* Col 1 */}
-                    <div className="space-y-3">
-                      {footerBrandDisplay === "logo_only" && (footerLogo || websiteLogo) ? (
-                        <img
-                          src={footerLogo || websiteLogo}
-                          alt="Logo"
-                          className="h-10 w-auto max-w-[160px] object-contain rounded bg-white/5 p-1"
-                        />
-                      ) : (
-                        <div className="flex items-center space-x-2.5">
-                          {footerLogo || websiteLogo ? (
-                            <img
-                              src={footerLogo || websiteLogo}
-                              alt="Logo"
-                              className="w-10 h-10 object-contain rounded-full bg-white p-0.5"
-                            />
-                          ) : (
-                            <div className="w-10 h-10 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center">
-                              <FaLeaf className="text-white text-lg" />
-                            </div>
-                          )}
-                          <div>
-                            <h4
-                              className="font-black text-sm"
-                              style={
-                                footerTitleColorType === "gradient"
-                                  ? {
-                                      backgroundImage: footerTitleColorVal,
-                                      WebkitBackgroundClip: "text",
-                                      WebkitTextFillColor: "transparent",
-                                    }
-                                  : { color: footerTitleColorVal }
-                              }
-                            >
-                              {footerBrandTitle || "আমওয়ালা ভাইয়া"}
-                            </h4>
-                            <p className="text-[10px] text-yellow-300">
-                              {footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"}
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                      <p className="text-gray-300 text-[11px] leading-relaxed line-clamp-3">
-                        {footerAboutText}
-                      </p>
-                      <div className="flex gap-2">
-                        {footerSocialLinks
-                          .filter((s) => s.show !== false)
-                          .map((s, i) => (
-                            <span
-                              key={i}
-                              className="w-7 h-7 rounded-full bg-white/10 flex items-center justify-center text-xs"
-                            >
-                              {s.icon === "facebook" && <FaFacebookF />}
-                              {s.icon === "instagram" && <FaInstagram />}
-                              {s.icon === "youtube" && <FaYoutube />}
-                              {s.icon === "whatsapp" && <FaWhatsapp />}
-                            </span>
-                          ))}
-                      </div>
-                    </div>
-
-                    {/* Col 2 */}
-                    <div className="space-y-2.5">
-                      <h5 className="font-bold border-l-2 border-yellow-400 pl-2 text-white">
-                        {footerCol2Title || "দ্রুত লিংক"}
-                      </h5>
-                      <ul className="space-y-1.5 text-gray-300 text-[11px]">
-                        {footerQuickLinks.slice(0, 5).map((l, i) => (
-                          <li key={i} className="flex items-center gap-1.5">
-                            <span>{l.icon}</span>
-                            <span>{l.name}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Col 3 */}
-                    <div className="space-y-2.5">
-                      <h5 className="font-bold border-l-2 border-yellow-400 pl-2 text-white">
-                        {footerCol3Title || "আমের জাত"}
-                      </h5>
-                      <div className="grid grid-cols-2 gap-1 text-[11px] text-gray-300">
-                        {footerMangoList.slice(0, 6).map((m, i) => (
-                          <div key={i} className="flex items-center gap-1 truncate">
-                            <span>{m.icon}</span>
-                            <span className="truncate">{m.name}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Col 4 */}
-                    <div className="space-y-2.5 text-[11px]">
-                      <h5 className="font-bold border-l-2 border-yellow-400 pl-2 text-white">
-                        {footerCol4Title || "যোগাযোগ"}
-                      </h5>
-                      <ul className="space-y-1 text-gray-300">
-                        {footerContactItems.slice(0, 3).map((c, i) => (
-                          <li key={i} className="truncate">
-                            {c.text}
-                          </li>
-                        ))}
-                      </ul>
-                      <div className="pt-2 border-t border-white/10 text-[10px]">
-                        <span className="font-bold text-yellow-400">
-                          {footerHoursIcon} {footerHoursTitle}
-                        </span>
-                        <p className="text-gray-300 mt-0.5">
-                          {footerHoursItems[0]?.text || "সোম-শনি: সকাল ৮টা - রাত ৮টা"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Payment & Return */}
-                  <div className="pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2">
-                      <span>{footerPaymentIcon}</span>
-                      <span className="text-gray-300 font-bold">{footerPaymentTitle}</span>
-                      <div className="flex gap-1.5">
-                        {footerPaymentMethods.map((m, i) => (
-                          <span
-                            key={i}
-                            className={`px-2 py-0.5 rounded text-[10px] font-bold ${m.bgColor}`}
-                          >
-                            {m.name}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {footerReturnPolicyShow && (
-                      <div className="flex items-center gap-1.5 text-green-300 font-bold">
-                        <span>{footerReturnPolicyIcon}</span>
-                        <span>{footerReturnPolicyText}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Copyright (NO admin link, English DevHome) */}
-                  <div className="pt-4 border-t border-white/10 text-center text-[11px] text-gray-400 space-y-1">
-                    <p>
-                      © {new Date().getFullYear()} {footerCopyrightText} | {footerPrivacyPolicyText} | {footerTermsText}
-                    </p>
-                    <p className="text-gray-500 text-[10px]">
-                      {footerDeveloperCreditText} <span className="text-yellow-400 font-bold">{footerDeveloperName}</span>
-                    </p>
-                  </div>
-                </div>
-              ) : (
-                /* MOBILE FOOTER PREVIEW */
-                <div className="flex justify-center py-2">
-                  <div className="w-full max-w-[340px] rounded-[38px] border-[6px] border-gray-700 bg-gray-950 shadow-2xl overflow-hidden relative">
-                    {/* Notch */}
-                    <div className="h-6 bg-gray-950 flex justify-center items-center">
-                      <div className="w-20 h-3.5 bg-gray-900 rounded-full flex items-center justify-end pr-2 border border-gray-800">
-                        <div className="w-2 h-2 rounded-full bg-blue-900/60" />
-                      </div>
-                    </div>
-
-                    {/* Mobile Screen Content */}
-                    <div className="bg-gradient-to-br from-green-950 via-green-900 to-amber-950 p-4 text-white text-xs space-y-4 max-h-[500px] overflow-y-auto">
-                      {/* Brand Info */}
-                      <div className="space-y-2 text-center">
-                        <h4
-                          className="font-black text-base"
-                          style={
-                            footerTitleColorType === "gradient"
-                              ? {
-                                  backgroundImage: footerTitleColorVal,
-                                  WebkitBackgroundClip: "text",
-                                  WebkitTextFillColor: "transparent",
-                                }
-                              : { color: footerTitleColorVal }
-                          }
-                        >
-                          {footerBrandTitle || "আমওয়ালা ভাইয়া"}
-                        </h4>
-                        <p className="text-[10px] text-yellow-300">
-                          {footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"}
-                        </p>
-                        <p className="text-[10px] text-gray-300 line-clamp-2">
-                          {footerAboutText}
-                        </p>
-                      </div>
-
-                      {/* Quick links & varieties in mobile */}
-                      <div className="pt-2 border-t border-white/10 space-y-2">
-                        <span className="font-bold text-yellow-400 block">{footerCol2Title}</span>
-                        <div className="flex flex-wrap gap-2 text-[10px] text-gray-300">
-                          {footerQuickLinks.slice(0, 4).map((l, i) => (
-                            <span key={i} className="px-2 py-1 bg-white/5 rounded">
-                              {l.icon} {l.name}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Payment & Return */}
-                      <div className="pt-2 border-t border-white/10 space-y-2 text-center">
-                        <div className="flex flex-wrap gap-1 justify-center">
-                          {footerPaymentMethods.map((m, i) => (
-                            <span key={i} className={`px-2 py-0.5 rounded text-[9px] font-bold ${m.bgColor}`}>
-                              {m.name}
-                            </span>
-                          ))}
-                        </div>
-                        {footerReturnPolicyShow && (
-                          <p className="text-[10px] text-green-300 font-bold">
-                            {footerReturnPolicyIcon} {footerReturnPolicyText}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Copyright */}
-                      <div className="pt-2 border-t border-white/10 text-center text-[9px] text-gray-400 space-y-0.5">
-                        <p>© {new Date().getFullYear()} {footerCopyrightText}</p>
-                        <p>{footerDeveloperCreditText} <span className="text-yellow-400">{footerDeveloperName}</span></p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Bottom Save Settings Button */}
             <div className="pt-4 border-t border-gray-100 flex items-center justify-end">
