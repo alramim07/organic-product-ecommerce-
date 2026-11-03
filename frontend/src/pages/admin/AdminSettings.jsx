@@ -713,11 +713,17 @@ export default function AdminSettings() {
   const [footerCopyrightText, setFooterCopyrightText] = useState(
     settings.footerCopyrightText || "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
   );
+  const [footerPrivacyPolicyShow, setFooterPrivacyPolicyShow] = useState(
+    settings.footerPrivacyPolicyShow !== undefined ? Boolean(settings.footerPrivacyPolicyShow) : true
+  );
   const [footerPrivacyPolicyText, setFooterPrivacyPolicyText] = useState(
     settings.footerPrivacyPolicyText || "গোপনীয়তা নীতি"
   );
   const [footerPrivacyPolicyLink, setFooterPrivacyPolicyLink] = useState(
     settings.footerPrivacyPolicyLink || "#"
+  );
+  const [footerTermsShow, setFooterTermsShow] = useState(
+    settings.footerTermsShow !== undefined ? Boolean(settings.footerTermsShow) : true
   );
   const [footerTermsText, setFooterTermsText] = useState(
     settings.footerTermsText || "সেবার শর্তাবলী"
@@ -856,8 +862,10 @@ export default function AdminSettings() {
       if (settings.footerReturnPolicyText !== undefined) setFooterReturnPolicyText(settings.footerReturnPolicyText);
       if (settings.footerReturnPolicyLink !== undefined) setFooterReturnPolicyLink(settings.footerReturnPolicyLink);
       if (settings.footerCopyrightText !== undefined) setFooterCopyrightText(settings.footerCopyrightText);
+      if (settings.footerPrivacyPolicyShow !== undefined) setFooterPrivacyPolicyShow(Boolean(settings.footerPrivacyPolicyShow));
       if (settings.footerPrivacyPolicyText !== undefined) setFooterPrivacyPolicyText(settings.footerPrivacyPolicyText);
       if (settings.footerPrivacyPolicyLink !== undefined) setFooterPrivacyPolicyLink(settings.footerPrivacyPolicyLink);
+      if (settings.footerTermsShow !== undefined) setFooterTermsShow(Boolean(settings.footerTermsShow));
       if (settings.footerTermsText !== undefined) setFooterTermsText(settings.footerTermsText);
       if (settings.footerTermsLink !== undefined) setFooterTermsLink(settings.footerTermsLink);
       if (settings.footerDeveloperCreditText !== undefined) setFooterDeveloperCreditText(settings.footerDeveloperCreditText);
@@ -1734,8 +1742,10 @@ export default function AdminSettings() {
       footerReturnPolicyText,
       footerReturnPolicyLink,
       footerCopyrightText,
+      footerPrivacyPolicyShow,
       footerPrivacyPolicyText,
       footerPrivacyPolicyLink,
+      footerTermsShow,
       footerTermsText,
       footerTermsLink,
       footerDeveloperCreditText,
@@ -8738,47 +8748,113 @@ export default function AdminSettings() {
                     placeholder="আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
                     className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
                   />
-                  <p className="text-[11px] text-emerald-700 font-semibold mt-1.5 flex items-center gap-1.5">
-                    <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <span>স্বয়ংক্রিয় সাল চালু: ওয়েবসাইটে প্রতি বছর অটোমেটিক বর্তমান সাল (© {new Date().getFullYear()}) রেন্ডার হবে। আপনি চাইলে টেক্সটের যেকোনো জায়গায় <code>&#123;year&#125;</code> ভ্যারিয়েবলও ব্যবহার করতে পারেন।</span>
-                  </p>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2.5">
                   <label className="block text-xs font-bold text-gray-700">
                     Policy Links (Privacy Policy & Terms of Service)
                   </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={footerPrivacyPolicyText}
-                      onChange={(e) => setFooterPrivacyPolicyText(e.target.value)}
-                      placeholder="গোপনীয়তা নীতি"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
-                    />
-                    <input
-                      type="text"
-                      value={footerPrivacyPolicyLink}
-                      onChange={(e) => setFooterPrivacyPolicyLink(e.target.value)}
-                      placeholder="লিংক (#)"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
-                    />
+
+                  {/* Privacy Policy Toggle & Inputs */}
+                  <div
+                    className={`p-2.5 rounded-xl border transition-all ${
+                      footerPrivacyPolicyShow
+                        ? "bg-white border-green-300 shadow-2xs"
+                        : "bg-gray-50 border-gray-200 opacity-75"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={footerPrivacyPolicyShow}
+                          onChange={(e) => setFooterPrivacyPolicyShow(e.target.checked)}
+                          className="w-3.5 h-3.5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
+                        />
+                        <span className="text-xs font-bold text-gray-800">
+                          গোপনীয়তা নীতি (Privacy Policy)
+                        </span>
+                      </label>
+                      <span
+                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${
+                          footerPrivacyPolicyShow
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {footerPrivacyPolicyShow ? "দেখাবে / Visible" : "লুকানো / Hidden"}
+                      </span>
+                    </div>
+
+                    {footerPrivacyPolicyShow && (
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <input
+                          type="text"
+                          value={footerPrivacyPolicyText}
+                          onChange={(e) => setFooterPrivacyPolicyText(e.target.value)}
+                          placeholder="গোপনীয়তা নীতি"
+                          className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                        />
+                        <input
+                          type="text"
+                          value={footerPrivacyPolicyLink}
+                          onChange={(e) => setFooterPrivacyPolicyLink(e.target.value)}
+                          placeholder="লিংক (#)"
+                          className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
+                        />
+                      </div>
+                    )}
                   </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={footerTermsText}
-                      onChange={(e) => setFooterTermsText(e.target.value)}
-                      placeholder="সেবার শর্তাবলী"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
-                    />
-                    <input
-                      type="text"
-                      value={footerTermsLink}
-                      onChange={(e) => setFooterTermsLink(e.target.value)}
-                      placeholder="লিংক (#)"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
-                    />
+
+                  {/* Terms of Service Toggle & Inputs */}
+                  <div
+                    className={`p-2.5 rounded-xl border transition-all ${
+                      footerTermsShow
+                        ? "bg-white border-green-300 shadow-2xs"
+                        : "bg-gray-50 border-gray-200 opacity-75"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <label className="flex items-center gap-2 cursor-pointer select-none">
+                        <input
+                          type="checkbox"
+                          checked={footerTermsShow}
+                          onChange={(e) => setFooterTermsShow(e.target.checked)}
+                          className="w-3.5 h-3.5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
+                        />
+                        <span className="text-xs font-bold text-gray-800">
+                          সেবার শর্তাবলী (Terms of Service)
+                        </span>
+                      </label>
+                      <span
+                        className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full ${
+                          footerTermsShow
+                            ? "bg-green-100 text-green-800"
+                            : "bg-gray-200 text-gray-600"
+                        }`}
+                      >
+                        {footerTermsShow ? "দেখাবে / Visible" : "লুকানো / Hidden"}
+                      </span>
+                    </div>
+
+                    {footerTermsShow && (
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <input
+                          type="text"
+                          value={footerTermsText}
+                          onChange={(e) => setFooterTermsText(e.target.value)}
+                          placeholder="সেবার শর্তাবলী"
+                          className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                        />
+                        <input
+                          type="text"
+                          value={footerTermsLink}
+                          onChange={(e) => setFooterTermsLink(e.target.value)}
+                          placeholder="লিংক (#)"
+                          className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -9024,8 +9100,9 @@ export default function AdminSettings() {
                     <p>
                       {footerCopyrightText.includes("{year}")
                         ? footerCopyrightText.replace(/{year}/gi, new Date().getFullYear())
-                        : `© ${new Date().getFullYear()} ${footerCopyrightText.replace(/^©\s*/, "")}`}{" "}
-                      | {footerPrivacyPolicyText} | {footerTermsText}
+                        : `© ${new Date().getFullYear()} ${footerCopyrightText.replace(/^©\s*/, "")}`}
+                      {footerPrivacyPolicyShow && <> | {footerPrivacyPolicyText}</>}
+                      {footerTermsShow && <> | {footerTermsText}</>}
                     </p>
                     <p className="text-gray-500 text-[10px]">
                       {footerDeveloperCreditText} <span className="text-yellow-400 font-bold">{footerDeveloperName}</span>

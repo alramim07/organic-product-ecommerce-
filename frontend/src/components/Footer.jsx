@@ -511,20 +511,29 @@ export default function Footer() {
         {/* Bottom Copyright & Credits (NO Admin Dashboard link, English DevHome credit) */}
         <div className="text-center pt-6 border-t border-white/10 space-y-2">
           <p className="text-gray-400 text-sm">
-            {displayCopyright} |
-            <a
-              href={privacyLink || "#"}
-              className="hover:text-yellow-400 transition-colors ml-1"
-            >
-              {privacyText}
-            </a>{" "}
-            |
-            <a
-              href={termsLink || "#"}
-              className="hover:text-yellow-400 transition-colors ml-1"
-            >
-              {termsText}
-            </a>
+            {displayCopyright}
+            {settings?.footerPrivacyPolicyShow !== false && (
+              <>
+                {" | "}
+                <a
+                  href={privacyLink || "#"}
+                  className="hover:text-yellow-400 transition-colors"
+                >
+                  {privacyText}
+                </a>
+              </>
+            )}
+            {settings?.footerTermsShow !== false && (
+              <>
+                {" | "}
+                <a
+                  href={termsLink || "#"}
+                  className="hover:text-yellow-400 transition-colors"
+                >
+                  {termsText}
+                </a>
+              </>
+            )}
           </p>
 
           {/* Developer credit (Permanent in English, non-editable) */}
