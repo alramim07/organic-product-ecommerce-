@@ -25,6 +25,7 @@ import {
   FaFileAlt,
   FaCheck,
   FaTimes,
+  FaLink,
 } from "react-icons/fa";
 import { Editor } from "@tinymce/tinymce-react";
 import Swal from "sweetalert2";
@@ -97,6 +98,8 @@ export default function AdminProductForm() {
   const [nameBn, setNameBn] = useState("");
   const [nameEn, setNameEn] = useState("");
   const [subtitleBn, setSubtitleBn] = useState("");
+  const [slug, setSlug] = useState("");
+  const [isCustomSlug, setIsCustomSlug] = useState(false);
   const [rating, setRating] = useState(5.0);
   const [totalReviews, setTotalReviews] = useState(0);
 
@@ -114,8 +117,8 @@ export default function AdminProductForm() {
   const [pricePerUnit, setPricePerUnit] = useState("");
   const [minOrder, setMinOrder] = useState("");
 
-  // Publication Status & Scheduling
-  const [publicationStatus, setPublicationStatus] = useState("published");
+  // Publication Status & Scheduling (Default to 'draft' for all new products)
+  const [publicationStatus, setPublicationStatus] = useState("draft");
   const [scheduledAt, setScheduledAt] = useState("");
   const [showSchedulePopover, setShowSchedulePopover] = useState(false);
 
@@ -250,123 +253,215 @@ export default function AdminProductForm() {
     window.addEventListener("mouseup", onMouseUp);
   };
 
-  // Load existing product in edit mode
-  useEffect(() => {
-    if (existingProduct) {
-      setCategory(existingProduct.category || "mango");
-      setUnit(existingProduct.unit || "কেজি");
-      setIsFeatured(Boolean(existingProduct.is_featured));
-      setNameBn(existingProduct.name_bn || "");
-      setNameEn(existingProduct.name_en || "");
-      setSubtitleBn(existingProduct.subtitle_bn || "");
-      setRating(existingProduct.rating || 4.9);
-      setTotalReviews(existingProduct.total_reviews || 25);
-      setOrigin(existingProduct.origin || "বাঘা ও পুঠিয়া, রাজশাহী");
-      setStockStatus(existingProduct.stock_status || "ইন স্টক");
-      setHarvestSchedule(existingProduct.harvest_schedule || "");
-      setRegionDates(existingProduct.regionDates || "");
+  // Helper to format text into URL-friendly slug
+  const slugify = (text) => {
+    return (text || "")
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/[\s_]+/g, "-")
+      .replace(/[^a-z0-9\u0980-\u09FF-]/g, "")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "");
+  };
 
-      const regPrice =
-        existingProduct.regular_price_per_unit ||
-        existingProduct.regular_price_per_kg ||
-        210;
-      const sellPrice =
-        existingProduct.price_per_unit ||
-        existingProduct.price_per_kg ||
-        existingProduct.price ||
-        180;
-      setRegularPricePerUnit(regPrice);
-      setPricePerUnit(sellPrice);
-
-      const disc =
-        existingProduct.discount_percent ||
-        (regPrice > sellPrice
-          ? Math.round(((regPrice - sellPrice) / regPrice) * 100)
-          : 0);
-      setDiscountPercent(disc);
-
-      setMinOrder(
-        existingProduct.min_order_kg
-          ? `${existingProduct.min_order_kg} ${existingProduct.unit || "কেজি"} বক্স`
-          : existingProduct.min_order || ""
-      );
-      setImage(existingProduct.image || "");
-
-      if (existingProduct.gallery && existingProduct.gallery.length > 0) {
-        setGallery(existingProduct.gallery);
-      }
-
-      if (existingProduct.image_badges && existingProduct.image_badges.length > 0) {
-        setImageBadges(existingProduct.image_badges);
-      }
-
-      if (existingProduct.packages && existingProduct.packages.length > 0) {
-        setPackages(existingProduct.packages);
-      }
-
-      if (existingProduct.description) {
-        setDescription(existingProduct.description);
-      }
-
-      // Tab icons & titles
-      if (existingProduct.tab1_title) {
-        setTab1Title(existingProduct.tab1_title.replace(/^[^\s\w\u0980-\u09FF]+\s*/, ""));
-      }
-      if (existingProduct.tab1_icon !== undefined) {
-        setTab1Icon(existingProduct.tab1_icon);
-      }
-
-      if (existingProduct.tab2_title) {
-        setTab2Title(existingProduct.tab2_title.replace(/^[^\s\w\u0980-\u09FF]+\s*/, ""));
-      }
-      if (existingProduct.tab2_icon !== undefined) {
-        setTab2Icon(existingProduct.tab2_icon);
-      }
-
-      if (existingProduct.tab3_title) {
-        setTab3Title(existingProduct.tab3_title.replace(/^[^\s\w\u0980-\u09FF]+\s*/, ""));
-      }
-      if (existingProduct.tab3_icon !== undefined) {
-        setTab3Icon(existingProduct.tab3_icon);
-      }
-
-      if (existingProduct.taste_specs && existingProduct.taste_specs.length > 0) {
-        setTasteSpecs(existingProduct.taste_specs);
-      }
-
-      if (existingProduct.highlights && existingProduct.highlights.length > 0) {
-        setHighlights(existingProduct.highlights);
-      }
-
-      if (existingProduct.packaging_description) {
-        setPackagingDescription(existingProduct.packaging_description);
-      }
-
-      if (existingProduct.packaging_steps && existingProduct.packaging_steps.length > 0) {
-        setPackagingSteps(existingProduct.packaging_steps);
-      }
-
-      if (existingProduct.storage_steps && existingProduct.storage_steps.length > 0) {
-        setStorageSteps(existingProduct.storage_steps);
-      }
-
-      if (existingProduct.stock_quantity !== undefined) {
-        setStockQuantity(existingProduct.stock_quantity);
-      }
-
-      if (existingProduct.publication_status) {
-        setPublicationStatus(existingProduct.publication_status);
-      }
-
-      if (existingProduct.scheduled_at) {
-        setScheduledAt(existingProduct.scheduled_at);
-      }
-
-      if (existingProduct._id || existingProduct.id) {
-        setSavedDraftId(existingProduct._id || existingProduct.id);
-      }
+  const handleNameBnChange = (val) => {
+    setNameBn(val);
+    if (!isCustomSlug && !isEdit && !nameEn) {
+      setSlug(slugify(val));
     }
-  }, [existingProduct]);
+  };
+
+  const handleNameEnChange = (val) => {
+    setNameEn(val);
+    if (!isCustomSlug && !isEdit) {
+      setSlug(slugify(val || nameBn));
+    }
+  };
+
+  const handleSlugChange = (val) => {
+    setIsCustomSlug(true);
+    setSlug(slugify(val));
+  };
+
+  // Reset form to clean default state for Add New Product route (/admin/products/add)
+  const resetForm = () => {
+    setCategory("mango");
+    setUnit("কেজি");
+    setIsFeatured(false);
+    setNameBn("");
+    setNameEn("");
+    setSubtitleBn("");
+    setSlug("");
+    setIsCustomSlug(false);
+    setRating(5.0);
+    setTotalReviews(0);
+    setOrigin("");
+    setStockStatus("ইন স্টক");
+    setStockQuantity("");
+    setHarvestSchedule("");
+    setRegionDates("");
+    setShowPreorderCalendar(false);
+    setRegularPricePerUnit("");
+    setDiscountPercent(0);
+    setPricePerUnit("");
+    setMinOrder("");
+    setPublicationStatus("draft");
+    setScheduledAt("");
+    setShowSchedulePopover(false);
+    setSavedDraftId(null);
+    setAutoSaveStatus("idle");
+    setLastSavedTime(null);
+    setImageBadges([]);
+    setImage("");
+    setGallery([]);
+    setPackages([]);
+    setTab1Icon("🥭");
+    setTab1Title("বৈশিষ্ট্য ও স্বাদ");
+    setDescription("");
+    setTasteSpecs([]);
+    setHighlights([]);
+    setTab2Icon("📦");
+    setTab2Title("প্যাকেজিং ও ডেলিভারি");
+    setPackagingDescription(
+      "আম অত্যন্ত সংবেদনশীল ফল। পরিবহনের ঝাঁকুনিতে যেন ফলের কোনো ক্ষতি না হয়, সেজন্য আমরা আন্তর্জাতিক মানের ৫-স্তরবিশিষ্ট (5-ply) ভেন্টিলেটেড হার্ডবোর্ড কার্টন ও ক্রেট ব্যবহার করি।"
+    );
+    setPackagingSteps(defaultPackagingSteps);
+    setTab3Icon("💡");
+    setTab3Title("পাকা ও সংরক্ষণ নিয়ম");
+    setStorageSteps(defaultStorageSteps);
+    setActiveTab("tab1");
+    isInitialMount.current = true;
+  };
+
+  // Load existing product in edit mode or reset when navigating to Add Product
+  useEffect(() => {
+    if (isEdit) {
+      if (existingProduct) {
+        setCategory(existingProduct.category || "mango");
+        setUnit(existingProduct.unit || "কেজি");
+        setIsFeatured(Boolean(existingProduct.is_featured));
+        setNameBn(existingProduct.name_bn || "");
+        setNameEn(existingProduct.name_en || "");
+        setSubtitleBn(existingProduct.subtitle_bn || "");
+        setSlug(existingProduct.slug || "");
+        setIsCustomSlug(Boolean(existingProduct.slug));
+        setRating(existingProduct.rating || 4.9);
+        setTotalReviews(existingProduct.total_reviews || 25);
+        setOrigin(existingProduct.origin || "বাঘা ও পুঠিয়া, রাজশাহী");
+        setStockStatus(existingProduct.stock_status || "ইন স্টক");
+        setHarvestSchedule(existingProduct.harvest_schedule || "");
+        setRegionDates(existingProduct.regionDates || "");
+
+        const regPrice =
+          existingProduct.regular_price_per_unit ||
+          existingProduct.regular_price_per_kg ||
+          210;
+        const sellPrice =
+          existingProduct.price_per_unit ||
+          existingProduct.price_per_kg ||
+          existingProduct.price ||
+          180;
+        setRegularPricePerUnit(regPrice);
+        setPricePerUnit(sellPrice);
+
+        const disc =
+          existingProduct.discount_percent ||
+          (regPrice > sellPrice
+            ? Math.round(((regPrice - sellPrice) / regPrice) * 100)
+            : 0);
+        setDiscountPercent(disc);
+
+        setMinOrder(
+          existingProduct.min_order_kg
+            ? `${existingProduct.min_order_kg} ${existingProduct.unit || "কেজি"} বক্স`
+            : existingProduct.min_order || ""
+        );
+        setImage(existingProduct.image || "");
+
+        if (existingProduct.gallery && existingProduct.gallery.length > 0) {
+          setGallery(existingProduct.gallery);
+        } else if (existingProduct.image) {
+          setGallery([existingProduct.image]);
+        } else {
+          setGallery([]);
+        }
+
+        setImageBadges(existingProduct.image_badges || []);
+        setPackages(existingProduct.packages || []);
+        setDescription(existingProduct.description || "");
+
+        // Tab icons & titles
+        if (existingProduct.tab1_title) {
+          setTab1Title(existingProduct.tab1_title.replace(/^[^\s\w\u0980-\u09FF]+\s*/, ""));
+        }
+        if (existingProduct.tab1_icon !== undefined) {
+          setTab1Icon(existingProduct.tab1_icon);
+        }
+
+        if (existingProduct.tab2_title) {
+          setTab2Title(existingProduct.tab2_title.replace(/^[^\s\w\u0980-\u09FF]+\s*/, ""));
+        }
+        if (existingProduct.tab2_icon !== undefined) {
+          setTab2Icon(existingProduct.tab2_icon);
+        }
+
+        if (existingProduct.tab3_title) {
+          setTab3Title(existingProduct.tab3_title.replace(/^[^\s\w\u0980-\u09FF]+\s*/, ""));
+        }
+        if (existingProduct.tab3_icon !== undefined) {
+          setTab3Icon(existingProduct.tab3_icon);
+        }
+
+        setTasteSpecs(existingProduct.taste_specs || []);
+        setHighlights(existingProduct.highlights || []);
+
+        if (existingProduct.packaging_description) {
+          setPackagingDescription(existingProduct.packaging_description);
+        }
+
+        if (existingProduct.packaging_steps && existingProduct.packaging_steps.length > 0) {
+          setPackagingSteps(existingProduct.packaging_steps);
+        }
+
+        if (existingProduct.storage_steps && existingProduct.storage_steps.length > 0) {
+          setStorageSteps(existingProduct.storage_steps);
+        }
+
+        if (existingProduct.stock_quantity !== undefined) {
+          setStockQuantity(existingProduct.stock_quantity);
+        }
+
+        if (existingProduct.publication_status) {
+          setPublicationStatus(existingProduct.publication_status);
+        }
+
+        if (existingProduct.scheduled_at) {
+          setScheduledAt(existingProduct.scheduled_at);
+        }
+
+        if (existingProduct._id || existingProduct.id) {
+          setSavedDraftId(existingProduct._id || existingProduct.id);
+        }
+      }
+    } else {
+      // User navigated to Add New Product route (/admin/products/add) -> Reset cleanly!
+      resetForm();
+    }
+  }, [id, existingProduct, isEdit]);
+
+  // Real-time Slug Uniqueness Check
+  const currentId = savedDraftId || (isEdit ? id : null);
+  const cleanSlug = slug.trim().toLowerCase();
+  const isSlugTaken = Boolean(
+    cleanSlug &&
+      products.some(
+        (p) =>
+          p.slug &&
+          p.slug.trim().toLowerCase() === cleanSlug &&
+          String(p._id || p.id) !== String(currentId)
+      )
+  );
 
   // Image Upload Handlers
   const handleImageUpload = (file) => {
@@ -534,13 +629,13 @@ export default function AdminProductForm() {
       return () => clearTimeout(t);
     }
 
-    // Do not auto-save if manual submit was triggered or product name is empty
-    if (isSubmittingRef.current || !nameBn.trim()) {
+    // Do not auto-save if manual submit was triggered, product name is empty, or slug collides
+    if (isSubmittingRef.current || !nameBn.trim() || (cleanSlug && isSlugTaken)) {
       return;
     }
 
     const timer = setTimeout(async () => {
-      if (isSubmittingRef.current || !nameBn.trim()) return;
+      if (isSubmittingRef.current || !nameBn.trim() || (cleanSlug && isSlugTaken)) return;
 
       try {
         setAutoSaveStatus("saving");
@@ -555,6 +650,7 @@ export default function AdminProductForm() {
           name_bn: nameBn.trim(),
           name_en: nameEn || nameBn,
           subtitle_bn: subtitleBn,
+          slug: cleanSlug || undefined,
           category: category,
           category_bn: selectedCatObj ? selectedCatObj.name_bn : "সাধারণ পণ্য",
           unit: unit,
@@ -619,6 +715,8 @@ export default function AdminProductForm() {
     nameBn,
     nameEn,
     subtitleBn,
+    cleanSlug,
+    isSlugTaken,
     category,
     unit,
     pricePerUnit,
@@ -652,7 +750,7 @@ export default function AdminProductForm() {
   ]);
 
   // Save / Publish / Schedule / Draft Handler
-  const handleSaveProduct = async (e, targetStatus = "published") => {
+  const handleSaveProduct = async (e, explicitStatus = null) => {
     if (e) e.preventDefault();
     isSubmittingRef.current = true;
 
@@ -665,6 +763,18 @@ export default function AdminProductForm() {
       });
       return;
     }
+
+    if (cleanSlug && isSlugTaken) {
+      isSubmittingRef.current = false;
+      Swal.fire({
+        icon: "warning",
+        title: "Duplicate URL Slug",
+        text: "এই URL Slug টি ইতিমধ্যে অন্য পণ্যে ব্যবহৃত হচ্ছে। অনুগ্রহ করে একটি ইউনিক স্লাগ ব্যবহার করুন।",
+      });
+      return;
+    }
+
+    const targetStatus = explicitStatus || publicationStatus || "draft";
 
     if (targetStatus === "scheduled" && !scheduledAt) {
       isSubmittingRef.current = false;
@@ -683,6 +793,7 @@ export default function AdminProductForm() {
       name_bn: nameBn.trim(),
       name_en: nameEn || nameBn,
       subtitle_bn: subtitleBn,
+      slug: cleanSlug || undefined,
       category: category,
       category_bn: selectedCatObj ? selectedCatObj.name_bn : "সাধারণ পণ্য",
       unit: unit,
@@ -721,28 +832,47 @@ export default function AdminProductForm() {
       scheduled_at: targetStatus === "scheduled" ? scheduledAt : null,
     };
 
-    const targetId = savedDraftId || (isEdit ? id : null);
-    if (targetId) {
-      await updateProduct(targetId, productPayload);
+    try {
+      const targetId = savedDraftId || (isEdit ? id : null);
+      if (targetId) {
+        await updateProduct(targetId, productPayload);
+        Swal.fire({
+          icon: "success",
+          title:
+            targetStatus === "draft"
+              ? "Saved as Draft!"
+              : targetStatus === "scheduled"
+              ? "Product Scheduled!"
+              : "Product Updated!",
+          text: `"${nameBn}" has been saved successfully (${targetStatus.toUpperCase()}).`,
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      } else {
+        await addProduct(productPayload);
+        Swal.fire({
+          icon: "success",
+          title:
+            targetStatus === "draft"
+              ? "Saved as Draft!"
+              : targetStatus === "scheduled"
+              ? "Product Scheduled!"
+              : "Product Published!",
+          text: `"${nameBn}" has been created (${targetStatus.toUpperCase()}).`,
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      }
+      navigate("/admin/products");
+    } catch (err) {
+      console.error("Save product error:", err);
+      isSubmittingRef.current = false;
       Swal.fire({
-        icon: "success",
-        title: targetStatus === "draft" ? "Saved as Draft!" : targetStatus === "scheduled" ? "Product Scheduled!" : "Product Updated!",
-        text: `"${nameBn}" has been saved successfully (${targetStatus.toUpperCase()}).`,
-        timer: 1800,
-        showConfirmButton: false,
-      });
-    } else {
-      await addProduct(productPayload);
-      Swal.fire({
-        icon: "success",
-        title: targetStatus === "draft" ? "Saved as Draft!" : targetStatus === "scheduled" ? "Product Scheduled!" : "Product Published!",
-        text: `"${nameBn}" has been created (${targetStatus.toUpperCase()}).`,
-        timer: 1800,
-        showConfirmButton: false,
+        icon: "error",
+        title: "Save Failed",
+        text: err?.response?.data?.message || err?.message || "Failed to save product.",
       });
     }
-
-    navigate("/admin/products");
   };
 
   return (
@@ -1498,7 +1628,7 @@ export default function AdminProductForm() {
                 type="text"
                 required
                 value={nameBn}
-                onChange={(e) => setNameBn(e.target.value)}
+                onChange={(e) => handleNameBnChange(e.target.value)}
                 placeholder="যেমন: গোপালভোগ"
                 className="w-full text-3xl sm:text-4xl font-extrabold text-green-900 bg-white/70 border border-yellow-200 rounded-2xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
               />
@@ -1513,7 +1643,7 @@ export default function AdminProductForm() {
                 <input
                   type="text"
                   value={nameEn}
-                  onChange={(e) => setNameEn(e.target.value)}
+                  onChange={(e) => handleNameEnChange(e.target.value)}
                   placeholder="e.g. Gopalbhog Mango"
                   className="w-full text-sm font-semibold text-amber-800 bg-white/70 border border-yellow-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
                 />
@@ -1530,6 +1660,82 @@ export default function AdminProductForm() {
                   className="w-full text-sm text-gray-700 bg-white/70 border border-yellow-200 rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm"
                 />
               </div>
+            </div>
+
+            {/* Custom URL Slug (SEO Permalink) */}
+            <div className="bg-white/90 border border-yellow-200 rounded-2xl p-3 sm:p-3.5 space-y-2 shadow-sm">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <label className="text-[11px] font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <FaLink className="text-green-700" />
+                  <span>Custom URL Slug (SEO Permalink):</span>
+                </label>
+                {cleanSlug && (
+                  <span
+                    className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border shadow-sm ${
+                      isSlugTaken
+                        ? "bg-red-50 text-red-700 border-red-300 animate-pulse"
+                        : "bg-green-50 text-green-800 border-green-300"
+                    }`}
+                  >
+                    {isSlugTaken ? "⚠️ Slug Already In Use!" : "✓ Unique & Available"}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center flex-wrap sm:flex-nowrap gap-2">
+                <div
+                  className={`flex items-center w-full bg-gray-50 border rounded-xl px-3 py-2 text-xs font-mono transition shadow-inner ${
+                    isSlugTaken
+                      ? "border-red-400 ring-2 ring-red-200"
+                      : "border-gray-300 focus-within:border-green-500 focus-within:ring-2 focus-within:ring-green-500/20"
+                  }`}
+                >
+                  <span className="text-gray-400 select-none hidden sm:inline font-semibold">
+                    domainname.com/product/
+                  </span>
+                  <span className="text-gray-400 select-none sm:hidden font-semibold">
+                    /product/
+                  </span>
+                  <input
+                    type="text"
+                    value={slug}
+                    onChange={(e) => handleSlugChange(e.target.value)}
+                    placeholder="product-er-slug"
+                    className="flex-1 bg-transparent font-bold text-green-950 focus:outline-none px-1"
+                  />
+                </div>
+
+                {isCustomSlug && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsCustomSlug(false);
+                      setSlug(slugify(nameEn || nameBn));
+                    }}
+                    className="px-2.5 py-2 text-[11px] font-bold text-gray-600 hover:text-green-800 bg-gray-100 hover:bg-gray-200 rounded-xl transition cursor-pointer whitespace-nowrap"
+                    title="Auto-generate from product name"
+                  >
+                    Auto Reset
+                  </button>
+                )}
+              </div>
+
+              <p className="text-[10px] text-gray-500 flex items-center gap-1.5 flex-wrap">
+                <span className="font-medium text-gray-600">🔗 লাইভ ইউআরএল প্রিভিউ:</span>
+                <span className="font-mono text-green-800 font-bold bg-green-50 px-2 py-0.5 rounded border border-green-200 truncate max-w-full">
+                  domainname.com/product/{cleanSlug || "product-er-slug"}
+                </span>
+                {cleanSlug && !isSlugTaken && (
+                  <a
+                    href={`/product/${cleanSlug}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-green-600 hover:text-green-800 hover:underline font-bold text-[10px] ml-auto flex items-center gap-1"
+                  >
+                    <FaEye className="text-[9px]" /> Open Preview
+                  </a>
+                )}
+              </p>
             </div>
 
             {/* Rating & Review Mock */}

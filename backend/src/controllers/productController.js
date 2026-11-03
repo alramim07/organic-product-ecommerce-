@@ -71,6 +71,18 @@ export const getProductById = async (req, res) => {
 // @route   POST /api/products
 // @access  Private (Admin)
 export const createProduct = async (req, res) => {
+  if (req.body.slug && req.body.slug.trim()) {
+    const slugClean = req.body.slug.trim().toLowerCase();
+    const existing = await Product.findOne({ slug: slugClean });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "এই URL Slug টি ইতিমধ্যে অন্য পণ্যে ব্যবহৃত হচ্ছে! একটি ভিন্ন ইউনিক স্লাগ ব্যবহার করুন।",
+      });
+    }
+    req.body.slug = slugClean;
+  }
+
   const product = await Product.create(req.body);
 
   res.status(201).json({
@@ -84,6 +96,21 @@ export const createProduct = async (req, res) => {
 // @route   PUT /api/products/:id
 // @access  Private (Admin)
 export const updateProduct = async (req, res) => {
+  if (req.body.slug && req.body.slug.trim()) {
+    const slugClean = req.body.slug.trim().toLowerCase();
+    const existing = await Product.findOne({
+      slug: slugClean,
+      _id: { $ne: req.params.id },
+    });
+    if (existing) {
+      return res.status(400).json({
+        success: false,
+        message: "এই URL Slug টি ইতিমধ্যে অন্য পণ্যে ব্যবহৃত হচ্ছে! একটি ভিন্ন ইউনিক স্লাগ ব্যবহার করুন।",
+      });
+    }
+    req.body.slug = slugClean;
+  }
+
   const product = await Product.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,

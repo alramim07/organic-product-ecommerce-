@@ -388,7 +388,7 @@ export default function AdminProductList() {
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            to={`/product/${prodId}`}
+                            to={`/product/${p.slug || prodId}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition text-xs font-bold"

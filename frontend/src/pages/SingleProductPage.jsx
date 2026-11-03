@@ -28,8 +28,10 @@ export default function SingleProductPage() {
   const navigate = useNavigate();
   const { products, addBooking, settings } = useApp();
 
-  // Find product by id from dynamic products
+  // Find product by slug or id from dynamic products
   const product =
+    products.find((p) => p.slug && p.slug.trim().toLowerCase() === (id || "").trim().toLowerCase()) ||
+    products.find((p) => String(p._id) === String(id) || String(p.id) === String(id)) ||
     products.find((p) => p.id === parseInt(id || "3")) ||
     products[0] ||
     productsData[2];
