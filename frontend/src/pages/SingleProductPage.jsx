@@ -7,6 +7,7 @@ import {
   FaTruck,
   FaShieldAlt,
   FaLeaf,
+  FaPercentage,
   FaCalendarAlt,
   FaWhatsapp,
   FaPhoneAlt,
@@ -1490,6 +1491,29 @@ export default function SingleProductPage() {
                 const relPrice = rel.price_per_unit || rel.price_per_kg || rel.price || 0;
                 const relUnit = rel.unit || "কেজি";
                 const relLink = `/product/${rel.slug || rel._id || rel.id}`;
+
+                const isRelOut = Boolean(
+                  rel.stock_status === "স্টক শেষ" ||
+                  rel.stock_status?.toLowerCase().includes("out of stock")
+                );
+                const isRelLimited = Boolean(
+                  rel.stock_status === "সীমিত স্টক" ||
+                  rel.stock_status?.toLowerCase().includes("limited")
+                );
+                const isRelPreOrder = Boolean(
+                  rel.stock_status?.includes("প্রি-অর্ডার") ||
+                  rel.stock_status?.toLowerCase().includes("pre-order")
+                );
+
+                const rawBadges = Array.isArray(rel.image_badges) && rel.image_badges.length > 0
+                  ? rel.image_badges
+                  : Array.isArray(rel.imageBadges) && rel.imageBadges.length > 0
+                  ? rel.imageBadges
+                  : [];
+                const relBadges = rawBadges.filter(
+                  (b) => b.type !== "discount" || Number(rel.discount_percent) > 0
+                );
+
                 return (
                   <motion.div
                     key={rel._id || rel.id}
@@ -1506,17 +1530,61 @@ export default function SingleProductPage() {
                           e.target.src = "/assets/mangoes/m1.jpg";
                         }}
                       />
-                      {rel.category && (
-                        <span className="absolute top-2 left-2 bg-green-700/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow">
-                          {rel.category}
-                        </span>
-                      )}
-                      {rel.stock_status && (
-                        <span className="absolute top-2 right-2 bg-yellow-400 text-green-950 text-[10px] font-extrabold px-2 py-0.5 rounded-full shadow">
-                          {rel.stock_status}
-                        </span>
-                      )}
+
+                      {/* Dynamic Product Badges (Exact same logic as Home Page) */}
+                      <div className="absolute top-2 left-2 items-start flex flex-col gap-1 z-10 pointer-events-none">
+                        {/* Stock Out Tag */}
+                        {isRelOut && (
+                          <span className="px-2.5 py-0.5 bg-red-600 text-white font-black text-[10px] rounded-full shadow-md flex items-center gap-1">
+                            <span>স্টক শেষ</span>
+                          </span>
+                        )}
+
+                        {/* Limited Stock Tag */}
+                        {isRelLimited && (
+                          <span className="px-2.5 py-0.5 bg-amber-500 text-white font-black text-[10px] rounded-full shadow-md flex items-center gap-1">
+                            <span>সীমিত স্টক</span>
+                          </span>
+                        )}
+
+                        {/* Custom Image Badges (Normal, Discount, etc.) */}
+                        {relBadges.map((b, bIdx) => {
+                          const isDiscount = b.type === "discount" || b.color === "red";
+                          return (
+                            <span
+                              key={b.id || bIdx}
+                              className={`px-2.5 py-0.5 backdrop-blur-sm text-white font-black text-[10px] rounded-full shadow-md flex items-center gap-1 pointer-events-auto leading-tight ${
+                                isDiscount
+                                  ? "bg-red-500/95"
+                                  : b.color === "amber"
+                                  ? "bg-amber-500/95"
+                                  : b.color === "blue"
+                                  ? "bg-blue-600/95"
+                                  : b.color === "purple"
+                                  ? "bg-purple-600/95"
+                                  : "bg-green-600/95"
+                              }`}
+                            >
+                              {b.type === "discount" ? (
+                                <FaPercentage className="text-yellow-200 text-[9px]" />
+                              ) : (
+                                <FaLeaf className="text-yellow-300 text-[9px]" />
+                              )}
+                              <span>{b.text}</span>
+                            </span>
+                          );
+                        })}
+
+                        {/* Fallback default tag if no custom tags and normal stock */}
+                        {relBadges.length === 0 && !isRelOut && !isRelLimited && (
+                          <span className="px-2.5 py-0.5 bg-green-700/90 text-white text-[10px] font-bold rounded-full shadow flex items-center gap-1">
+                            <FaLeaf className="text-yellow-300 text-[9px]" />
+                            <span>{rel.category_bn || "বাগান ফ্রেশ"}</span>
+                          </span>
+                        )}
+                      </div>
                     </div>
+
                     <div className="p-4 flex-1 flex flex-col justify-between">
                       <div>
                         <h4 className="font-bold text-green-900 text-lg">{rel.name_bn || rel.name}</h4>
@@ -1530,9 +1598,15 @@ export default function SingleProductPage() {
                       <div className="pt-4 border-t border-gray-100 mt-3 flex items-center gap-2">
                         <Link
                           to={relLink}
-                          className="w-full text-center py-2 bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-500 hover:to-yellow-500 text-green-950 font-bold text-xs rounded-xl shadow transition"
+                          className={`w-full text-center py-2 font-bold text-xs rounded-xl shadow transition ${
+                            isRelOut
+                              ? "bg-gray-300 text-gray-500 cursor-not-allowed pointer-events-none"
+                              : isRelPreOrder
+                              ? "bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
+                              : "bg-gradient-to-r from-amber-400 to-yellow-400 hover:from-amber-500 hover:to-yellow-500 text-green-950"
+                          }`}
                         >
-                          বিস্তারিত ও অর্ডার
+                          {isRelOut ? "অনুপলব্ধ" : isRelPreOrder ? "প্রি-অর্ডার করুন" : "অর্ডার করুন"}
                         </Link>
                       </div>
                     </div>
