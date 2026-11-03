@@ -213,24 +213,56 @@ export default function SingleProductPage() {
   };
 
   // Recommended Products Logic:
-  // 1. Same category products
-  // 2. If finished/less than 4, recommend similar products from other categories
-  const publishedProducts = products.filter((p) => p.publication_status !== "draft");
-  const pool = publishedProducts.length > 0 ? publishedProducts : productsData;
+  // 1. Same category products from published database products
+  // 2. Other category products from published database products
+  // 3. Fallback/supplement with productsData so at least 4 items are always recommended
+  const currentId = String(product._id || product.id || "");
+  const currentSlug = String(product.slug || "");
 
-  const currentIdentifier = String(product._id || product.id || "");
-  const eligibleProducts = pool.filter(
-    (p) => String(p._id || p.id) !== currentIdentifier && p.slug !== product.slug
+  const dbPublishedOthers = (products || []).filter((p) => {
+    const pId = String(p._id || p.id || "");
+    const pSlug = String(p.slug || "");
+    if (pId === currentId || (currentSlug && pSlug === currentSlug)) return false;
+    if (p.publication_status === "draft") return false;
+    if (
+      p.publication_status === "scheduled" &&
+      p.scheduled_at &&
+      new Date(p.scheduled_at) > new Date()
+    ) {
+      return false;
+    }
+    return true;
+  });
+
+  const fallbackOthers = productsData.filter((p) => {
+    const pId = String(p._id || p.id || "");
+    const pSlug = String(p.slug || "");
+    return pId !== currentId && (!currentSlug || pSlug !== currentSlug);
+  });
+
+  const sameCategoryFromDb = dbPublishedOthers.filter(
+    (p) => p.category && product.category && p.category.trim() === product.category.trim()
+  );
+  const otherCategoryFromDb = dbPublishedOthers.filter(
+    (p) => !p.category || !product.category || p.category.trim() !== product.category.trim()
   );
 
-  const sameCategoryProducts = eligibleProducts.filter(
-    (p) => p.category && product.category && p.category === product.category
-  );
-  const otherCategoryProducts = eligibleProducts.filter(
-    (p) => !p.category || p.category !== product.category
-  );
+  const combinedRecommendations = [...sameCategoryFromDb, ...otherCategoryFromDb];
 
-  const recommendedProducts = [...sameCategoryProducts, ...otherCategoryProducts].slice(0, 4);
+  // If database products are fewer than 4, backfill remaining slots from catalog
+  if (combinedRecommendations.length < 4) {
+    for (const fb of fallbackOthers) {
+      const alreadyInList = combinedRecommendations.some(
+        (c) => String(c._id || c.id) === String(fb.id) || (fb.name_bn && c.name_bn === fb.name_bn)
+      );
+      if (!alreadyInList) {
+        combinedRecommendations.push(fb);
+      }
+      if (combinedRecommendations.length >= 4) break;
+    }
+  }
+
+  const recommendedProducts = combinedRecommendations.slice(0, 4);
 
   return (
     <div className="bg-gradient-to-b from-amber-50/50 via-white to-green-50/30 pt-24 pb-20">
