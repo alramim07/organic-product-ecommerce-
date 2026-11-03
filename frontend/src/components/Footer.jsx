@@ -508,16 +508,16 @@ export default function Footer() {
             </a>
           </p>
 
-          {/* Developer credit (Totally in English as requested) */}
+          {/* Developer credit (Permanent in English, non-editable) */}
           <p className="text-gray-400 text-xs">
-            {devCreditText}{" "}
+            Designed & Developed with{" "}
             <a
-              href={devLink || "https://devhome.onrender.com/"}
+              href="https://devhome.onrender.com/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-yellow-400 hover:text-yellow-300 font-semibold hover:underline transition-colors"
             >
-              {devName}
+              DevHome
             </a>
           </p>
         </div>

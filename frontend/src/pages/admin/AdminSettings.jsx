@@ -59,6 +59,24 @@ import { toBengaliNumber } from "../../components/About";
 import { useApp } from "../../context/AppContext";
 import { api } from "../../services/api";
 
+
+// Header Title Color Presets
+const HEADER_TITLE_GRADIENT_PRESETS = [
+  { id: "green_gold", name: "Green & Gold (Original)", value: "linear-gradient(to right, #15803d, #ca8a04)" },
+  { id: "emerald_lime", name: "Emerald & Fresh Lime", value: "linear-gradient(to right, #059669, #84cc16)" },
+  { id: "sunset_orange", name: "Sunset Orange & Amber", value: "linear-gradient(to right, #ea580c, #f59e0b)" },
+  { id: "mango_royal", name: "Royal Mango Gold", value: "linear-gradient(to right, #d97706, #eab308, #16a34a)" },
+  { id: "deep_forest", name: "Deep Forest Mint", value: "linear-gradient(to right, #14532d, #10b981)" },
+];
+
+const HEADER_TITLE_SOLID_PRESETS = [
+  { id: "green", name: "Forest Green", value: "#15803d" },
+  { id: "emerald", name: "Emerald Green", value: "#059669" },
+  { id: "amber", name: "Amber Yellow", value: "#d97706" },
+  { id: "orange", name: "Orange", value: "#ea580c" },
+  { id: "dark", name: "Dark Slate", value: "#1e293b" },
+];
+
 // Footer Title Color Presets
 const FOOTER_TITLE_GRADIENT_PRESETS = [
   { id: "gold_green", name: "Mango Gold & Green (Original)", value: "linear-gradient(to right, #facc15, #4ade80)" },
@@ -74,6 +92,13 @@ const FOOTER_TITLE_SOLID_PRESETS = [
   { id: "white", name: "Pure White", value: "#ffffff" },
   { id: "orange", name: "Warm Orange", value: "#fb923c" },
   { id: "lime", name: "Fresh Lime", value: "#a3e635" },
+];
+
+
+const POPULAR_FOOTER_ICONS = [
+  "🏠", "🥭", "📖", "⭐", "📦", "📞", "💬", "✉️", "📍", "🕒",
+  "💳", "🛡️", "🍃", "🚀", "🎁", "🛒", "🏷️", "🚚", "🏆", "⏰",
+  "👑", "🔥", "✨", "💯", "✅", "🌿", "🍑", "🍈", "❤️", "🎯"
 ];
 
 const POPULAR_MENU_ICONS = [
@@ -711,6 +736,8 @@ export default function AdminSettings() {
       if (settings.websiteFavicon !== undefined) setWebsiteFavicon(settings.websiteFavicon);
       if (settings.websiteLogo !== undefined) setWebsiteLogo(settings.websiteLogo);
       if (settings.headerBrandDisplay !== undefined) setHeaderBrandDisplay(settings.headerBrandDisplay);
+      if (settings.headerTitleColorType !== undefined) setHeaderTitleColorType(settings.headerTitleColorType);
+      if (settings.headerTitleColorVal !== undefined) setHeaderTitleColorVal(settings.headerTitleColorVal);
       if (settings.headerNavLinks !== undefined && Array.isArray(settings.headerNavLinks)) {
         setHeaderNavLinks(settings.headerNavLinks);
       }
@@ -1595,6 +1622,8 @@ export default function AdminSettings() {
       websiteFavicon,
       websiteLogo,
       headerBrandDisplay,
+      headerTitleColorType,
+      headerTitleColorVal,
       headerNavLinks,
       headerCallBtnText,
       headerCallBtnPhone,
@@ -3267,8 +3296,181 @@ export default function AdminSettings() {
                     </p>
                   </div>
                 </div>
-              </div>
-            </div>
+              
+                {/* Header Brand Text Color Customization (Solid & Gradient) */}
+                <div className="pt-4 border-t border-gray-200 space-y-3.5">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <h5 className="text-xs font-black text-gray-900 uppercase flex items-center gap-1.5">
+                        <FaPalette className="text-amber-500" /> ব্র্যান্ড টেক্সট কালার কাস্টমাইজেশন (Title Color)
+                      </h5>
+                      <p className="text-[11px] text-gray-500">
+                        হেডারে ব্র্যান্ড টাইটেলের রঙের জন্য গ্রেডিয়েন্ট অথবা সলিড কালার পছন্দ করুন।
+                      </p>
+                    </div>
+
+                    {/* Mode switcher (Gradient vs Solid) */}
+                    <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl self-start sm:self-auto text-xs font-bold border border-gray-200">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setHeaderTitleColorType("gradient");
+                          updateSettings({ headerTitleColorType: "gradient" });
+                        }}
+                        className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                          headerTitleColorType === "gradient"
+                            ? "bg-green-600 text-white shadow font-black"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        🌈 Gradient
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setHeaderTitleColorType("solid");
+                          updateSettings({ headerTitleColorType: "solid" });
+                        }}
+                        className={`px-3 py-1 rounded-lg transition cursor-pointer ${
+                          headerTitleColorType === "solid"
+                            ? "bg-green-600 text-white shadow font-black"
+                            : "text-gray-600 hover:text-gray-900"
+                        }`}
+                      >
+                        🎨 Solid Color
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Gradient Presets */}
+                  {headerTitleColorType === "gradient" ? (
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {HEADER_TITLE_GRADIENT_PRESETS.map((gp) => (
+                          <button
+                            key={gp.id}
+                            type="button"
+                            onClick={() => {
+                              setHeaderTitleColorVal(gp.value);
+                              updateSettings({ headerTitleColorVal: gp.value });
+                            }}
+                            className={`p-2.5 rounded-xl border text-left transition cursor-pointer flex flex-col gap-1.5 ${
+                              headerTitleColorVal === gp.value
+                                ? "border-green-600 ring-2 ring-green-500/30 bg-green-50/50"
+                                : "border-gray-200 bg-white hover:bg-gray-50"
+                            }`}
+                          >
+                            <div
+                              className="h-4 rounded-md shadow-inner"
+                              style={{ backgroundImage: gp.value }}
+                            />
+                            <span className="text-[10px] font-bold text-gray-700 truncate">
+                              {gp.name}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Custom Gradient Input */}
+                      <div>
+                        <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                          Custom Gradient CSS (কাস্টম গ্রেডিয়েন্ট কোড)
+                        </label>
+                        <input
+                          type="text"
+                          value={headerTitleColorVal}
+                          onChange={(e) => {
+                            setHeaderTitleColorVal(e.target.value);
+                            updateSettings({ headerTitleColorVal: e.target.value });
+                          }}
+                          placeholder="linear-gradient(to right, #15803d, #ca8a04)"
+                          className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-mono text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    /* Solid Color Presets & Picker */
+                    <div className="space-y-3">
+                      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+                        {HEADER_TITLE_SOLID_PRESETS.map((sp) => (
+                          <button
+                            key={sp.id}
+                            type="button"
+                            onClick={() => {
+                              setHeaderTitleColorVal(sp.value);
+                              updateSettings({ headerTitleColorVal: sp.value });
+                            }}
+                            className={`p-2.5 rounded-xl border text-left transition cursor-pointer flex items-center gap-2 ${
+                              headerTitleColorVal === sp.value
+                                ? "border-green-600 ring-2 ring-green-500/30 bg-green-50/50"
+                                : "border-gray-200 bg-white hover:bg-gray-50"
+                            }`}
+                          >
+                            <span
+                              className="w-5 h-5 rounded-md shadow-inner shrink-0 border border-black/10"
+                              style={{ backgroundColor: sp.value }}
+                            />
+                            <span className="text-[10px] font-bold text-gray-700 truncate">
+                              {sp.name}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+
+                      {/* Custom Solid Color Picker */}
+                      <div className="flex items-center gap-3">
+                        <div className="flex-1">
+                          <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                            Custom Solid Color Hex (কালার কোড লিখুন)
+                          </label>
+                          <input
+                            type="text"
+                            value={headerTitleColorVal}
+                            onChange={(e) => {
+                              setHeaderTitleColorVal(e.target.value);
+                              updateSettings({ headerTitleColorVal: e.target.value });
+                            }}
+                            placeholder="#15803d"
+                            className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-mono text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+                          />
+                        </div>
+                        <div className="pt-5">
+                          <input
+                            type="color"
+                            value={headerTitleColorVal.startsWith("#") ? headerTitleColorVal : "#15803d"}
+                            onChange={(e) => {
+                              setHeaderTitleColorVal(e.target.value);
+                              updateSettings({ headerTitleColorVal: e.target.value });
+                            }}
+                            className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer"
+                            title="কালার পিকার খুলুন"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Live Header Text Preview Box */}
+                  <div className="p-3 bg-gray-900 rounded-xl flex items-center justify-between border border-gray-800">
+                    <span className="text-[11px] text-gray-400 font-bold">লাইভ হেডার টাইটেল প্রিভিউ:</span>
+                    <span
+                      className="text-lg font-black"
+                      style={
+                        headerTitleColorType === "gradient"
+                          ? {
+                              backgroundImage: headerTitleColorVal,
+                              WebkitBackgroundClip: "text",
+                              WebkitTextFillColor: "transparent",
+                            }
+                          : { color: headerTitleColorVal }
+                      }
+                    >
+                      {siteName || "আমওয়ালা ভাইয়া"}
+                    </span>
+                  </div>
+                </div>
+
+              </div></div>
 
             {/* Part 2: Navigation Menu Management */}
             <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
@@ -7392,8 +7594,995 @@ export default function AdminSettings() {
             </div>
 
             
+            {/* Part 3: About / Description Text */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-600" />
+                <h4 className="text-sm font-extrabold text-green-950">
+                  ফুটার পরিচিতি ও বিবরণ টেক্সট (About Paragraph)
+                </h4>
+              </div>
+              <textarea
+                rows={3}
+                value={footerAboutText}
+                onChange={(e) => setFooterAboutText(e.target.value)}
+                placeholder="রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম..."
+                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-medium text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+
+            {/* Part 4: Social Media Links */}
+            <div className="space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-600" />
+                <h4 className="text-sm font-extrabold text-green-950">
+                  সোশ্যাল মিডিয়া প্রোফাইল লিংক (Social Links)
+                </h4>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {footerSocialLinks.map((s, idx) => (
+                  <div
+                    key={idx}
+                    className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
+                        {s.icon === "facebook" && <FaFacebookF className="text-blue-600" />}
+                        {s.icon === "instagram" && <FaInstagram className="text-pink-600" />}
+                        {s.icon === "youtube" && <FaYoutube className="text-red-600" />}
+                        {s.icon === "whatsapp" && <FaWhatsapp className="text-green-600" />}
+                        <span>{s.name} লিংক</span>
+                      </span>
+                      <input
+                        type="checkbox"
+                        checked={s.show !== false}
+                        onChange={(e) => {
+                          const updated = [...footerSocialLinks];
+                          updated[idx] = { ...updated[idx], show: e.target.checked };
+                          setFooterSocialLinks(updated);
+                        }}
+                        className="toggle toggle-sm toggle-success"
+                        title="প্রদর্শন চালু/বন্ধ"
+                      />
+                    </div>
+                    <input
+                      type="text"
+                      value={s.link}
+                      onChange={(e) => {
+                        const updated = [...footerSocialLinks];
+                        updated[idx] = { ...updated[idx], link: e.target.value };
+                        setFooterSocialLinks(updated);
+                      }}
+                      placeholder="https://..."
+                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Part 4 & 5: Column 2 (Quick Links) & Column 3 (Mango Varieties) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Column 2: Quick Links */}
+              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
+                  <div className="flex-1 pr-3">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
+                      কলাম ২ শিরোনাম
+                    </label>
+                    <input
+                      type="text"
+                      value={footerCol2Title}
+                      onChange={(e) => setFooterCol2Title(e.target.value)}
+                      placeholder="দ্রুত লিংক"
+                      className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFooterQuickLinks([
+                        ...footerQuickLinks,
+                        { name: "নতুন লিংক", href: "#", icon: "🔗", show: true },
+                      ]);
+                    }}
+                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
+                  >
+                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                  {footerQuickLinks.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 bg-white rounded-xl border border-gray-200 flex items-center gap-2 shadow-2xs"
+                    >
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `ql_${idx}` ? null : `ql_${idx}`)}
+                          className="w-9 h-8 rounded-lg bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer overflow-hidden shadow-2xs shrink-0"
+                          title="আইকন পরিবর্তন করুন (Choose or Upload)"
+                        >
+                          {item.icon ? (
+                            item.icon.startsWith("data:") || item.icon.startsWith("http") || item.icon.startsWith("/") ? (
+                              <img src={item.icon} alt="" className="w-5 h-5 object-contain" />
+                            ) : (
+                              <span>{item.icon}</span>
+                            )
+                          ) : (
+                            <span className="text-gray-400">🔗</span>
+                          )}
+                        </button>
+
+                        {/* Floating Icon Picker Popover */}
+                        {activeFooterIconPicker === `ql_${idx}` && (
+                          <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
+                              <span>আইকন পছন্দ করুন</span>
+                              <button
+                                type="button"
+                                onClick={() => setActiveFooterIconPicker(null)}
+                                className="text-gray-400 hover:text-red-500 cursor-pointer text-xs"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-6 gap-1 max-h-36 overflow-y-auto pr-0.5">
+                              {POPULAR_FOOTER_ICONS.map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = [...footerQuickLinks];
+                                    updated[idx] = { ...updated[idx], icon: emoji };
+                                    setFooterQuickLinks(updated);
+                                    setActiveFooterIconPicker(null);
+                                  }}
+                                  className="w-8 h-8 rounded-lg hover:bg-yellow-100 flex items-center justify-center text-sm transition cursor-pointer"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="pt-1 border-t border-gray-100 flex items-center gap-1">
+                              <input
+                                type="text"
+                                value={item.icon?.startsWith("data:") ? "" : item.icon}
+                                onChange={(e) => {
+                                  const updated = [...footerQuickLinks];
+                                  updated[idx] = { ...updated[idx], icon: e.target.value };
+                                  setFooterQuickLinks(updated);
+                                }}
+                                placeholder="কাস্টম ইমোজি/আইকন..."
+                                className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                              />
+                            </div>
+                            <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
+                              <FaUpload className="text-[9px]" />
+                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleFooterItemIconUpload(setFooterQuickLinks, footerQuickLinks, idx, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => {
+                          const updated = [...footerQuickLinks];
+                          updated[idx] = { ...updated[idx], name: e.target.value };
+                          setFooterQuickLinks(updated);
+                        }}
+                        placeholder="লিংকের নাম"
+                        className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={item.href}
+                        onChange={(e) => {
+                          const updated = [...footerQuickLinks];
+                          updated[idx] = { ...updated[idx], href: e.target.value };
+                          setFooterQuickLinks(updated);
+                        }}
+                        placeholder="#home"
+                        className="w-24 px-2 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
+                        title="টার্গেট লিংক"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFooterQuickLinks(footerQuickLinks.filter((_, i) => i !== idx));
+                        }}
+                        className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
+                        title="মুছুন"
+                      >
+                        <FaTrash className="text-xs" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Column 3: Mango Varieties */}
+              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
+                  <div className="flex-1 pr-3">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
+                      কলাম ৩ শিরোনাম
+                    </label>
+                    <input
+                      type="text"
+                      value={footerCol3Title}
+                      onChange={(e) => setFooterCol3Title(e.target.value)}
+                      placeholder="আমের জাত"
+                      className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFooterMangoList([
+                        ...footerMangoList,
+                        { name: "নতুন জাত", href: "#varieties", icon: "🥭", show: true },
+                      ]);
+                    }}
+                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
+                  >
+                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+                  {footerMangoList.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 bg-white rounded-xl border border-gray-200 flex items-center gap-2 shadow-2xs"
+                    >
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `ml_${idx}` ? null : `ml_${idx}`)}
+                          className="w-9 h-8 rounded-lg bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer overflow-hidden shadow-2xs shrink-0"
+                          title="আইকন পরিবর্তন করুন (Choose or Upload)"
+                        >
+                          {item.icon ? (
+                            item.icon.startsWith("data:") || item.icon.startsWith("http") || item.icon.startsWith("/") ? (
+                              <img src={item.icon} alt="" className="w-5 h-5 object-contain" />
+                            ) : (
+                              <span>{item.icon}</span>
+                            )
+                          ) : (
+                            <span className="text-gray-400">🥭</span>
+                          )}
+                        </button>
+
+                        {/* Floating Icon Picker Popover */}
+                        {activeFooterIconPicker === `ml_${idx}` && (
+                          <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
+                              <span>আইকন পছন্দ করুন</span>
+                              <button
+                                type="button"
+                                onClick={() => setActiveFooterIconPicker(null)}
+                                className="text-gray-400 hover:text-red-500 cursor-pointer text-xs"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-6 gap-1 max-h-36 overflow-y-auto pr-0.5">
+                              {POPULAR_FOOTER_ICONS.map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = [...footerMangoList];
+                                    updated[idx] = { ...updated[idx], icon: emoji };
+                                    setFooterMangoList(updated);
+                                    setActiveFooterIconPicker(null);
+                                  }}
+                                  className="w-8 h-8 rounded-lg hover:bg-yellow-100 flex items-center justify-center text-sm transition cursor-pointer"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="pt-1 border-t border-gray-100 flex items-center gap-1">
+                              <input
+                                type="text"
+                                value={item.icon?.startsWith("data:") ? "" : item.icon}
+                                onChange={(e) => {
+                                  const updated = [...footerMangoList];
+                                  updated[idx] = { ...updated[idx], icon: e.target.value };
+                                  setFooterMangoList(updated);
+                                }}
+                                placeholder="কাস্টম ইমোজি/আইকন..."
+                                className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                              />
+                            </div>
+                            <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
+                              <FaUpload className="text-[9px]" />
+                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleFooterItemIconUpload(setFooterMangoList, footerMangoList, idx, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                      <input
+                        type="text"
+                        value={item.name}
+                        onChange={(e) => {
+                          const updated = [...footerMangoList];
+                          updated[idx] = { ...updated[idx], name: e.target.value };
+                          setFooterMangoList(updated);
+                        }}
+                        placeholder="জাতের নাম"
+                        className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
+                      />
+                      <input
+                        type="text"
+                        value={item.href}
+                        onChange={(e) => {
+                          const updated = [...footerMangoList];
+                          updated[idx] = { ...updated[idx], href: e.target.value };
+                          setFooterMangoList(updated);
+                        }}
+                        placeholder="#varieties"
+                        className="w-24 px-2 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
+                        title="টার্গেট লিংক"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFooterMangoList(footerMangoList.filter((_, i) => i !== idx));
+                        }}
+                        className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
+                        title="মুছুন"
+                      >
+                        <FaTrash className="text-xs" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Part 6: Column 4 — যোগাযোগ ও খোলার সময় (Contact & Hours) */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Contact Info */}
+              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
+                  <div className="flex-1 pr-3">
+                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
+                      যোগাযোগ শিরোনাম
+                    </label>
+                    <input
+                      type="text"
+                      value={footerCol4Title}
+                      onChange={(e) => setFooterCol4Title(e.target.value)}
+                      placeholder="যোগাযোগ"
+                      className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFooterContactItems([
+                        ...footerContactItems,
+                        { text: "নতুন তথ্য", link: "#", icon: "phone", show: true },
+                      ]);
+                    }}
+                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
+                  >
+                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {footerContactItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2.5 bg-white rounded-xl border border-gray-200 space-y-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `ct_${idx}` ? null : `ct_${idx}`)}
+                          className="w-9 h-8 rounded-lg bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer overflow-hidden shadow-2xs shrink-0"
+                          title="আইকন পরিবর্তন করুন (Preset or Custom)"
+                        >
+                          {item.icon === "phone" && <FaPhoneAlt className="text-yellow-600 text-xs" />}
+                          {item.icon === "whatsapp" && <FaWhatsapp className="text-green-600 text-xs" />}
+                          {item.icon === "envelope" && <FaEnvelope className="text-yellow-600 text-xs" />}
+                          {item.icon === "map-marker" && <FaMapMarkerAlt className="text-red-500 text-xs" />}
+                          {!["phone", "whatsapp", "envelope", "map-marker"].includes(item.icon) && (
+                            item.icon?.startsWith("data:") || item.icon?.startsWith("http") || item.icon?.startsWith("/") ? (
+                              <img src={item.icon} alt="" className="w-5 h-5 object-contain" />
+                            ) : (
+                              <span>{item.icon || "📞"}</span>
+                            )
+                          )}
+                        </button>
+
+                        {/* Floating Contact Icon Picker */}
+                        {activeFooterIconPicker === `ct_${idx}` && (
+                          <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-64 space-y-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
+                              <span>যোগাযোগ আইকন পছন্দ করুন</span>
+                              <button
+                                type="button"
+                                onClick={() => setActiveFooterIconPicker(null)}
+                                className="text-gray-400 hover:text-red-500 cursor-pointer text-xs"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-4 gap-1.5 text-xs font-bold">
+                              {[
+                                { key: "phone", label: "📞 Phone" },
+                                { key: "whatsapp", label: "💬 WhatsApp" },
+                                { key: "envelope", label: "✉️ Email" },
+                                { key: "map-marker", label: "📍 Address" },
+                              ].map((opt) => (
+                                <button
+                                  key={opt.key}
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = [...footerContactItems];
+                                    updated[idx] = { ...updated[idx], icon: opt.key };
+                                    setFooterContactItems(updated);
+                                    setActiveFooterIconPicker(null);
+                                  }}
+                                  className={`p-1.5 rounded-lg border text-center transition cursor-pointer text-[10px] ${
+                                    item.icon === opt.key ? "bg-green-100 border-green-500" : "bg-gray-50 border-gray-200 hover:bg-gray-100"
+                                  }`}
+                                >
+                                  {opt.label}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="grid grid-cols-6 gap-1 max-h-24 overflow-y-auto pt-1 border-t border-gray-100">
+                              {POPULAR_FOOTER_ICONS.map((emoji) => (
+                                <button
+                                  key={emoji}
+                                  type="button"
+                                  onClick={() => {
+                                    const updated = [...footerContactItems];
+                                    updated[idx] = { ...updated[idx], icon: emoji };
+                                    setFooterContactItems(updated);
+                                    setActiveFooterIconPicker(null);
+                                  }}
+                                  className="w-8 h-8 rounded-lg hover:bg-yellow-100 flex items-center justify-center text-sm transition cursor-pointer"
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="pt-1 border-t border-gray-100 flex items-center gap-1">
+                              <input
+                                type="text"
+                                value={item.icon?.startsWith("data:") ? "" : item.icon}
+                                onChange={(e) => {
+                                  const updated = [...footerContactItems];
+                                  updated[idx] = { ...updated[idx], icon: e.target.value };
+                                  setFooterContactItems(updated);
+                                }}
+                                placeholder="কাস্টম ইমোজি/কোড..."
+                                className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                              />
+                            </div>
+                            <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
+                              <FaUpload className="text-[9px]" />
+                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleFooterItemIconUpload(setFooterContactItems, footerContactItems, idx, file);
+                                }}
+                                className="hidden"
+                              />
+                            </label>
+                          </div>
+                        )}
+                      </div>
+                        <input
+                          type="text"
+                          value={item.text}
+                          onChange={(e) => {
+                            const updated = [...footerContactItems];
+                            updated[idx] = { ...updated[idx], text: e.target.value };
+                            setFooterContactItems(updated);
+                          }}
+                          placeholder="যোগাযোগ তথ্য (যেমন: ০১৭৪৯-৭৭৫০৩০)"
+                          className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFooterContactItems(footerContactItems.filter((_, i) => i !== idx));
+                          }}
+                          className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
+                        >
+                          <FaTrash className="text-xs" />
+                        </button>
+                      </div>
+                      <input
+                        type="text"
+                        value={item.link}
+                        onChange={(e) => {
+                          const updated = [...footerContactItems];
+                          updated[idx] = { ...updated[idx], link: e.target.value };
+                          setFooterContactItems(updated);
+                        }}
+                        placeholder="লিংক (যেমন: tel:01749775030)"
+                        className="w-full px-2.5 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Opening Hours */}
+              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
+                  <div className="flex items-center gap-2 flex-1 pr-3">
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "hours" ? null : "hours")}
+                        className="w-8 h-8 rounded-lg bg-white hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer shadow-2xs font-bold shrink-0"
+                        title="আইকন নির্বাচন বা পরিবর্তন করুন"
+                      >
+                        {footerHoursIcon || "🕒"}
+                      </button>
+
+                      {activeFooterIconPicker === "hours" && (
+                        <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-56 space-y-2">
+                          <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
+                            <span>সময়সূচি আইকন</span>
+                            <button
+                              type="button"
+                              onClick={() => setActiveFooterIconPicker(null)}
+                              className="text-gray-400 hover:text-red-500 cursor-pointer text-xs"
+                            >
+                              <FaTimes />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {["🕒", "⏰", "📅", "⌛", "⏱️", "⚡", "🔔", "☀️"].map((ic) => (
+                              <button
+                                key={ic}
+                                type="button"
+                                onClick={() => {
+                                  setFooterHoursIcon(ic);
+                                  setActiveFooterIconPicker(null);
+                                }}
+                                className="w-10 h-10 rounded-xl hover:bg-yellow-100 flex items-center justify-center text-lg transition cursor-pointer"
+                              >
+                                {ic}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="pt-1 border-t border-gray-100">
+                            <input
+                              type="text"
+                              value={footerHoursIcon}
+                              onChange={(e) => setFooterHoursIcon(e.target.value)}
+                              placeholder="কাস্টম ইমোজি..."
+                              className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={footerHoursTitle}
+                      onChange={(e) => setFooterHoursTitle(e.target.value)}
+                      placeholder="খোলার সময়"
+                      className="flex-1 px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFooterHoursItems([
+                        ...footerHoursItems,
+                        { text: "নতুন সময়সূচি", show: true },
+                      ]);
+                    }}
+                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
+                  >
+                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                  </button>
+                </div>
+
+                <div className="space-y-2.5">
+                  {footerHoursItems.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="p-2 bg-white rounded-xl border border-gray-200 flex items-center gap-2 shadow-2xs"
+                    >
+                      <input
+                        type="text"
+                        value={item.text}
+                        onChange={(e) => {
+                          const updated = [...footerHoursItems];
+                          updated[idx] = { ...updated[idx], text: e.target.value };
+                          setFooterHoursItems(updated);
+                        }}
+                        placeholder="যেমন: সোম-শনি: সকাল ৮টা - রাত ৮টা"
+                        className="flex-1 px-2.5 py-1 text-xs font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFooterHoursItems(footerHoursItems.filter((_, i) => i !== idx));
+                        }}
+                        className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
+                      >
+                        <FaTrash className="text-xs" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Part 7: Payment Methods & Return Policy */}
+            <div className="p-5 rounded-2xl bg-amber-50/40 border border-amber-200/60 space-y-6">
+              {/* Payment Methods */}
+              <div className="space-y-3.5">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-amber-200/60 pb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "payment" ? null : "payment")}
+                        className="w-8 h-8 rounded-lg bg-white hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer shadow-2xs font-bold shrink-0"
+                        title="পেমেন্ট আইকন পরিবর্তন করুন"
+                      >
+                        {footerPaymentIcon || "💳"}
+                      </button>
+
+                      {activeFooterIconPicker === "payment" && (
+                        <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-56 space-y-2">
+                          <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
+                            <span>পেমেন্ট আইকন</span>
+                            <button
+                              type="button"
+                              onClick={() => setActiveFooterIconPicker(null)}
+                              className="text-gray-400 hover:text-red-500 cursor-pointer text-xs"
+                            >
+                              <FaTimes />
+                            </button>
+                          </div>
+                          <div className="grid grid-cols-4 gap-1.5">
+                            {["💳", "💰", "💸", "🪙", "🏦", "🏷️", "💵", "✨"].map((ic) => (
+                              <button
+                                key={ic}
+                                type="button"
+                                onClick={() => {
+                                  setFooterPaymentIcon(ic);
+                                  setActiveFooterIconPicker(null);
+                                }}
+                                className="w-10 h-10 rounded-xl hover:bg-yellow-100 flex items-center justify-center text-lg transition cursor-pointer"
+                              >
+                                {ic}
+                              </button>
+                            ))}
+                          </div>
+                          <div className="pt-1 border-t border-gray-100">
+                            <input
+                              type="text"
+                              value={footerPaymentIcon}
+                              onChange={(e) => setFooterPaymentIcon(e.target.value)}
+                              placeholder="কাস্টম ইমোজি..."
+                              className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                    <input
+                      type="text"
+                      value={footerPaymentTitle}
+                      onChange={(e) => setFooterPaymentTitle(e.target.value)}
+                      placeholder="পেমেন্ট মেথড:"
+                      className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-gray-900"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFooterPaymentMethods([
+                        ...footerPaymentMethods,
+                        { name: "নতুন মেথড", bgColor: "bg-blue-600", icon: "", show: true },
+                      ]);
+                    }}
+                    className="px-3 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer self-start sm:self-auto"
+                  >
+                    <FaPlus className="text-[10px]" /> <span>নতুন মেথড যোগ করুন</span>
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                  {footerPaymentMethods.map((m, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 bg-white rounded-xl border border-gray-200 space-y-2 shadow-2xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold text-white ${m.bgColor}`}>
+                          {m.name || "মেথড"}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setFooterPaymentMethods(footerPaymentMethods.filter((_, i) => i !== idx));
+                          }}
+                          className="text-red-500 hover:text-red-700 text-xs"
+                          title="মুছুন"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={m.name}
+                        onChange={(e) => {
+                          const updated = [...footerPaymentMethods];
+                          updated[idx] = { ...updated[idx], name: e.target.value };
+                          setFooterPaymentMethods(updated);
+                        }}
+                        placeholder="মেথড নাম (যেমন: বিকাশ)"
+                        className="w-full px-2.5 py-1 text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg"
+                      />
+
+                      {/* Color badge picker */}
+                      <div className="flex items-center gap-1.5 pt-1">
+                        {[
+                          { cls: "bg-pink-600", name: "বিকাশ" },
+                          { cls: "bg-orange-500", name: "নগদ" },
+                          { cls: "bg-purple-600", name: "রকেট" },
+                          { cls: "bg-green-600", name: "ক্যাশ" },
+                          { cls: "bg-blue-600", name: "ভিসা" },
+                          { cls: "bg-slate-700", name: "মাস্টারকার্ড" },
+                        ].map((c) => (
+                          <button
+                            key={c.cls}
+                            type="button"
+                            onClick={() => {
+                              const updated = [...footerPaymentMethods];
+                              updated[idx] = { ...updated[idx], bgColor: c.cls };
+                              setFooterPaymentMethods(updated);
+                            }}
+                            className={`w-5 h-5 rounded-full ${c.cls} transition cursor-pointer ${
+                              m.bgColor === c.cls ? "ring-2 ring-offset-1 ring-gray-600" : ""
+                            }`}
+                            title={c.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Return Policy (Totally Dynamic & Optional) */}
+              <div className="pt-4 border-t border-amber-200/60 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-600" />
+                    <h5 className="text-xs font-black text-green-950 uppercase">
+                      রিটার্ন পলিসি ব্যাজ (Return Policy Banner)
+                    </h5>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs font-bold text-gray-500">
+                      {footerReturnPolicyShow ? "প্রদর্শন সক্রিয়" : "লুকানো"}
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={footerReturnPolicyShow}
+                      onChange={(e) => setFooterReturnPolicyShow(e.target.checked)}
+                      className="toggle toggle-sm toggle-success"
+                    />
+                  </div>
+                </div>
+
+                {footerReturnPolicyShow && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-white rounded-xl border border-gray-200">
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                        আইকন (Emoji / Text)
+                      </label>
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "return" ? null : "return")}
+                          className="w-full px-3 py-1.5 text-xs bg-gray-50 hover:bg-yellow-50 border border-gray-200 hover:border-gray-300 rounded-lg text-center font-bold flex items-center justify-center gap-1.5 cursor-pointer transition"
+                          title="পলিসি আইকন পরিবর্তন করুন"
+                        >
+                          <span>{footerReturnPolicyIcon || "🛡️"}</span>
+                          <span className="text-[10px] text-gray-500">(আইকন পরিবর্তন)</span>
+                        </button>
+
+                        {activeFooterIconPicker === "return" && (
+                          <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
+                            <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
+                              <span>রিটার্ন পলিসি আইকন</span>
+                              <button
+                                type="button"
+                                onClick={() => setActiveFooterIconPicker(null)}
+                                className="text-gray-400 hover:text-red-500 cursor-pointer text-xs"
+                              >
+                                <FaTimes />
+                              </button>
+                            </div>
+                            <div className="grid grid-cols-4 gap-1.5">
+                              {["🛡️", "🔄", "📦", "✅", "↩️", "🔒", "💯", "⭐"].map((ic) => (
+                                <button
+                                  key={ic}
+                                  type="button"
+                                  onClick={() => {
+                                    setFooterReturnPolicyIcon(ic);
+                                    setActiveFooterIconPicker(null);
+                                  }}
+                                  className="w-10 h-10 rounded-xl hover:bg-yellow-100 flex items-center justify-center text-lg transition cursor-pointer"
+                                >
+                                  {ic}
+                                </button>
+                              ))}
+                            </div>
+                            <div className="pt-1 border-t border-gray-100">
+                              <input
+                                type="text"
+                                value={footerReturnPolicyIcon}
+                                onChange={(e) => setFooterReturnPolicyIcon(e.target.value)}
+                                placeholder="কাস্টম ইমোজি/আইকন লিখুন..."
+                                className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
+                              />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                        পলিসি টেক্সট
+                      </label>
+                      <input
+                        type="text"
+                        value={footerReturnPolicyText}
+                        onChange={(e) => setFooterReturnPolicyText(e.target.value)}
+                        placeholder="৭ দিনের রিটার্ন পলিসি"
+                        className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg font-bold text-gray-800"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
+                        পলিসি লিংক (ঐচ্ছিক)
+                      </label>
+                      <input
+                        type="text"
+                        value={footerReturnPolicyLink}
+                        onChange={(e) => setFooterReturnPolicyLink(e.target.value)}
+                        placeholder="# বা /policy"
+                        className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg font-mono text-gray-600"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Part 8: Copyright & Developer Credits */}
+            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-green-600" />
+                <h4 className="text-sm font-extrabold text-green-950">
+                  কপিরাইট, পলিসি ও ডেভেলপার ক্রেডিট সেটিংস
+                </h4>
+              </div>
+
+              {/* Security info alert */}
+              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-center gap-2">
+                <span className="text-base">🔒</span>
+                <span>
+                  <strong>নিরাপত্তা আপডেট:</strong> ওয়েবসাইটের ফুটার থেকে <strong>"এডমিন ড্যাশবোর্ড / এডমিন লগইন"</strong> লিংক সম্পূর্ণ সরিয়ে দেওয়া হয়েছে, যাতে সাধারণ ভিজিটররা সরাসরি কোনো অ্যাডমিন লিংক দেখতে না পায়।
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    কপিরাইট টেক্সট
+                  </label>
+                  <input
+                    type="text"
+                    value={footerCopyrightText}
+                    onChange={(e) => setFooterCopyrightText(e.target.value)}
+                    placeholder="আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
+                    className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
+                  />
+                  <p className="text-[10px] text-gray-400 mt-1">
+                    ওয়েবসাইটে স্বয়ংক্রিয়ভাবে © {new Date().getFullYear()} এর সাথে যুক্ত হয়ে প্রদর্শিত হবে।
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold text-gray-700">
+                    পলিসি লিংকসমূহ (Privacy Policy & Terms)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={footerPrivacyPolicyText}
+                      onChange={(e) => setFooterPrivacyPolicyText(e.target.value)}
+                      placeholder="গোপনীয়তা নীতি"
+                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                    />
+                    <input
+                      type="text"
+                      value={footerPrivacyPolicyLink}
+                      onChange={(e) => setFooterPrivacyPolicyLink(e.target.value)}
+                      placeholder="লিংক (#)"
+                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <input
+                      type="text"
+                      value={footerTermsText}
+                      onChange={(e) => setFooterTermsText(e.target.value)}
+                      placeholder="সেবার শর্তাবলী"
+                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
+                    />
+                    <input
+                      type="text"
+                      value={footerTermsLink}
+                      onChange={(e) => setFooterTermsLink(e.target.value)}
+                      placeholder="লিংক (#)"
+                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Developer Credit (Permanent English notice, non-editable) */}
+              <div className="pt-3 border-t border-gray-200 flex items-center justify-between text-xs">
+                <span className="font-bold text-gray-700">Developer Credit (English):</span>
+                <span className="px-3 py-1 bg-gray-100 text-gray-700 font-bold rounded-lg border border-gray-200">
+                  Designed & Developed with <strong className="text-amber-600 font-black">DevHome</strong> (স্থায়ী ও অপরিবর্তনযোগ্য)
+                </span>
+              </div>
+            </div>
+
             {/* ========================================================================= */}
-            {/* Part 2: Live Interactive Footer Preview (লাইভ ফুটার প্রিভিউ - Desktop & Mobile) */}
+            {/* Live Footer Section Preview (লাইভ ফুটার প্রিভিউ - Desktop & Mobile) */}
             {/* ========================================================================= */}
             <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
@@ -7796,677 +8985,6 @@ export default function AdminSettings() {
                 </div>
               )}
             </div>
-
-
-            {/* Part 3: About / Description Text */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-600" />
-                <h4 className="text-sm font-extrabold text-green-950">
-                  ফুটার পরিচিতি ও বিবরণ টেক্সট (About Paragraph)
-                </h4>
-              </div>
-              <textarea
-                rows={3}
-                value={footerAboutText}
-                onChange={(e) => setFooterAboutText(e.target.value)}
-                placeholder="রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম..."
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-medium text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
-              />
-            </div>
-
-            {/* Part 4: Social Media Links */}
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-600" />
-                <h4 className="text-sm font-extrabold text-green-950">
-                  সোশ্যাল মিডিয়া প্রোফাইল লিংক (Social Links)
-                </h4>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                {footerSocialLinks.map((s, idx) => (
-                  <div
-                    key={idx}
-                    className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-gray-800 flex items-center gap-1.5">
-                        {s.icon === "facebook" && <FaFacebookF className="text-blue-600" />}
-                        {s.icon === "instagram" && <FaInstagram className="text-pink-600" />}
-                        {s.icon === "youtube" && <FaYoutube className="text-red-600" />}
-                        {s.icon === "whatsapp" && <FaWhatsapp className="text-green-600" />}
-                        <span>{s.name} লিংক</span>
-                      </span>
-                      <input
-                        type="checkbox"
-                        checked={s.show !== false}
-                        onChange={(e) => {
-                          const updated = [...footerSocialLinks];
-                          updated[idx] = { ...updated[idx], show: e.target.checked };
-                          setFooterSocialLinks(updated);
-                        }}
-                        className="toggle toggle-sm toggle-success"
-                        title="প্রদর্শন চালু/বন্ধ"
-                      />
-                    </div>
-                    <input
-                      type="text"
-                      value={s.link}
-                      onChange={(e) => {
-                        const updated = [...footerSocialLinks];
-                        updated[idx] = { ...updated[idx], link: e.target.value };
-                        setFooterSocialLinks(updated);
-                      }}
-                      placeholder="https://..."
-                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Part 4 & 5: Column 2 (Quick Links) & Column 3 (Mango Varieties) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Column 2: Quick Links */}
-              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
-                  <div className="flex-1 pr-3">
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                      কলাম ২ শিরোনাম
-                    </label>
-                    <input
-                      type="text"
-                      value={footerCol2Title}
-                      onChange={(e) => setFooterCol2Title(e.target.value)}
-                      placeholder="দ্রুত লিংক"
-                      className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFooterQuickLinks([
-                        ...footerQuickLinks,
-                        { name: "নতুন লিংক", href: "#", icon: "🔗", show: true },
-                      ]);
-                    }}
-                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
-                  >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
-                  </button>
-                </div>
-
-                <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-                  {footerQuickLinks.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2.5 bg-white rounded-xl border border-gray-200 flex items-center gap-2 shadow-2xs"
-                    >
-                      <input
-                        type="text"
-                        value={item.icon}
-                        onChange={(e) => {
-                          const updated = [...footerQuickLinks];
-                          updated[idx] = { ...updated[idx], icon: e.target.value };
-                          setFooterQuickLinks(updated);
-                        }}
-                        className="w-9 h-8 text-center text-sm bg-gray-50 border border-gray-200 rounded-lg shrink-0"
-                        title="আইকন বা ইমোজি"
-                      />
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => {
-                          const updated = [...footerQuickLinks];
-                          updated[idx] = { ...updated[idx], name: e.target.value };
-                          setFooterQuickLinks(updated);
-                        }}
-                        placeholder="লিংকের নাম"
-                        className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={item.href}
-                        onChange={(e) => {
-                          const updated = [...footerQuickLinks];
-                          updated[idx] = { ...updated[idx], href: e.target.value };
-                          setFooterQuickLinks(updated);
-                        }}
-                        placeholder="#home"
-                        className="w-24 px-2 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
-                        title="টার্গেট লিংক"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFooterQuickLinks(footerQuickLinks.filter((_, i) => i !== idx));
-                        }}
-                        className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
-                        title="মুছুন"
-                      >
-                        <FaTrash className="text-xs" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Column 3: Mango Varieties */}
-              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
-                  <div className="flex-1 pr-3">
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                      কলাম ৩ শিরোনাম
-                    </label>
-                    <input
-                      type="text"
-                      value={footerCol3Title}
-                      onChange={(e) => setFooterCol3Title(e.target.value)}
-                      placeholder="আমের জাত"
-                      className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFooterMangoList([
-                        ...footerMangoList,
-                        { name: "নতুন জাত", href: "#varieties", icon: "🥭", show: true },
-                      ]);
-                    }}
-                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
-                  >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
-                  </button>
-                </div>
-
-                <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
-                  {footerMangoList.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2.5 bg-white rounded-xl border border-gray-200 flex items-center gap-2 shadow-2xs"
-                    >
-                      <input
-                        type="text"
-                        value={item.icon}
-                        onChange={(e) => {
-                          const updated = [...footerMangoList];
-                          updated[idx] = { ...updated[idx], icon: e.target.value };
-                          setFooterMangoList(updated);
-                        }}
-                        className="w-9 h-8 text-center text-sm bg-gray-50 border border-gray-200 rounded-lg shrink-0"
-                        title="আইকন বা ইমোজি"
-                      />
-                      <input
-                        type="text"
-                        value={item.name}
-                        onChange={(e) => {
-                          const updated = [...footerMangoList];
-                          updated[idx] = { ...updated[idx], name: e.target.value };
-                          setFooterMangoList(updated);
-                        }}
-                        placeholder="জাতের নাম"
-                        className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
-                      />
-                      <input
-                        type="text"
-                        value={item.href}
-                        onChange={(e) => {
-                          const updated = [...footerMangoList];
-                          updated[idx] = { ...updated[idx], href: e.target.value };
-                          setFooterMangoList(updated);
-                        }}
-                        placeholder="#varieties"
-                        className="w-24 px-2 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
-                        title="টার্গেট লিংক"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFooterMangoList(footerMangoList.filter((_, i) => i !== idx));
-                        }}
-                        className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
-                        title="মুছুন"
-                      >
-                        <FaTrash className="text-xs" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Part 6: Column 4 — যোগাযোগ ও খোলার সময় (Contact & Hours) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Contact Info */}
-              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
-                  <div className="flex-1 pr-3">
-                    <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                      যোগাযোগ শিরোনাম
-                    </label>
-                    <input
-                      type="text"
-                      value={footerCol4Title}
-                      onChange={(e) => setFooterCol4Title(e.target.value)}
-                      placeholder="যোগাযোগ"
-                      className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFooterContactItems([
-                        ...footerContactItems,
-                        { text: "নতুন তথ্য", link: "#", icon: "phone", show: true },
-                      ]);
-                    }}
-                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
-                  >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
-                  </button>
-                </div>
-
-                <div className="space-y-2.5">
-                  {footerContactItems.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2.5 bg-white rounded-xl border border-gray-200 space-y-2"
-                    >
-                      <div className="flex items-center gap-2">
-                        <select
-                          value={item.icon}
-                          onChange={(e) => {
-                            const updated = [...footerContactItems];
-                            updated[idx] = { ...updated[idx], icon: e.target.value };
-                            setFooterContactItems(updated);
-                          }}
-                          className="px-2 py-1 text-xs bg-gray-50 border border-gray-200 rounded-lg font-bold"
-                        >
-                          <option value="phone">📞 Phone</option>
-                          <option value="whatsapp">💬 WhatsApp</option>
-                          <option value="envelope">✉️ Email</option>
-                          <option value="map-marker">📍 Address</option>
-                        </select>
-                        <input
-                          type="text"
-                          value={item.text}
-                          onChange={(e) => {
-                            const updated = [...footerContactItems];
-                            updated[idx] = { ...updated[idx], text: e.target.value };
-                            setFooterContactItems(updated);
-                          }}
-                          placeholder="যোগাযোগ তথ্য (যেমন: ০১৭৪৯-৭৭৫০৩০)"
-                          className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFooterContactItems(footerContactItems.filter((_, i) => i !== idx));
-                          }}
-                          className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
-                        >
-                          <FaTrash className="text-xs" />
-                        </button>
-                      </div>
-                      <input
-                        type="text"
-                        value={item.link}
-                        onChange={(e) => {
-                          const updated = [...footerContactItems];
-                          updated[idx] = { ...updated[idx], link: e.target.value };
-                          setFooterContactItems(updated);
-                        }}
-                        placeholder="লিংক (যেমন: tel:01749775030)"
-                        className="w-full px-2.5 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Opening Hours */}
-              <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
-                  <div className="flex items-center gap-2 flex-1 pr-3">
-                    <input
-                      type="text"
-                      value={footerHoursIcon}
-                      onChange={(e) => setFooterHoursIcon(e.target.value)}
-                      className="w-8 h-8 text-center text-sm bg-white border border-gray-300 rounded-lg font-bold"
-                      title="আইকন"
-                    />
-                    <input
-                      type="text"
-                      value={footerHoursTitle}
-                      onChange={(e) => setFooterHoursTitle(e.target.value)}
-                      placeholder="খোলার সময়"
-                      className="flex-1 px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFooterHoursItems([
-                        ...footerHoursItems,
-                        { text: "নতুন সময়সূচি", show: true },
-                      ]);
-                    }}
-                    className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
-                  >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
-                  </button>
-                </div>
-
-                <div className="space-y-2.5">
-                  {footerHoursItems.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2 bg-white rounded-xl border border-gray-200 flex items-center gap-2 shadow-2xs"
-                    >
-                      <input
-                        type="text"
-                        value={item.text}
-                        onChange={(e) => {
-                          const updated = [...footerHoursItems];
-                          updated[idx] = { ...updated[idx], text: e.target.value };
-                          setFooterHoursItems(updated);
-                        }}
-                        placeholder="যেমন: সোম-শনি: সকাল ৮টা - রাত ৮টা"
-                        className="flex-1 px-2.5 py-1 text-xs font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFooterHoursItems(footerHoursItems.filter((_, i) => i !== idx));
-                        }}
-                        className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
-                      >
-                        <FaTrash className="text-xs" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            {/* Part 7: Payment Methods & Return Policy */}
-            <div className="p-5 rounded-2xl bg-amber-50/40 border border-amber-200/60 space-y-6">
-              {/* Payment Methods */}
-              <div className="space-y-3.5">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-amber-200/60 pb-2">
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={footerPaymentIcon}
-                      onChange={(e) => setFooterPaymentIcon(e.target.value)}
-                      className="w-8 h-8 text-center text-sm bg-white border border-gray-300 rounded-lg font-bold"
-                    />
-                    <input
-                      type="text"
-                      value={footerPaymentTitle}
-                      onChange={(e) => setFooterPaymentTitle(e.target.value)}
-                      placeholder="পেমেন্ট মেথড:"
-                      className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-gray-900"
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setFooterPaymentMethods([
-                        ...footerPaymentMethods,
-                        { name: "নতুন মেথড", bgColor: "bg-blue-600", icon: "", show: true },
-                      ]);
-                    }}
-                    className="px-3 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer self-start sm:self-auto"
-                  >
-                    <FaPlus className="text-[10px]" /> <span>নতুন মেথড যোগ করুন</span>
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  {footerPaymentMethods.map((m, idx) => (
-                    <div
-                      key={idx}
-                      className="p-3 bg-white rounded-xl border border-gray-200 space-y-2 shadow-2xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold text-white ${m.bgColor}`}>
-                          {m.name || "মেথড"}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setFooterPaymentMethods(footerPaymentMethods.filter((_, i) => i !== idx));
-                          }}
-                          className="text-red-500 hover:text-red-700 text-xs"
-                          title="মুছুন"
-                        >
-                          <FaTrash />
-                        </button>
-                      </div>
-
-                      <input
-                        type="text"
-                        value={m.name}
-                        onChange={(e) => {
-                          const updated = [...footerPaymentMethods];
-                          updated[idx] = { ...updated[idx], name: e.target.value };
-                          setFooterPaymentMethods(updated);
-                        }}
-                        placeholder="মেথড নাম (যেমন: বিকাশ)"
-                        className="w-full px-2.5 py-1 text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg"
-                      />
-
-                      {/* Color badge picker */}
-                      <div className="flex items-center gap-1.5 pt-1">
-                        {[
-                          { cls: "bg-pink-600", name: "বিকাশ" },
-                          { cls: "bg-orange-500", name: "নগদ" },
-                          { cls: "bg-purple-600", name: "রকেট" },
-                          { cls: "bg-green-600", name: "ক্যাশ" },
-                          { cls: "bg-blue-600", name: "ভিসা" },
-                          { cls: "bg-slate-700", name: "মাস্টারকার্ড" },
-                        ].map((c) => (
-                          <button
-                            key={c.cls}
-                            type="button"
-                            onClick={() => {
-                              const updated = [...footerPaymentMethods];
-                              updated[idx] = { ...updated[idx], bgColor: c.cls };
-                              setFooterPaymentMethods(updated);
-                            }}
-                            className={`w-5 h-5 rounded-full ${c.cls} transition cursor-pointer ${
-                              m.bgColor === c.cls ? "ring-2 ring-offset-1 ring-gray-600" : ""
-                            }`}
-                            title={c.name}
-                          />
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Return Policy (Totally Dynamic & Optional) */}
-              <div className="pt-4 border-t border-amber-200/60 space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-600" />
-                    <h5 className="text-xs font-black text-green-950 uppercase">
-                      রিটার্ন পলিসি ব্যাজ (Return Policy Banner)
-                    </h5>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-gray-500">
-                      {footerReturnPolicyShow ? "প্রদর্শন সক্রিয়" : "লুকানো"}
-                    </span>
-                    <input
-                      type="checkbox"
-                      checked={footerReturnPolicyShow}
-                      onChange={(e) => setFooterReturnPolicyShow(e.target.checked)}
-                      className="toggle toggle-sm toggle-success"
-                    />
-                  </div>
-                </div>
-
-                {footerReturnPolicyShow && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-white rounded-xl border border-gray-200">
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        আইকন (Emoji / Text)
-                      </label>
-                      <input
-                        type="text"
-                        value={footerReturnPolicyIcon}
-                        onChange={(e) => setFooterReturnPolicyIcon(e.target.value)}
-                        placeholder="🛡️"
-                        className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg text-center font-bold"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        পলিসি টেক্সট
-                      </label>
-                      <input
-                        type="text"
-                        value={footerReturnPolicyText}
-                        onChange={(e) => setFooterReturnPolicyText(e.target.value)}
-                        placeholder="৭ দিনের রিটার্ন পলিসি"
-                        className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg font-bold text-gray-800"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        পলিসি লিংক (ঐচ্ছিক)
-                      </label>
-                      <input
-                        type="text"
-                        value={footerReturnPolicyLink}
-                        onChange={(e) => setFooterReturnPolicyLink(e.target.value)}
-                        placeholder="# বা /policy"
-                        className="w-full px-3 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg font-mono text-gray-600"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Part 8: Copyright & Developer Credits */}
-            <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
-              <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-600" />
-                <h4 className="text-sm font-extrabold text-green-950">
-                  কপিরাইট, পলিসি ও ডেভেলপার ক্রেডিট সেটিংস
-                </h4>
-              </div>
-
-              {/* Security info alert */}
-              <div className="p-3 bg-blue-50 border border-blue-200 rounded-xl text-xs text-blue-900 flex items-center gap-2">
-                <span className="text-base">🔒</span>
-                <span>
-                  <strong>নিরাপত্তা আপডেট:</strong> ওয়েবসাইটের ফুটার থেকে <strong>"এডমিন ড্যাশবোর্ড / এডমিন লগইন"</strong> লিংক সম্পূর্ণ সরিয়ে দেওয়া হয়েছে, যাতে সাধারণ ভিজিটররা সরাসরি কোনো অ্যাডমিন লিংক দেখতে না পায়।
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    কপিরাইট টেক্সট
-                  </label>
-                  <input
-                    type="text"
-                    value={footerCopyrightText}
-                    onChange={(e) => setFooterCopyrightText(e.target.value)}
-                    placeholder="আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
-                    className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
-                  />
-                  <p className="text-[10px] text-gray-400 mt-1">
-                    ওয়েবসাইটে স্বয়ংক্রিয়ভাবে © {new Date().getFullYear()} এর সাথে যুক্ত হয়ে প্রদর্শিত হবে।
-                  </p>
-                </div>
-
-                <div className="space-y-2">
-                  <label className="block text-xs font-bold text-gray-700">
-                    পলিসি লিংকসমূহ (Privacy Policy & Terms)
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={footerPrivacyPolicyText}
-                      onChange={(e) => setFooterPrivacyPolicyText(e.target.value)}
-                      placeholder="গোপনীয়তা নীতি"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
-                    />
-                    <input
-                      type="text"
-                      value={footerPrivacyPolicyLink}
-                      onChange={(e) => setFooterPrivacyPolicyLink(e.target.value)}
-                      placeholder="লিংক (#)"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <input
-                      type="text"
-                      value={footerTermsText}
-                      onChange={(e) => setFooterTermsText(e.target.value)}
-                      placeholder="সেবার শর্তাবলী"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
-                    />
-                    <input
-                      type="text"
-                      value={footerTermsLink}
-                      onChange={(e) => setFooterTermsLink(e.target.value)}
-                      placeholder="লিংক (#)"
-                      className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Developer Credit (Totally in English) */}
-              <div className="pt-3 border-t border-gray-200">
-                <label className="block text-xs font-black text-gray-800 mb-1.5">
-                  Developer Credit (English)
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 mb-1">Prefix Text</label>
-                    <input
-                      type="text"
-                      value={footerDeveloperCreditText}
-                      onChange={(e) => setFooterDeveloperCreditText(e.target.value)}
-                      placeholder="Designed & Developed with"
-                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 mb-1">Developer Name</label>
-                    <input
-                      type="text"
-                      value={footerDeveloperName}
-                      onChange={(e) => setFooterDeveloperName(e.target.value)}
-                      placeholder="DevHome"
-                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-amber-600"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[11px] font-bold text-gray-500 mb-1">Developer Link</label>
-                    <input
-                      type="text"
-                      value={footerDeveloperLink}
-                      onChange={(e) => setFooterDeveloperLink(e.target.value)}
-                      placeholder="https://devhome.onrender.com/"
-                      className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono text-gray-600"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-
 
             {/* Bottom Save Settings Button */}
             <div className="pt-4 border-t border-gray-100 flex items-center justify-end">

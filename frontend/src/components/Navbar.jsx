@@ -137,7 +137,20 @@ export default function Navbar() {
               {/* Optional Brand Text (Title & Tagline) */}
               {settings?.headerBrandDisplay === "logo_and_text" && (
                 <div className="hidden sm:block">
-                  <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-green-700 to-yellow-600 bg-clip-text text-transparent leading-tight">
+                  <h1
+                    className="text-xl md:text-2xl font-black leading-tight"
+                    style={
+                      settings?.headerTitleColorType === "solid"
+                        ? { color: settings?.headerTitleColorVal || "#15803d" }
+                        : {
+                            backgroundImage:
+                              settings?.headerTitleColorVal ||
+                              "linear-gradient(to right, #15803d, #ca8a04)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                          }
+                    }
+                  >
                     {settings?.siteName || "আমওয়ালা ভাইয়া"}
                   </h1>
                   {settings?.tagline && (

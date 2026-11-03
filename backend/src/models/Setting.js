@@ -29,6 +29,15 @@ const settingSchema = new mongoose.Schema(
       enum: ["logo_only", "logo_and_text"],
       default: "logo_only",
     },
+    headerTitleColorType: {
+      type: String,
+      enum: ["gradient", "solid"],
+      default: "gradient",
+    },
+    headerTitleColorVal: {
+      type: String,
+      default: "linear-gradient(to right, #15803d, #ca8a04)",
+    },
     headerNavLinks: {
       type: [
         {

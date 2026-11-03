@@ -73,6 +73,8 @@ export function AppProvider({ children }) {
             websiteFavicon: "",
             websiteLogo: "",
             headerBrandDisplay: "logo_only",
+            headerTitleColorType: "gradient", // "gradient" | "solid"
+            headerTitleColorVal: "linear-gradient(to right, #15803d, #ca8a04)",
             headerNavLinks: [
               { name: "হোম", href: "#home", icon: "🏠", showIcon: true },
               { name: "আমের জাত", href: "#varieties", icon: "🥭", showIcon: true },
