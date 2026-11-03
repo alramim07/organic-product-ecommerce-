@@ -213,9 +213,9 @@ export default function SingleProductPage() {
   };
 
   // Recommended Products Logic:
-  // 1. Same category products from published database products
-  // 2. Other category products from published database products
-  // 3. Fallback/supplement with productsData so at least 4 items are always recommended
+  // ONLY real published products from the store/database (no fake/demo items)
+  // 1. Same category products first
+  // 2. If same category is finished/less, show products from other categories in the store
   const currentId = String(product._id || product.id || "");
   const currentSlug = String(product.slug || "");
 
@@ -234,12 +234,6 @@ export default function SingleProductPage() {
     return true;
   });
 
-  const fallbackOthers = productsData.filter((p) => {
-    const pId = String(p._id || p.id || "");
-    const pSlug = String(p.slug || "");
-    return pId !== currentId && (!currentSlug || pSlug !== currentSlug);
-  });
-
   const sameCategoryFromDb = dbPublishedOthers.filter(
     (p) => p.category && product.category && p.category.trim() === product.category.trim()
   );
@@ -247,22 +241,7 @@ export default function SingleProductPage() {
     (p) => !p.category || !product.category || p.category.trim() !== product.category.trim()
   );
 
-  const combinedRecommendations = [...sameCategoryFromDb, ...otherCategoryFromDb];
-
-  // If database products are fewer than 4, backfill remaining slots from catalog
-  if (combinedRecommendations.length < 4) {
-    for (const fb of fallbackOthers) {
-      const alreadyInList = combinedRecommendations.some(
-        (c) => String(c._id || c.id) === String(fb.id) || (fb.name_bn && c.name_bn === fb.name_bn)
-      );
-      if (!alreadyInList) {
-        combinedRecommendations.push(fb);
-      }
-      if (combinedRecommendations.length >= 4) break;
-    }
-  }
-
-  const recommendedProducts = combinedRecommendations.slice(0, 4);
+  const recommendedProducts = [...sameCategoryFromDb, ...otherCategoryFromDb].slice(0, 4);
 
   return (
     <div className="bg-gradient-to-b from-amber-50/50 via-white to-green-50/30 pt-24 pb-20">

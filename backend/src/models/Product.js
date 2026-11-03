@@ -91,7 +91,11 @@ const productSchema = new mongoose.Schema(
       default: 0,
     },
     min_order: {
-      type: Number,
+      type: mongoose.Schema.Types.Mixed,
+      default: 1,
+    },
+    min_order_kg: {
+      type: mongoose.Schema.Types.Mixed,
       default: 1,
     },
     stock_status: {
