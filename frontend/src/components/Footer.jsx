@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 import {
   FaChevronUp,
   FaPhoneAlt,
@@ -16,86 +15,200 @@ import {
   FaFacebookF,
   FaInstagram,
   FaYoutube,
-  FaUserShield,
 } from "react-icons/fa";
 import { useApp } from "../context/AppContext";
 
-const quickLinks = [
-  { name: "হোম", href: "#home", icon: "🏠" },
-  { name: "আমের জাত", href: "#varieties", icon: "🥭" },
-  { name: "আমাদের সম্পর্কে", href: "#about", icon: "📖" },
-  { name: "গ্রাহক মতামত", href: "#reviews", icon: "⭐" },
-  { name: "অর্ডার করুন", href: "#order", icon: "📦" },
-];
-
-const mangoList = [
-  "গুটি/স্থানীয়",
-  "গোপালভোগ",
-  "হিমসাগর",
-  "ল্যাংড়া",
-  "আম্রপালি",
-  "ফজলি",
-  "কাটিমন",
-  "গৌরমতি",
-];
-
-const contactList = [
-  { icon: <FaPhoneAlt className="text-yellow-500" />, text: "০১৭৪৯-৭৭৫০৩০", link: "tel:01749775030" },
-  { icon: <FaWhatsapp className="text-green-500" />, text: "WhatsApp", link: "https://wa.me/8801749775030" },
-  { icon: <FaEnvelope className="text-yellow-500" />, text: "ammwalaaviya@gmail.com", link: "mailto:ammwalaaviya@gmail.com" },
-  { icon: <FaMapMarkerAlt className="text-red-500" />, text: "রাজশাহী, বাংলাদেশ - ৬২০৩", link: "https://maps.google.com" },
-];
-
-const featuresList = [
-  { icon: <FaTruck />, title: "সারাদেশ ডেলিভারি", desc: "দ্রুত ও নিরাপদ" },
-  { icon: <FaLeaf />, title: "গুনগত মান", desc: "১০০% সতেজ ও বিশুদ্ধ" },
-  { icon: <FaHeadset />, title: "২৪/৭ সাপোর্ট", desc: "যেকোনো সময় যোগাযোগ" },
-  { icon: <FaMedal />, title: "প্রিমিয়াম কোয়ালিটি", desc: "বাগান থেকে সরাসরি" },
-];
-
-const socialLinks = [
-  { icon: <FaFacebookF />, link: "https://facebook.com", color: "hover:bg-blue-600" },
-  { icon: <FaInstagram />, link: "https://instagram.com", color: "hover:bg-pink-600" },
-  { icon: <FaYoutube />, link: "https://youtube.com", color: "hover:bg-red-600" },
-  { icon: <FaWhatsapp />, link: "https://wa.me/8801749775030", color: "hover:bg-green-600" },
-];
-
 export default function Footer() {
   const currentYear = new Date().getFullYear();
-  const { settings, isAuthenticated } = useApp();
+  const { settings } = useApp();
 
-  const dynamicContactList = [
-    {
-      icon: <FaPhoneAlt className="text-yellow-500" />,
-      text: settings?.hotlinePhone || "০১৭৪৯-৭৭৫০৩০",
-      link: `tel:${settings?.rawHotlinePhone || "01749775030"}`,
-    },
-    {
-      icon: <FaWhatsapp className="text-green-500" />,
-      text: "WhatsApp",
-      link: `https://wa.me/${settings?.whatsappNumber || "8801749775030"}`,
-    },
-    {
-      icon: <FaEnvelope className="text-yellow-500" />,
-      text: settings?.email || "ammwalaaviya@gmail.com",
-      link: `mailto:${settings?.email || "ammwalaaviya@gmail.com"}`,
-    },
-    {
-      icon: <FaMapMarkerAlt className="text-red-500" />,
-      text: settings?.officeAddress || "রাজশাহী, বাংলাদেশ - ৬২০৩",
-      link: "https://maps.google.com",
-    },
+  // Helper to render icon (image, emoji, or icon name)
+  const renderIcon = (iconVal, defaultIcon = "🥭") => {
+    if (!iconVal) return <span>{defaultIcon}</span>;
+    if (
+      iconVal.startsWith("data:") ||
+      iconVal.startsWith("http") ||
+      iconVal.startsWith("/")
+    ) {
+      return (
+        <img
+          src={iconVal}
+          alt=""
+          className="w-4 h-4 object-contain inline-block shrink-0"
+        />
+      );
+    }
+    // Check known icons
+    if (iconVal === "phone") return <FaPhoneAlt className="text-yellow-500" />;
+    if (iconVal === "whatsapp") return <FaWhatsapp className="text-green-500" />;
+    if (iconVal === "envelope") return <FaEnvelope className="text-yellow-500" />;
+    if (iconVal === "map-marker") return <FaMapMarkerAlt className="text-red-500" />;
+    if (iconVal === "facebook") return <FaFacebookF />;
+    if (iconVal === "instagram") return <FaInstagram />;
+    if (iconVal === "youtube") return <FaYoutube />;
+    if (iconVal === "clock") return <FaClock className="text-yellow-400" />;
+    if (iconVal === "shield") return <FaShieldAlt className="text-green-400" />;
+    if (iconVal === "credit-card") return <FaCreditCard className="text-yellow-500" />;
+
+    return <span>{iconVal}</span>;
+  };
+
+  // 1. Brand Logo & Display Mode
+  const brandMode = settings?.footerBrandMode || "use_header";
+  const brandDisplay =
+    brandMode === "use_header"
+      ? settings?.headerBrandDisplay || "logo_only"
+      : settings?.footerBrandDisplay || "logo_and_text";
+
+  const brandLogo =
+    brandMode === "use_header"
+      ? settings?.websiteLogo || settings?.logo || ""
+      : settings?.footerLogo || settings?.websiteLogo || settings?.logo || "";
+
+  const brandTitle =
+    brandMode === "use_header"
+      ? settings?.siteName || "আমওয়ালা ভাইয়া"
+      : settings?.footerBrandTitle || settings?.siteName || "আমওয়ালা ভাইয়া";
+
+  const brandTagline =
+    brandMode === "use_header"
+      ? settings?.tagline || "প্রিমিয়াম মানের দেশি আম"
+      : settings?.footerBrandTagline || settings?.tagline || "প্রিমিয়াম মানের দেশি আম";
+
+  // Color customization for brand title
+  const titleColorType = settings?.footerTitleColorType || "gradient";
+  const titleColorVal =
+    settings?.footerTitleColorVal || "linear-gradient(to right, #facc15, #4ade80)";
+
+  const titleStyle =
+    titleColorType === "gradient"
+      ? {
+          backgroundImage: titleColorVal,
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+        }
+      : {
+          color: titleColorVal,
+        };
+
+  // 2. About Description Text
+  const aboutText =
+    settings?.footerAboutText ||
+    "রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম সরাসরি বাগান থেকে আপনার ঘরে পৌঁছে দিচ্ছি। কেমিক্যাল-মুক্ত, পুষ্টিকর ও সুস্বাদু আমের অভিজ্ঞতা নিন।";
+
+  // 3. Social Media Links
+  const socialLinks =
+    Array.isArray(settings?.footerSocialLinks) && settings.footerSocialLinks.length > 0
+      ? settings.footerSocialLinks
+      : [
+          { name: "Facebook", icon: "facebook", link: settings?.facebookUrl || "https://facebook.com", color: "hover:bg-blue-600", show: true },
+          { name: "Instagram", icon: "instagram", link: settings?.instagramUrl || "https://instagram.com", color: "hover:bg-pink-600", show: true },
+          { name: "YouTube", icon: "youtube", link: settings?.youtubeUrl || "https://youtube.com", color: "hover:bg-red-600", show: true },
+          { name: "WhatsApp", icon: "whatsapp", link: `https://wa.me/${settings?.whatsappNumber || "8801749775030"}`, color: "hover:bg-green-600", show: true },
+        ];
+
+  // 4. Col 2: Quick Links (দ্রুত লিংক)
+  const col2Title = settings?.footerCol2Title || "দ্রুত লিংক";
+  const quickLinks =
+    Array.isArray(settings?.footerQuickLinks) && settings.footerQuickLinks.length > 0
+      ? settings.footerQuickLinks
+      : [
+          { name: "হোম", href: "#home", icon: "🏠", show: true },
+          { name: "আমের জাত", href: "#varieties", icon: "🥭", show: true },
+          { name: "আমাদের সম্পর্কে", href: "#about", icon: "📖", show: true },
+          { name: "গ্রাহক মতামত", href: "#reviews", icon: "⭐", show: true },
+          { name: "অর্ডার করুন", href: "#order", icon: "📦", show: true },
+        ];
+
+  // 5. Col 3: Mango Varieties (আমের জাত)
+  const col3Title = settings?.footerCol3Title || "আমের জাত";
+  const mangoList =
+    Array.isArray(settings?.footerMangoList) && settings.footerMangoList.length > 0
+      ? settings.footerMangoList
+      : [
+          { name: "গুটি/স্থানীয়", href: "#varieties", icon: "🥭", show: true },
+          { name: "গোপালভোগ", href: "#varieties", icon: "🥭", show: true },
+          { name: "হিমসাগর", href: "#varieties", icon: "🥭", show: true },
+          { name: "ল্যাংড়া", href: "#varieties", icon: "🥭", show: true },
+          { name: "আম্রপালি", href: "#varieties", icon: "🥭", show: true },
+          { name: "ফজলি", href: "#varieties", icon: "🥭", show: true },
+          { name: "কাটিমন", href: "#varieties", icon: "🥭", show: true },
+          { name: "গৌরমতি", href: "#varieties", icon: "🥭", show: true },
+        ];
+
+  // 6. Col 4: Contact & Opening Hours
+  const col4Title = settings?.footerCol4Title || "যোগাযোগ";
+  const contactItems =
+    Array.isArray(settings?.footerContactItems) && settings.footerContactItems.length > 0
+      ? settings.footerContactItems
+      : [
+          { text: settings?.hotlinePhone || "০১৭৪৯-৭৭৫০৩০", link: `tel:${settings?.rawHotlinePhone || "01749775030"}`, icon: "phone", show: true },
+          { text: "WhatsApp", link: `https://wa.me/${settings?.whatsappNumber || "8801749775030"}`, icon: "whatsapp", show: true },
+          { text: settings?.email || "ammwalaaviya@gmail.com", link: `mailto:${settings?.email || "ammwalaaviya@gmail.com"}`, icon: "envelope", show: true },
+          { text: settings?.officeAddress || "রাজশাহী, বাংলাদেশ - ৬২০৩", link: "https://maps.google.com", icon: "map-marker", show: true },
+        ];
+
+  const hoursTitle = settings?.footerHoursTitle || "খোলার সময়";
+  const hoursIcon = settings?.footerHoursIcon || "🕒";
+  const hoursItems =
+    Array.isArray(settings?.footerHoursItems) && settings.footerHoursItems.length > 0
+      ? settings.footerHoursItems
+      : [
+          { text: "সোম-শনি: সকাল ৮টা - রাত ৮টা", show: true },
+          { text: "রবিবার: সকাল ১০টা - সন্ধ্যা ৬টা", show: true },
+          { text: "✨ অনলাইন অর্ডার ২৪/৭", show: true },
+        ];
+
+  // 7. Feature highlights
+  const featuresList = [
+    { icon: <FaTruck />, title: "সারাদেশ ডেলিভারি", desc: "দ্রুত ও নিরাপদ" },
+    { icon: <FaLeaf />, title: "গুনগত মান", desc: "১০০% সতেজ ও বিশুদ্ধ" },
+    { icon: <FaHeadset />, title: "২৪/৭ সাপোর্ট", desc: "যেকোনো সময় যোগাযোগ" },
+    { icon: <FaMedal />, title: "প্রিমিয়াম কোয়ালিটি", desc: "বাগান থেকে সরাসরি" },
   ];
+
+  // 8. Payment Methods
+  const paymentTitle = settings?.footerPaymentTitle || "পেমেন্ট মেথড:";
+  const paymentIcon = settings?.footerPaymentIcon || "💳";
+  const paymentMethods =
+    Array.isArray(settings?.footerPaymentMethods) && settings.footerPaymentMethods.length > 0
+      ? settings.footerPaymentMethods
+      : [
+          { name: "বিকাশ", bgColor: "bg-pink-600", icon: "", show: true },
+          { name: "নগদ", bgColor: "bg-orange-500", icon: "", show: true },
+          { name: "রকেট", bgColor: "bg-purple-600", icon: "", show: true },
+          { name: "ক্যাশ অন ডেলিভারি", bgColor: "bg-green-600", icon: "", show: true },
+        ];
+
+  // 9. Return Policy
+  const returnPolicyShow = settings?.footerReturnPolicyShow !== false;
+  const returnPolicyIcon = settings?.footerReturnPolicyIcon || "🛡️";
+  const returnPolicyText = settings?.footerReturnPolicyText || "৭ দিনের রিটার্ন পলিসি";
+  const returnPolicyLink = settings?.footerReturnPolicyLink || "#";
+
+  // 10. Copyright & Developer Credits
+  const copyrightText = settings?.footerCopyrightText || "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত";
+  const privacyText = settings?.footerPrivacyPolicyText || "গোপনীয়তা নীতি";
+  const privacyLink = settings?.footerPrivacyPolicyLink || "#";
+  const termsText = settings?.footerTermsText || "সেবার শর্তাবলী";
+  const termsLink = settings?.footerTermsLink || "#";
+
+  const devCreditText = settings?.footerDeveloperCreditText || "Designed & Developed with";
+  const devName = settings?.footerDeveloperName || "DevHome";
+  const devLink = settings?.footerDeveloperLink || "https://devhome.onrender.com/";
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleNavClick = (e, href) => {
-    e.preventDefault();
-    const target = document.querySelector(href);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (!href || href === "#") return;
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   };
 
@@ -109,7 +222,7 @@ export default function Footer() {
         <FaLeaf className="text-8xl text-yellow-400 transform rotate-45" />
       </div>
 
-      {/* Scroll-to-Top Button - Cleanly positioned above the footer line without clipping */}
+      {/* Scroll-to-Top Button */}
       <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 z-20">
         <motion.button
           whileHover={{ scale: 1.15, y: -3 }}
@@ -133,35 +246,60 @@ export default function Footer() {
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center shadow-lg">
-                <FaLeaf className="text-white text-2xl" />
+            {/* Brand Logo & Text based on Brand Display Mode */}
+            {brandDisplay === "logo_only" && brandLogo ? (
+              <div className="py-1">
+                <img
+                  src={brandLogo}
+                  alt={brandTitle}
+                  className="h-12 sm:h-14 w-auto max-w-[220px] object-contain rounded bg-white/5 p-1"
+                />
               </div>
-              <div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-green-400 bg-clip-text text-transparent">
-                  আমওয়ালা ভাইয়া
-                </h3>
-                <p className="text-sm text-yellow-300">প্রিমিয়াম মানের দেশি আম</p>
+            ) : (
+              <div className="flex items-center space-x-3">
+                {brandLogo ? (
+                  <img
+                    src={brandLogo}
+                    alt={brandTitle}
+                    className="w-12 h-12 object-contain rounded-full bg-white shadow-lg p-0.5 shrink-0"
+                  />
+                ) : (
+                  <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-green-500 rounded-full flex items-center justify-center shadow-lg shrink-0">
+                    <FaLeaf className="text-white text-2xl" />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <h3 className="text-2xl font-bold truncate" style={titleStyle}>
+                    {brandTitle}
+                  </h3>
+                  <p className="text-sm text-yellow-300 truncate">{brandTagline}</p>
+                </div>
               </div>
-            </div>
+            )}
 
             <p className="text-gray-300 text-sm leading-relaxed">
-              রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম সরাসরি বাগান থেকে আপনার ঘরে পৌঁছে দিচ্ছি। কেমিক্যাল-মুক্ত, পুষ্টিকর ও সুস্বাদু আমের অভিজ্ঞতা নিন।
+              {aboutText}
             </p>
 
+            {/* Social Links */}
             <div className="flex space-x-3 pt-2">
-              {socialLinks.map((item, idx) => (
-                <motion.a
-                  key={idx}
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  whileHover={{ scale: 1.15, y: -3 }}
-                  className={`w-9 h-9 bg-white/10 rounded-full flex items-center justify-center text-white transition-all ${item.color} hover:text-white shadow`}
-                >
-                  {item.icon}
-                </motion.a>
-              ))}
+              {socialLinks
+                .filter((item) => item.show !== false)
+                .map((item, idx) => (
+                  <motion.a
+                    key={idx}
+                    href={item.link || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    whileHover={{ scale: 1.15, y: -3 }}
+                    className={`w-9 h-9 bg-white/10 rounded-full flex items-center justify-center text-white transition-all ${
+                      item.color || "hover:bg-green-600"
+                    } hover:text-white shadow`}
+                    title={item.name}
+                  >
+                    {renderIcon(item.icon, "🔗")}
+                  </motion.a>
+                ))}
             </div>
           </motion.div>
 
@@ -174,25 +312,27 @@ export default function Footer() {
             className="space-y-4"
           >
             <h4 className="text-xl font-bold border-l-4 border-yellow-500 pl-3">
-              দ্রুত লিংক
+              {col2Title}
             </h4>
             <ul className="space-y-2">
-              {quickLinks.map((item, idx) => (
-                <motion.li
-                  key={idx}
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <a
-                    href={item.href}
-                    onClick={(e) => handleNavClick(e, item.href)}
-                    className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center gap-2 text-sm cursor-pointer"
+              {quickLinks
+                .filter((item) => item.show !== false)
+                .map((item, idx) => (
+                  <motion.li
+                    key={idx}
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.2 }}
                   >
-                    <span>{item.icon}</span>
-                    <span>{item.name}</span>
-                  </a>
-                </motion.li>
-              ))}
+                    <a
+                      href={item.href || "#"}
+                      onClick={(e) => handleNavClick(e, item.href)}
+                      className="text-gray-300 hover:text-yellow-400 transition-colors flex items-center gap-2 text-sm cursor-pointer"
+                    >
+                      <span className="text-base">{renderIcon(item.icon, "🏠")}</span>
+                      <span>{item.name}</span>
+                    </a>
+                  </motion.li>
+                ))}
             </ul>
           </motion.div>
 
@@ -205,19 +345,29 @@ export default function Footer() {
             className="space-y-4"
           >
             <h4 className="text-xl font-bold border-l-4 border-yellow-500 pl-3">
-              আমের জাত
+              {col3Title}
             </h4>
             <div className="grid grid-cols-2 gap-2">
-              {mangoList.map((item, idx) => (
-                <motion.div
-                  key={idx}
-                  whileHover={{ scale: 1.05 }}
-                  className="text-gray-300 text-sm flex items-center gap-1.5"
-                >
-                  <span className="text-yellow-500">🥭</span>
-                  <span>{item}</span>
-                </motion.div>
-              ))}
+              {mangoList
+                .filter((item) => item.show !== false)
+                .map((item, idx) => (
+                  <motion.div
+                    key={idx}
+                    whileHover={{ scale: 1.05 }}
+                    className="text-gray-300 text-sm flex items-center gap-1.5"
+                  >
+                    <a
+                      href={item.href || "#varieties"}
+                      onClick={(e) => handleNavClick(e, item.href || "#varieties")}
+                      className="flex items-center gap-1.5 hover:text-yellow-400 transition-colors cursor-pointer"
+                    >
+                      <span className="text-yellow-500 shrink-0">
+                        {renderIcon(item.icon, "🥭")}
+                      </span>
+                      <span className="truncate">{item.name}</span>
+                    </a>
+                  </motion.div>
+                ))}
             </div>
           </motion.div>
 
@@ -230,35 +380,51 @@ export default function Footer() {
             className="space-y-4"
           >
             <h4 className="text-xl font-bold border-l-4 border-yellow-500 pl-3">
-              যোগাযোগ
+              {col4Title}
             </h4>
             <ul className="space-y-3">
-              {dynamicContactList.map((item, idx) => (
-                <motion.li
-                  key={idx}
-                  whileHover={{ x: 3 }}
-                  className="flex items-center gap-3 text-sm"
-                >
-                  <a
-                    href={item.link}
-                    target={item.link.startsWith("http") ? "_blank" : "_self"}
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-gray-300 hover:text-yellow-400 transition-colors"
+              {contactItems
+                .filter((item) => item.show !== false)
+                .map((item, idx) => (
+                  <motion.li
+                    key={idx}
+                    whileHover={{ x: 3 }}
+                    className="flex items-center gap-3 text-sm"
                   >
-                    <span className="text-base">{item.icon}</span>
-                    <span>{item.text}</span>
-                  </a>
-                </motion.li>
-              ))}
+                    <a
+                      href={item.link || "#"}
+                      target={item.link?.startsWith("http") ? "_blank" : "_self"}
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 text-gray-300 hover:text-yellow-400 transition-colors"
+                    >
+                      <span className="text-base shrink-0">
+                        {renderIcon(item.icon, "📞")}
+                      </span>
+                      <span className="break-all">{item.text}</span>
+                    </a>
+                  </motion.li>
+                ))}
             </ul>
 
             <div className="pt-4 border-t border-white/10">
               <h5 className="font-semibold text-yellow-400 mb-2 flex items-center gap-2 text-sm">
-                <FaClock /> খোলার সময়
+                <span>{renderIcon(hoursIcon, "🕒")}</span>
+                <span>{hoursTitle}</span>
               </h5>
-              <p className="text-gray-300 text-xs">সোম-শনি: সকাল ৮টা - রাত ৮টা</p>
-              <p className="text-gray-300 text-xs">রবিবার: সকাল ১০টা - সন্ধ্যা ৬টা</p>
-              <p className="text-green-400 text-xs mt-1 font-medium">✨ অনলাইন অর্ডার ২৪/৭</p>
+              {hoursItems
+                .filter((item) => item.show !== false)
+                .map((item, idx) => (
+                  <p
+                    key={idx}
+                    className={`text-xs ${
+                      item.text?.includes("২৪/৭") || item.text?.includes("অনলাইন")
+                        ? "text-green-400 mt-1 font-medium"
+                        : "text-gray-300"
+                    }`}
+                  >
+                    {item.text}
+                  </p>
+                ))}
             </div>
           </motion.div>
         </div>
@@ -282,44 +448,76 @@ export default function Footer() {
           ))}
         </motion.div>
 
-        {/* Payment Methods & Policy */}
+        {/* Payment Methods & Return Policy */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 py-6">
+          {/* Payment Methods */}
           <div className="flex flex-wrap items-center gap-3 justify-center">
-            <FaCreditCard className="text-yellow-500 text-xl" />
-            <span className="text-sm text-gray-300">পেমেন্ট মেথড:</span>
+            <span className="text-xl text-yellow-500">{renderIcon(paymentIcon, "💳")}</span>
+            <span className="text-sm text-gray-300 font-semibold">{paymentTitle}</span>
             <div className="flex flex-wrap gap-2">
-              <span className="px-3 py-1 bg-pink-600 rounded text-xs font-semibold text-white">বিকাশ</span>
-              <span className="px-3 py-1 bg-orange-500 rounded text-xs font-semibold text-white">নগদ</span>
-              <span className="px-3 py-1 bg-purple-600 rounded text-xs font-semibold text-white">রকেট</span>
-              <span className="px-3 py-1 bg-green-600 rounded text-xs font-semibold text-white">ক্যাশ অন ডেলিভারি</span>
+              {paymentMethods
+                .filter((item) => item.show !== false)
+                .map((method, idx) => (
+                  <span
+                    key={idx}
+                    className={`px-3 py-1 rounded text-xs font-semibold text-white flex items-center gap-1.5 shadow-sm ${
+                      method.bgColor || "bg-green-600"
+                    }`}
+                  >
+                    {method.icon && (
+                      <span className="shrink-0">{renderIcon(method.icon, "")}</span>
+                    )}
+                    <span>{method.name}</span>
+                  </span>
+                ))}
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
-            <FaShieldAlt className="text-green-400" />
-            <span className="text-xs text-gray-300">৭ দিনের রিটার্ন পলিসি</span>
-          </div>
+          {/* Return Policy (Totally dynamic and optional) */}
+          {returnPolicyShow && (
+            <a
+              href={returnPolicyLink || "#"}
+              className="flex items-center gap-2 hover:text-yellow-300 transition-colors"
+            >
+              <span className="text-green-400 text-base">
+                {renderIcon(returnPolicyIcon, "🛡️")}
+              </span>
+              <span className="text-xs text-gray-300 hover:text-white font-medium">
+                {returnPolicyText}
+              </span>
+            </a>
+          )}
         </div>
 
-        {/* Bottom Copyright & Credits */}
-        <div className="text-center pt-6 border-t border-white/10">
+        {/* Bottom Copyright & Credits (NO Admin Dashboard link, English DevHome credit) */}
+        <div className="text-center pt-6 border-t border-white/10 space-y-2">
           <p className="text-gray-400 text-sm">
-            © {currentYear} {settings?.siteName || "আমওয়ালা ভাইয়া"} - সর্বস্বত্ব সংরক্ষিত |
-            <a href="#" className="hover:text-yellow-400 transition-colors ml-1">গোপনীয়তা নীতি</a> |
-            <a href="#" className="hover:text-yellow-400 transition-colors ml-1">সেবার শর্তাবলী</a> |
-            <Link to={isAuthenticated ? "/admin" : "/admin/login"} className="text-yellow-400 hover:text-yellow-300 font-bold ml-1 transition">
-              {isAuthenticated ? "এডমিন ড্যাশবোর্ড" : "এডমিন লগইন"}
-            </Link>
-          </p>
-          <p className="text-gray-400 text-xs mt-2">
-            ডিজাইন ও ডেভেলপড with{" "}
+            © {currentYear} {copyrightText} |
             <a
-              href="https://devhome.onrender.com/"
+              href={privacyLink || "#"}
+              className="hover:text-yellow-400 transition-colors ml-1"
+            >
+              {privacyText}
+            </a>{" "}
+            |
+            <a
+              href={termsLink || "#"}
+              className="hover:text-yellow-400 transition-colors ml-1"
+            >
+              {termsText}
+            </a>
+          </p>
+
+          {/* Developer credit (Totally in English as requested) */}
+          <p className="text-gray-400 text-xs">
+            {devCreditText}{" "}
+            <a
+              href={devLink || "https://devhome.onrender.com/"}
               target="_blank"
               rel="noopener noreferrer"
               className="text-yellow-400 hover:text-yellow-300 font-semibold hover:underline transition-colors"
             >
-              DevHome
+              {devName}
             </a>
           </p>
         </div>

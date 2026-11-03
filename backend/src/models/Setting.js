@@ -384,6 +384,218 @@ const settingSchema = new mongoose.Schema(
         },
       ],
     },
+    // Footer Section Settings
+    footerBrandMode: {
+      type: String,
+      enum: ["use_header", "custom"],
+      default: "use_header",
+    },
+    footerBrandDisplay: {
+      type: String,
+      enum: ["logo_only", "logo_and_text"],
+      default: "logo_and_text",
+    },
+    footerLogo: {
+      type: String,
+      default: "",
+    },
+    footerBrandTitle: {
+      type: String,
+      default: "আমওয়ালা ভাইয়া",
+    },
+    footerBrandTagline: {
+      type: String,
+      default: "প্রিমিয়াম মানের দেশি আম",
+    },
+    footerTitleColorType: {
+      type: String,
+      enum: ["gradient", "solid"],
+      default: "gradient",
+    },
+    footerTitleColorVal: {
+      type: String,
+      default: "linear-gradient(to right, #facc15, #4ade80)",
+    },
+    footerAboutText: {
+      type: String,
+      default:
+        "রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম সরাসরি বাগান থেকে আপনার ঘরে পৌঁছে দিচ্ছি। কেমিক্যাল-মুক্ত, পুষ্টিকর ও সুস্বাদু আমের অভিজ্ঞতা নিন।",
+    },
+    footerSocialLinks: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          icon: { type: String, default: "" },
+          link: { type: String, default: "" },
+          color: { type: String, default: "" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { name: "Facebook", icon: "facebook", link: "https://facebook.com", color: "hover:bg-blue-600", show: true },
+        { name: "Instagram", icon: "instagram", link: "https://instagram.com", color: "hover:bg-pink-600", show: true },
+        { name: "YouTube", icon: "youtube", link: "https://youtube.com", color: "hover:bg-red-600", show: true },
+        { name: "WhatsApp", icon: "whatsapp", link: "https://wa.me/8801749775030", color: "hover:bg-green-600", show: true },
+      ],
+    },
+    footerCol2Title: {
+      type: String,
+      default: "দ্রুত লিংক",
+    },
+    footerQuickLinks: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          href: { type: String, default: "" },
+          icon: { type: String, default: "🏠" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { name: "হোম", href: "#home", icon: "🏠", show: true },
+        { name: "আমের জাত", href: "#varieties", icon: "🥭", show: true },
+        { name: "আমাদের সম্পর্কে", href: "#about", icon: "📖", show: true },
+        { name: "গ্রাহক মতামত", href: "#reviews", icon: "⭐", show: true },
+        { name: "অর্ডার করুন", href: "#order", icon: "📦", show: true },
+      ],
+    },
+    footerCol3Title: {
+      type: String,
+      default: "আমের জাত",
+    },
+    footerMangoList: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          href: { type: String, default: "" },
+          icon: { type: String, default: "🥭" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { name: "গুটি/স্থানীয়", href: "#varieties", icon: "🥭", show: true },
+        { name: "গোপালভোগ", href: "#varieties", icon: "🥭", show: true },
+        { name: "হিমসাগর", href: "#varieties", icon: "🥭", show: true },
+        { name: "ল্যাংড়া", href: "#varieties", icon: "🥭", show: true },
+        { name: "আম্রপালি", href: "#varieties", icon: "🥭", show: true },
+        { name: "ফজলি", href: "#varieties", icon: "🥭", show: true },
+        { name: "কাটিমন", href: "#varieties", icon: "🥭", show: true },
+        { name: "গৌরমতি", href: "#varieties", icon: "🥭", show: true },
+      ],
+    },
+    footerCol4Title: {
+      type: String,
+      default: "যোগাযোগ",
+    },
+    footerContactItems: {
+      type: [
+        {
+          text: { type: String, default: "" },
+          link: { type: String, default: "" },
+          icon: { type: String, default: "phone" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { text: "০১৭৪৯-৭৭৫০৩০", link: "tel:01749775030", icon: "phone", show: true },
+        { text: "WhatsApp", link: "https://wa.me/8801749775030", icon: "whatsapp", show: true },
+        { text: "ammwalaaviya@gmail.com", link: "mailto:ammwalaaviya@gmail.com", icon: "envelope", show: true },
+        { text: "রাজশাহী, বাংলাদেশ - ৬২০৩", link: "https://maps.google.com", icon: "map-marker", show: true },
+      ],
+    },
+    footerHoursTitle: {
+      type: String,
+      default: "খোলার সময়",
+    },
+    footerHoursIcon: {
+      type: String,
+      default: "🕒",
+    },
+    footerHoursItems: {
+      type: [
+        {
+          text: { type: String, default: "" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { text: "সোম-শনি: সকাল ৮টা - রাত ৮টা", show: true },
+        { text: "রবিবার: সকাল ১০টা - সন্ধ্যা ৬টা", show: true },
+        { text: "✨ অনলাইন অর্ডার ২৪/৭", show: true },
+      ],
+    },
+    footerPaymentTitle: {
+      type: String,
+      default: "পেমেন্ট মেথড:",
+    },
+    footerPaymentIcon: {
+      type: String,
+      default: "💳",
+    },
+    footerPaymentMethods: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          bgColor: { type: String, default: "bg-pink-600" },
+          icon: { type: String, default: "" },
+          show: { type: Boolean, default: true },
+        },
+      ],
+      default: [
+        { name: "বিকাশ", bgColor: "bg-pink-600", icon: "", show: true },
+        { name: "নগদ", bgColor: "bg-orange-500", icon: "", show: true },
+        { name: "রকেট", bgColor: "bg-purple-600", icon: "", show: true },
+        { name: "ক্যাশ অন ডেলিভারি", bgColor: "bg-green-600", icon: "", show: true },
+      ],
+    },
+    footerReturnPolicyShow: {
+      type: Boolean,
+      default: true,
+    },
+    footerReturnPolicyIcon: {
+      type: String,
+      default: "🛡️",
+    },
+    footerReturnPolicyText: {
+      type: String,
+      default: "৭ দিনের রিটার্ন পলিসি",
+    },
+    footerReturnPolicyLink: {
+      type: String,
+      default: "#",
+    },
+    footerCopyrightText: {
+      type: String,
+      default: "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত",
+    },
+    footerPrivacyPolicyText: {
+      type: String,
+      default: "গোপনীয়তা নীতি",
+    },
+    footerPrivacyPolicyLink: {
+      type: String,
+      default: "#",
+    },
+    footerTermsText: {
+      type: String,
+      default: "সেবার শর্তাবলী",
+    },
+    footerTermsLink: {
+      type: String,
+      default: "#",
+    },
+    footerDeveloperCreditText: {
+      type: String,
+      default: "Designed & Developed with",
+    },
+    footerDeveloperName: {
+      type: String,
+      default: "DevHome",
+    },
+    footerDeveloperLink: {
+      type: String,
+      default: "https://devhome.onrender.com/",
+    },
   },
   { timestamps: true, versionKey: false }
 );

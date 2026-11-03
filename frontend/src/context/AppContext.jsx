@@ -221,6 +221,75 @@ export function AppProvider({ children }) {
                 avatar: "😊",
               },
             ],
+            // Footer Section Settings
+            footerBrandMode: "use_header", // "use_header" | "custom"
+            footerBrandDisplay: "logo_and_text", // "logo_only" | "logo_and_text"
+            footerLogo: "",
+            footerBrandTitle: "আমওয়ালা ভাইয়া",
+            footerBrandTagline: "প্রিমিয়াম মানের দেশি আম",
+            footerTitleColorType: "gradient", // "gradient" | "solid"
+            footerTitleColorVal: "linear-gradient(to right, #facc15, #4ade80)",
+            footerAboutText:
+              "রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম সরাসরি বাগান থেকে আপনার ঘরে পৌঁছে দিচ্ছি। কেমিক্যাল-মুক্ত, পুষ্টিকর ও সুস্বাদু আমের অভিজ্ঞতা নিন।",
+            footerSocialLinks: [
+              { name: "Facebook", icon: "facebook", link: "https://facebook.com", color: "hover:bg-blue-600", show: true },
+              { name: "Instagram", icon: "instagram", link: "https://instagram.com", color: "hover:bg-pink-600", show: true },
+              { name: "YouTube", icon: "youtube", link: "https://youtube.com", color: "hover:bg-red-600", show: true },
+              { name: "WhatsApp", icon: "whatsapp", link: "https://wa.me/8801749775030", color: "hover:bg-green-600", show: true },
+            ],
+            footerCol2Title: "দ্রুত লিংক",
+            footerQuickLinks: [
+              { name: "হোম", href: "#home", icon: "🏠", show: true },
+              { name: "আমের জাত", href: "#varieties", icon: "🥭", show: true },
+              { name: "আমাদের সম্পর্কে", href: "#about", icon: "📖", show: true },
+              { name: "গ্রাহক মতামত", href: "#reviews", icon: "⭐", show: true },
+              { name: "অর্ডার করুন", href: "#order", icon: "📦", show: true },
+            ],
+            footerCol3Title: "আমের জাত",
+            footerMangoList: [
+              { name: "গুটি/স্থানীয়", href: "#varieties", icon: "🥭", show: true },
+              { name: "গোপালভোগ", href: "#varieties", icon: "🥭", show: true },
+              { name: "হিমসাগর", href: "#varieties", icon: "🥭", show: true },
+              { name: "ল্যাংড়া", href: "#varieties", icon: "🥭", show: true },
+              { name: "আম্রপালি", href: "#varieties", icon: "🥭", show: true },
+              { name: "ফজলি", href: "#varieties", icon: "🥭", show: true },
+              { name: "কাটিমন", href: "#varieties", icon: "🥭", show: true },
+              { name: "গৌরমতি", href: "#varieties", icon: "🥭", show: true },
+            ],
+            footerCol4Title: "যোগাযোগ",
+            footerContactItems: [
+              { text: "০১৭৪৯-৭৭৫০৩০", link: "tel:01749775030", icon: "phone", show: true },
+              { text: "WhatsApp", link: "https://wa.me/8801749775030", icon: "whatsapp", show: true },
+              { text: "ammwalaaviya@gmail.com", link: "mailto:ammwalaaviya@gmail.com", icon: "envelope", show: true },
+              { text: "রাজশাহী, বাংলাদেশ - ৬২০৩", link: "https://maps.google.com", icon: "map-marker", show: true },
+            ],
+            footerHoursTitle: "খোলার সময়",
+            footerHoursIcon: "🕒",
+            footerHoursItems: [
+              { text: "সোম-শনি: সকাল ৮টা - রাত ৮টা", show: true },
+              { text: "রবিবার: সকাল ১০টা - সন্ধ্যা ৬টা", show: true },
+              { text: "✨ অনলাইন অর্ডার ২৪/৭", show: true },
+            ],
+            footerPaymentTitle: "পেমেন্ট মেথড:",
+            footerPaymentIcon: "💳",
+            footerPaymentMethods: [
+              { name: "বিকাশ", bgColor: "bg-pink-600", icon: "", show: true },
+              { name: "নগদ", bgColor: "bg-orange-500", icon: "", show: true },
+              { name: "রকেট", bgColor: "bg-purple-600", icon: "", show: true },
+              { name: "ক্যাশ অন ডেলিভারি", bgColor: "bg-green-600", icon: "", show: true },
+            ],
+            footerReturnPolicyShow: true,
+            footerReturnPolicyIcon: "🛡️",
+            footerReturnPolicyText: "৭ দিনের রিটার্ন পলিসি",
+            footerReturnPolicyLink: "#",
+            footerCopyrightText: "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত",
+            footerPrivacyPolicyText: "গোপনীয়তা নীতি",
+            footerPrivacyPolicyLink: "#",
+            footerTermsText: "সেবার শর্তাবলী",
+            footerTermsLink: "#",
+            footerDeveloperCreditText: "Designed & Developed with",
+            footerDeveloperName: "DevHome",
+            footerDeveloperLink: "https://devhome.onrender.com/",
           };
     } catch {
       return {};
