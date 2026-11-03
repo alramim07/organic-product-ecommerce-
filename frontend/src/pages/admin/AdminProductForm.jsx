@@ -119,6 +119,13 @@ export default function AdminProductForm() {
   const [scheduledAt, setScheduledAt] = useState("");
   const [showSchedulePopover, setShowSchedulePopover] = useState(false);
 
+  // Auto-Save Draft States
+  const [savedDraftId, setSavedDraftId] = useState(id || null);
+  const [autoSaveStatus, setAutoSaveStatus] = useState("idle"); // "idle" | "saving" | "saved" | "error"
+  const [lastSavedTime, setLastSavedTime] = useState(null);
+  const isInitialMount = useRef(true);
+  const isSubmittingRef = useRef(false);
+
   // Dynamic Image Badges
   const [imageBadges, setImageBadges] = useState([]);
 
@@ -354,6 +361,10 @@ export default function AdminProductForm() {
       if (existingProduct.scheduled_at) {
         setScheduledAt(existingProduct.scheduled_at);
       }
+
+      if (existingProduct._id || existingProduct.id) {
+        setSavedDraftId(existingProduct._id || existingProduct.id);
+      }
     }
   }, [existingProduct]);
 
@@ -513,11 +524,140 @@ export default function AdminProductForm() {
       ? currentCategoryObj.available_units
       : ["কেজি", "গ্রাম", "লিটার", "মিলি", "পিস", "বোতল", "জার", "বক্স", "ক্যারেট"];
 
+  // Auto-Save Effect (Debounced 2.5 seconds)
+  useEffect(() => {
+    // Avoid running on initial mount / while state is loading
+    if (isInitialMount.current) {
+      const t = setTimeout(() => {
+        isInitialMount.current = false;
+      }, 1500);
+      return () => clearTimeout(t);
+    }
+
+    // Do not auto-save if manual submit was triggered or product name is empty
+    if (isSubmittingRef.current || !nameBn.trim()) {
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      if (isSubmittingRef.current || !nameBn.trim()) return;
+
+      try {
+        setAutoSaveStatus("saving");
+
+        const selectedCatObj = categories.find((c) => c.slug === category);
+        const draftStatus =
+          isEdit && existingProduct?.publication_status === "published"
+            ? "published"
+            : "draft";
+
+        const draftPayload = {
+          name_bn: nameBn.trim(),
+          name_en: nameEn || nameBn,
+          subtitle_bn: subtitleBn,
+          category: category,
+          category_bn: selectedCatObj ? selectedCatObj.name_bn : "সাধারণ পণ্য",
+          unit: unit,
+          price: `৳ ${pricePerUnit || 0}/${unit}`,
+          price_per_unit: Number(pricePerUnit) || 0,
+          price_per_kg: Number(pricePerUnit) || 0,
+          regular_price_per_unit: Number(regularPricePerUnit) || 0,
+          regular_price_per_kg: Number(regularPricePerUnit) || 0,
+          discount_percent: Number(discountPercent) || 0,
+          stock_status: stockStatus,
+          stock_quantity:
+            stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
+          origin: origin,
+          harvest_schedule: harvestSchedule,
+          regionDates: regionDates,
+          min_order: minOrder,
+          image: image,
+          gallery: gallery.length > 0 ? gallery : image ? [image] : [],
+          image_badges: imageBadges,
+          description: description,
+          rating: Number(rating) || 5.0,
+          total_reviews: Number(totalReviews) || 0,
+          is_featured: isFeatured,
+          packages: packages,
+          taste_specs: tasteSpecs,
+          highlights: highlights,
+          tab1_icon: (tab1Icon || "").trim(),
+          tab1_title: (tab1Title || "").trim(),
+          tab2_icon: (tab2Icon || "").trim(),
+          tab2_title: (tab2Title || "").trim(),
+          packaging_description: packagingDescription,
+          packaging_steps: packagingSteps,
+          tab3_icon: (tab3Icon || "").trim(),
+          tab3_title: (tab3Title || "").trim(),
+          storage_steps: storageSteps,
+          publication_status: draftStatus,
+          scheduled_at: null,
+        };
+
+        const activeId = savedDraftId || (isEdit ? id : null);
+        if (activeId) {
+          await updateProduct(activeId, draftPayload);
+        } else {
+          const res = await addProduct(draftPayload);
+          const newId = res?._id || res?.id;
+          if (newId) {
+            setSavedDraftId(newId);
+            window.history.replaceState(null, "", `/admin/products/edit/${newId}`);
+          }
+        }
+
+        setAutoSaveStatus("saved");
+        setLastSavedTime(new Date());
+      } catch (err) {
+        console.error("Auto-save draft error:", err);
+        setAutoSaveStatus("error");
+      }
+    }, 2500);
+
+    return () => clearTimeout(timer);
+  }, [
+    nameBn,
+    nameEn,
+    subtitleBn,
+    category,
+    unit,
+    pricePerUnit,
+    regularPricePerUnit,
+    discountPercent,
+    stockStatus,
+    stockQuantity,
+    origin,
+    harvestSchedule,
+    regionDates,
+    minOrder,
+    image,
+    gallery,
+    imageBadges,
+    description,
+    rating,
+    totalReviews,
+    isFeatured,
+    packages,
+    tasteSpecs,
+    highlights,
+    tab1Icon,
+    tab1Title,
+    tab2Icon,
+    tab2Title,
+    packagingDescription,
+    packagingSteps,
+    tab3Icon,
+    tab3Title,
+    storageSteps,
+  ]);
+
   // Save / Publish / Schedule / Draft Handler
-  const handleSaveProduct = (e, targetStatus = "published") => {
+  const handleSaveProduct = async (e, targetStatus = "published") => {
     if (e) e.preventDefault();
+    isSubmittingRef.current = true;
 
     if (!nameBn.trim()) {
+      isSubmittingRef.current = false;
       Swal.fire({
         icon: "warning",
         title: "Product Name Required",
@@ -527,6 +667,7 @@ export default function AdminProductForm() {
     }
 
     if (targetStatus === "scheduled" && !scheduledAt) {
+      isSubmittingRef.current = false;
       Swal.fire({
         icon: "warning",
         title: "Schedule Date & Time Required",
@@ -539,13 +680,13 @@ export default function AdminProductForm() {
     const selectedCatObj = categories.find((c) => c.slug === category);
 
     const productPayload = {
-      name_bn: nameBn,
+      name_bn: nameBn.trim(),
       name_en: nameEn || nameBn,
       subtitle_bn: subtitleBn,
       category: category,
       category_bn: selectedCatObj ? selectedCatObj.name_bn : "সাধারণ পণ্য",
       unit: unit,
-      price: `৳ ${pricePerUnit}/${unit}`,
+      price: `৳ ${pricePerUnit || 0}/${unit}`,
       price_per_unit: Number(pricePerUnit) || 0,
       price_per_kg: Number(pricePerUnit) || 0,
       regular_price_per_unit: Number(regularPricePerUnit) || 0,
@@ -580,8 +721,9 @@ export default function AdminProductForm() {
       scheduled_at: targetStatus === "scheduled" ? scheduledAt : null,
     };
 
-    if (isEdit) {
-      updateProduct(id, productPayload);
+    const targetId = savedDraftId || (isEdit ? id : null);
+    if (targetId) {
+      await updateProduct(targetId, productPayload);
       Swal.fire({
         icon: "success",
         title: targetStatus === "draft" ? "Saved as Draft!" : targetStatus === "scheduled" ? "Product Scheduled!" : "Product Updated!",
@@ -590,7 +732,7 @@ export default function AdminProductForm() {
         showConfirmButton: false,
       });
     } else {
-      addProduct(productPayload);
+      await addProduct(productPayload);
       Swal.fire({
         icon: "success",
         title: targetStatus === "draft" ? "Saved as Draft!" : targetStatus === "scheduled" ? "Product Scheduled!" : "Product Published!",
@@ -616,9 +758,34 @@ export default function AdminProductForm() {
             <FaArrowLeft />
           </Link>
           <div>
-            <h2 className="text-lg sm:text-xl font-black text-gray-900">
-              {isEdit ? `Edit Product: ${nameBn || nameEn}` : "Add New Product"}
-            </h2>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h2 className="text-lg sm:text-xl font-black text-gray-900">
+                {isEdit ? `Edit Product: ${nameBn || nameEn}` : "Add New Product"}
+              </h2>
+              {/* Auto-Save Status Badge */}
+              {autoSaveStatus === "saving" && (
+                <span className="flex items-center gap-1.5 text-[11px] text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300 font-bold animate-pulse">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping inline-block" />
+                  Auto-saving to draft...
+                </span>
+              )}
+              {autoSaveStatus === "saved" && (
+                <span className="flex items-center gap-1.5 text-[11px] text-green-800 bg-green-50 px-2.5 py-0.5 rounded-full border border-green-300 font-bold">
+                  <FaCheck className="text-[9px]" />
+                  Draft auto-saved {lastSavedTime ? `at ${lastSavedTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}` : ""}
+                </span>
+              )}
+              {autoSaveStatus === "error" && (
+                <span className="flex items-center gap-1 text-[11px] text-red-600 bg-red-50 px-2.5 py-0.5 rounded-full border border-red-300 font-bold">
+                  <FaTimes className="text-[9px]" /> Auto-save failed
+                </span>
+              )}
+              {autoSaveStatus === "idle" && (
+                <span className="hidden sm:inline-flex items-center gap-1 text-[11px] text-gray-400 font-medium">
+                  <FaClock className="text-[9px]" /> Auto-save enabled
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -1992,10 +2159,14 @@ export default function AdminProductForm() {
           <button
             type="button"
             onClick={(e) => handleSaveProduct(e, "draft")}
-            className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            className="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            title="Save as Draft"
           >
             <FaFileAlt className="text-gray-500 text-xs" />
             <span>Draft</span>
+            {autoSaveStatus === "saved" && (
+              <span className="w-2 h-2 rounded-full bg-green-500 inline-block shadow-sm" title="Auto-saved" />
+            )}
           </button>
 
           {/* Schedule Trigger */}
