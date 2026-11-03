@@ -3177,7 +3177,7 @@ export default function AdminSettings() {
                   <FaImage className="text-green-600" /> Header Brand Display Style & Text Settings
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Header-e sudhu matro single logo dekhaben, naki logo-r pashe Store Name & Tagline text dekhaben ta select korun ebong text edit korun.
+                  Select whether to display a single logo only or logo with Store Name and Tagline, and edit brand text.
                 </p>
               </div>
 
@@ -3215,7 +3215,7 @@ export default function AdminSettings() {
                       </span>
                     </div>
                     <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                      Header-e sudhu matro uploaded single logo image show korbe. Kono extra text dekhabe na.
+                      Displays only the uploaded logo image in the header without extra text.
                     </p>
                   </div>
                 </div>
@@ -3249,7 +3249,7 @@ export default function AdminSettings() {
                       <span className="text-sm font-black text-gray-900">Logo + Brand Text</span>
                     </div>
                     <p className="text-xs text-gray-600 mt-1 leading-relaxed">
-                      Logo icon-er pashe Store Name & Tagline text dekhabe (nicher box-e edit kora jabe).
+                      Displays Store Name and Tagline beside the logo icon (editable below).
                     </p>
                   </div>
                 </div>
@@ -3263,7 +3263,7 @@ export default function AdminSettings() {
                       Brand Name & Tagline Text (Edit & Update)
                     </h5>
                     <p className="text-[11px] text-gray-400">
-                      Website-er title ebong tagline text ja header text mode ebong footer copyright-e use hoy.
+                      Store title and tagline used in header text mode and footer copyright.
                     </p>
                   </div>
                   {headerBrandDisplay === "logo_only" && (
@@ -3289,7 +3289,7 @@ export default function AdminSettings() {
                       className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                     />
                     <p className="text-[11px] text-gray-400 mt-1">
-                      Header text mode ebong Footer copyright-e show kore
+                      Appears in header text mode and footer copyright
                     </p>
                   </div>
 
@@ -3308,7 +3308,7 @@ export default function AdminSettings() {
                       className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                     />
                     <p className="text-[11px] text-gray-400 mt-1">
-                      Store name-er niche choto subtitle slogan
+                      Short subtitle slogan below the store name
                     </p>
                   </div>
                 </div>
@@ -3318,10 +3318,10 @@ export default function AdminSettings() {
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div>
                       <h5 className="text-xs font-black text-gray-900 uppercase flex items-center gap-1.5">
-                        <FaPalette className="text-amber-500" /> ব্র্যান্ড টেক্সট কালার কাস্টমাইজেশন (Title Color)
+                        <FaPalette className="text-amber-500" /> Brand Text Color Customization (Title Color)
                       </h5>
                       <p className="text-[11px] text-gray-500">
-                        হেডারে ব্র্যান্ড টাইটেলের রঙের জন্য গ্রেডিয়েন্ট অথবা সলিড কালার পছন্দ করুন।
+                        Choose a gradient or solid color for the header brand title.
                       </p>
                     </div>
 
@@ -3390,7 +3390,7 @@ export default function AdminSettings() {
                       {/* Custom Gradient Input */}
                       <div>
                         <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                          Custom Gradient CSS (কাস্টম গ্রেডিয়েন্ট কোড)
+                          Custom Gradient CSS Code
                         </label>
                         <input
                           type="text"
@@ -3437,7 +3437,7 @@ export default function AdminSettings() {
                       <div className="flex items-center gap-3">
                         <div className="flex-1">
                           <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                            Custom Solid Color Hex (কালার কোড লিখুন)
+                            Custom Solid Color Hex Code
                           </label>
                           <input
                             type="text"
@@ -3459,7 +3459,7 @@ export default function AdminSettings() {
                               updateSettings({ headerTitleColorVal: e.target.value });
                             }}
                             className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer"
-                            title="কালার পিকার খুলুন"
+                            title="Open Color Picker"
                           />
                         </div>
                       </div>
@@ -3468,7 +3468,7 @@ export default function AdminSettings() {
 
                   {/* Live Header Text Preview Box */}
                   <div className="p-3 bg-gray-900 rounded-xl flex items-center justify-between border border-gray-800">
-                    <span className="text-[11px] text-gray-400 font-bold">লাইভ হেডার টাইটেল প্রিভিউ:</span>
+                    <span className="text-[11px] text-gray-400 font-bold">Live Header Title Preview:</span>
                     <span
                       className="text-lg font-black"
                       style={
@@ -4048,7 +4048,7 @@ export default function AdminSettings() {
                   <FaImage className="text-green-600" /> 2. Hero Section Settings
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  Homepage-er top Hero Section-er background (Single Image vs Carousel), main headline, subtitles, trust badges ebong features control korun.
+                  Manage homepage Hero Section background (Single Image vs Carousel), main headline, subtitles, animated badges, and action buttons.
                 </p>
               </div>
               <span className="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 self-start sm:self-auto">
@@ -4063,7 +4063,7 @@ export default function AdminSettings() {
                   <FaDesktop className="text-amber-600" /> Hero Background Image Mode
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  User chaile akta single static image o use korte pare (kono animation ba slider chara), athoba multi-image carousel use korte pare.
+                  Choose between a single static image (without slider animations) or a multi-image sliding carousel.
                 </p>
               </div>
 
@@ -4094,7 +4094,7 @@ export default function AdminSettings() {
                   <div>
                     <span className="text-sm font-black text-gray-900 block">Single Static Image</span>
                     <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                      Just akta image static thakbe. Kono slider, next/prev arrow ba animation thakbe na.
+                      Static hero image without slider controls, arrows, or slide transitions.
                     </p>
                   </div>
                 </div>
@@ -4299,7 +4299,7 @@ export default function AdminSettings() {
                     className="mt-0.5 text-green-600 focus:ring-green-500 cursor-pointer"
                   />
                   <div>
-                    <span className="text-sm font-black text-gray-900 block">Multiple Texts (Animation সহ)</span>
+                    <span className="text-sm font-black text-gray-900 block">Multiple Texts (With Animation)</span>
                     <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
                       Carousel slide-er sathe sathe headline o subtitle transition animation soho change hobe.
                     </p>
@@ -4991,10 +4991,10 @@ export default function AdminSettings() {
             <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
-                  <FaBoxes className="text-green-600" /> 3. Product Section Settings (আমের জাত ও মূল্য)
+                  <FaBoxes className="text-green-600" /> 3. Product Section Settings
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  হোমপেজের 'আমের জাত ও মূল্য' সেকশনের হেডার টেক্সট, কার্ড ডিজাইন প্রিসেট, ৮টি প্রডাক্ট ডিসপ্লে মোড এবং 'Show More' ও 'Collapse' বাটন কাস্টমাইজ করুন।
+                  Customize product catalog section title, card design presets, 8-product display mode, and 'Show More' / 'Collapse' buttons.
                 </p>
               </div>
             </div>
@@ -5006,7 +5006,7 @@ export default function AdminSettings() {
                   <FaPaintBrush className="text-amber-600" /> Section Title & Subheading
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  সেকশন হেডিং, টাইটেল আইকন এবং সাব-হেডিং টেক্সট কাস্টমাইজ করুন।
+                  Customize section title, title icon, and subheading description.
                 </p>
               </div>
 
@@ -5883,10 +5883,10 @@ export default function AdminSettings() {
             <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
-                  <FaBookOpen className="text-green-600" /> 4. About Section Settings (আমওয়ালা ভাইয়ার গল্প ও পরিচিতি)
+                  <FaBookOpen className="text-green-600" /> 4. About Section Settings (Story & Statistics)
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  প্রতিষ্ঠাতার ছবি, গল্পের বিবরণ এবং ৩টি ডাইনামিক কাউন্টার কার্ড (রিয়েল ডেটাবেজ সংখ্যা অথবা কাস্টম ইনপুট) পরিচালনা করুন।
+                  Manage founder photo, brand story narrative, and dynamic counter stat cards (real database metrics or custom inputs).
                 </p>
               </div>
 
@@ -5900,7 +5900,7 @@ export default function AdminSettings() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
                 <h4 className="text-sm font-extrabold text-green-950">
-                  প্রতিষ্ঠাতার ছবি (Founder Avatar Image)
+                  Founder Avatar Image
                 </h4>
               </div>
 
@@ -5929,7 +5929,7 @@ export default function AdminSettings() {
                   <div className="flex flex-wrap items-center gap-2.5 justify-center sm:justify-start">
                     <label className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5 shadow">
                       <FaUpload />
-                      <span>ছবি আপলোড করুন (Upload Photo)</span>
+                      <span>Upload Photo</span>
                       <input
                         type="file"
                         accept="image/*"
@@ -5949,7 +5949,7 @@ export default function AdminSettings() {
                         className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer"
                       >
                         <FaUndoAlt className="text-xs" />
-                        <span>ডিফল্ট ছবি রাখুন</span>
+                        <span>Reset Default রাখুন</span>
                       </button>
                     )}
                   </div>
@@ -5985,7 +5985,7 @@ export default function AdminSettings() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-xs font-extrabold text-green-950 mb-1">
-                    সেকশন শিরোনাম (Section Title)
+                    Section Title
                   </label>
                   <input
                     type="text"
@@ -6024,7 +6024,7 @@ export default function AdminSettings() {
                   </h4>
                 </div>
                 <span className="text-xs font-bold text-gray-400 hidden sm:inline">
-                  রিয়েল ডেটাবেজ সংখ্যা অথবা কাস্টম ইনপুট
+                  রিয়েল ডেটাবেজ সংখ্যা অথবা Custom Input Values
                 </span>
               </div>
 
@@ -6514,10 +6514,10 @@ export default function AdminSettings() {
             <div className="border-b border-gray-100 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
-                  <FaStar className="text-amber-500" /> 5. Testimonials & Reviews Settings (গ্রাহকদের মতামত)
+                  <FaStar className="text-amber-500" /> 5. Testimonials & Reviews Settings
                 </h3>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  হোমপেজের রিভিউ ক্যারোসেল নিয়ন্ত্রণ করুন। স্লাইডার অ্যারো দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, নতুন রিভিউ যোগ করুন এবং রিয়েল রিভিউ অপশন বেছে নিন।
+                  হোমপেজের রিভিউ ক্যারোসেল নিয়ন্ত্রণ করুন। স্লাইডার অ্যারো দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, Add New Review এবং রিয়েল রিভিউ অপশন বেছে নিন।
                 </p>
               </div>
 
@@ -6533,7 +6533,7 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-xs font-black text-green-950 uppercase">
-                    সেকশন শিরোনাম ও আইকন (Title & Icon)
+                    Section Title & Icon
                   </h4>
                 </div>
 
@@ -6570,7 +6570,7 @@ export default function AdminSettings() {
                       <div className="absolute top-full left-0 mt-1.5 z-40 bg-white rounded-2xl shadow-2xl border border-gray-300 p-3.5 w-68 space-y-3">
                         <div className="flex items-center justify-between border-b border-gray-100 pb-2">
                           <span className="text-[11px] font-black text-gray-800">
-                            সেকশন আইকন পছন্দ করুন
+                            Choose Section Icon
                           </span>
                           <button
                             type="button"
@@ -6650,7 +6650,7 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-xs font-black text-green-950 uppercase">
-                    রিভিউ প্রদর্শন মোড (Display Mode)
+                    Review Display Mode
                   </h4>
                 </div>
 
@@ -6688,7 +6688,7 @@ export default function AdminSettings() {
                   </div>
                 ) : (
                   <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-[11px] text-green-900 leading-relaxed">
-                    <span className="font-bold">✅ সক্রিয় মোড:</span> নিচের তীর বাটন দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, আর নতুন রিভিউ যোগ করতে "+ নতুন রিভিউ যোগ করুন" বাটনে ক্লিক করুন।
+                    <span className="font-bold">✅ সক্রিয় মোড:</span> নিচের তীর বাটন দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, আর নতুন রিভিউ যোগ করতে "+ Add New Review" বাটনে ক্লিক করুন।
                   </div>
                 )}
               </div>
@@ -6754,7 +6754,7 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2.5">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-sm font-extrabold text-green-950">
-                    কাস্টম রিভিউ তালিকা (Custom Reviews - মোট {testimonialItems.length}টি)
+                    Custom Reviews List (Custom Reviews - মোট {testimonialItems.length}টি)
                   </h4>
                   <span className="px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 font-black text-xs border border-green-200">
                     রিভিউ {currentReviewIndex + 1} / {testimonialItems.length}
@@ -6767,7 +6767,7 @@ export default function AdminSettings() {
                     onClick={() => setIsAddReviewModalOpen(true)}
                     className="px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow cursor-pointer"
                   >
-                    <FaPlus /> <span>নতুন রিভিউ যোগ করুন</span>
+                    <FaPlus /> <span>Add New Review</span>
                   </button>
 
                   <button
@@ -7074,7 +7074,7 @@ export default function AdminSettings() {
                     </h3>
                     {testimonialDisplayMode === "real" && (
                       <p className="text-[11px] text-emerald-400 font-bold">
-                        ✓ ১০০% ভেরিফাইড ক্রেতাদের অভিজ্ঞতা ও সরাসরি রিভিউ
+                        ✓ 100% Verified Customer Experience ও সরাসরি রিভিউ
                       </p>
                     )}
                   </div>
@@ -7145,7 +7145,7 @@ export default function AdminSettings() {
                       <span className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
                       <span className="w-1.5 h-1.5 bg-gray-700 rounded-full" />
                       <span className="text-[10px] text-gray-400 ml-2 font-bold">
-                        অটো-ক্যারোসেল ({testimonialAutoPlayInterval}s)
+                        Auto-carousel ({testimonialAutoPlayInterval}s)
                       </span>
                     </div>
                   </div>
@@ -7181,7 +7181,7 @@ export default function AdminSettings() {
                         </h3>
                         {testimonialDisplayMode === "real" && (
                           <p className="text-[9px] text-emerald-400 font-bold">
-                            ✓ ১০০% ভেরিফাইড ক্রেতাদের অভিজ্ঞতা
+                            ✓ 100% Verified Customer Experience
                           </p>
                         )}
                       </div>
@@ -7265,7 +7265,7 @@ export default function AdminSettings() {
             {/* Header Title Bar */}
             <div className="border-b border-gray-100 pb-4">
               <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
-                <FaBuilding className="text-green-600" /> 6. Footer Settings (ফুটার ও পলিসি সেটিংস)
+                <FaBuilding className="text-green-600" /> 6. Footer Settings
               </h3>
             </div>
 
@@ -7275,7 +7275,7 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-xs font-black text-green-950 uppercase">
-                    ফুটার ব্র্যান্ড ও লোগো (Brand & Logo Mode)
+                    Footer Brand & Logo Settings
                   </h4>
                 </div>
 
@@ -7289,7 +7289,7 @@ export default function AdminSettings() {
                         : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    🔗 Header এর Brand সেটিংস ব্যবহার করুন
+                    🔗 Use Header Brand Settings
                   </button>
                   <button
                     type="button"
@@ -7300,7 +7300,7 @@ export default function AdminSettings() {
                         : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
                     }`}
                   >
-                    🎨 Custom Footer Brand সেটিংস
+                    🎨 Custom Footer Brand Settings
                   </button>
                 </div>
               </div>
@@ -7309,7 +7309,7 @@ export default function AdminSettings() {
                 <div className="p-3.5 bg-green-50 border border-green-200 rounded-xl text-xs text-green-900 flex items-center gap-2.5">
                   <span className="text-base">ℹ️</span>
                   <span>
-                    <strong>হেডার সিঙ্ক সক্রিয়:</strong> ফুটারের লোগো, ব্র্যান্ডের নাম এবং ট্যাগলাইন সরাসরি <strong>1. Header Settings</strong> থেকে সিঙ্ক হয়ে প্রদর্শিত হবে।
+                    <strong>Header Sync Active:</strong> Footer logo, brand name, and tagline are synced from <strong>1. Header Settings</strong>.
                   </span>
                 </div>
               ) : (
@@ -7317,7 +7317,7 @@ export default function AdminSettings() {
                   {/* Display Mode Selection */}
                   <div>
                     <label className="block text-[11px] font-bold text-gray-700 mb-1.5">
-                      ফুটার ব্র্যান্ড ডিসপ্লে স্টাইল:
+                      Footer Brand Display Style:
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <button
@@ -7329,8 +7329,8 @@ export default function AdminSettings() {
                             : "border-gray-200 bg-white hover:bg-gray-50"
                         }`}
                       >
-                        <span className="text-xs font-bold text-green-950 block">লোগো + টেক্সট (Logo & Text)</span>
-                        <span className="text-[11px] text-gray-500">গোলাকার লোগোর পাশে ব্র্যান্ড নাম ও ট্যাগলাইন</span>
+                        <span className="text-xs font-bold text-green-950 block">Logo + Brand Text</span>
+                        <span className="text-[11px] text-gray-500">Circular logo icon with brand name and tagline</span>
                       </button>
 
                       <button
@@ -7342,8 +7342,8 @@ export default function AdminSettings() {
                             : "border-gray-200 bg-white hover:bg-gray-50"
                         }`}
                       >
-                        <span className="text-xs font-bold text-green-950 block">শুধু ব্যানার লোগো (Wide Logo Banner)</span>
-                        <span className="text-[11px] text-gray-500">টেক্সট ছাড়া সম্পূর্ণ ব্যানার বা সাইজ অনুযায়ী লোগো</span>
+                        <span className="text-xs font-bold text-green-950 block">Wide Logo Banner Only</span>
+                        <span className="text-[11px] text-gray-500">Wide banner logo without extra text</span>
                       </button>
                     </div>
                   </div>
@@ -7365,7 +7365,7 @@ export default function AdminSettings() {
                       <div className="flex flex-wrap items-center gap-2 justify-center sm:justify-start">
                         <label className="px-3.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold cursor-pointer transition flex items-center gap-1.5 shadow-xs">
                           <FaUpload className="text-[10px]" />
-                          <span>কাস্টম ফুটার লোগো আপলোড</span>
+                          <span>Upload Custom Footer Logo</span>
                           <input
                             type="file"
                             accept="image/*"
@@ -7379,12 +7379,12 @@ export default function AdminSettings() {
                             onClick={() => setFooterLogo("")}
                             className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-bold transition cursor-pointer"
                           >
-                            লোগো রিসেট
+                            Reset Logo
                           </button>
                         )}
                       </div>
                       <p className="text-[10px] text-gray-400">
-                        সুপারিশ: PNG বা WebP ফরম্যাটের ট্রান্সপারেন্ট লোগো ব্যবহার করুন।
+                        Recommended: Transparent PNG or WebP logo format.
                       </p>
                     </div>
                   </div>
@@ -7394,7 +7394,7 @@ export default function AdminSettings() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                          ব্র্যান্ডের নাম (Brand Name)
+                          Brand Name
                         </label>
                         <input
                           type="text"
@@ -7406,7 +7406,7 @@ export default function AdminSettings() {
                       </div>
                       <div>
                         <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                          ট্যাগলাইন (Tagline / Subtitle)
+                          Tagline / Subtitle
                         </label>
                         <input
                           type="text"
@@ -7426,10 +7426,10 @@ export default function AdminSettings() {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                   <div>
                     <h5 className="text-xs font-black text-green-950 uppercase flex items-center gap-1.5">
-                      <FaPalette className="text-amber-500" /> ব্র্যান্ড টেক্সট কালার কাস্টমাইজেশন (Title Color)
+                      <FaPalette className="text-amber-500" /> Brand Text Color Customization (Title Color)
                     </h5>
                     <p className="text-[11px] text-gray-500">
-                      ফুটার ব্র্যান্ডের টাইটেলের জন্য গ্রেডিয়েন্ট অথবা সলিড কালার পছন্দ করুন।
+                      Choose gradient or solid color for the footer brand title.
                     </p>
                   </div>
 
@@ -7488,7 +7488,7 @@ export default function AdminSettings() {
 
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        অথবা কাস্টম CSS Gradient লিখুন:
+                        Custom CSS Gradient Code:
                       </label>
                       <input
                         type="text"
@@ -7544,7 +7544,7 @@ export default function AdminSettings() {
                           value={footerTitleColorVal.startsWith("#") ? footerTitleColorVal : "#facc15"}
                           onChange={(e) => setFooterTitleColorVal(e.target.value)}
                           className="w-10 h-10 rounded-xl border border-gray-300 p-0.5 cursor-pointer"
-                          title="কালার পিকার খুলুন"
+                          title="Open Color Picker"
                         />
                       </div>
                     </div>
@@ -7553,7 +7553,7 @@ export default function AdminSettings() {
 
                 {/* Live Text Preview Box */}
                 <div className="p-3 bg-gray-900 rounded-xl flex items-center justify-between border border-gray-800">
-                  <span className="text-[11px] text-gray-400 font-bold">লাইভ টাইটেল প্রিভিউ:</span>
+                  <span className="text-[11px] text-gray-400 font-bold">Live Title Preview:</span>
                   <span
                     className="text-lg font-black"
                     style={
@@ -7578,7 +7578,7 @@ export default function AdminSettings() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
                 <h4 className="text-sm font-extrabold text-green-950">
-                  ফুটার পরিচিতি ও বিবরণ টেক্সট (About Paragraph)
+                  Footer About Description Paragraph
                 </h4>
               </div>
               <textarea
@@ -7595,7 +7595,7 @@ export default function AdminSettings() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
                 <h4 className="text-sm font-extrabold text-green-950">
-                  সোশ্যাল মিডিয়া প্রোফাইল লিংক (Social Links)
+                  Social Media Profile Links
                 </h4>
               </div>
 
@@ -7622,7 +7622,7 @@ export default function AdminSettings() {
                           setFooterSocialLinks(updated);
                         }}
                         className="toggle toggle-sm toggle-success"
-                        title="প্রদর্শন চালু/বন্ধ"
+                        title="Toggle Visibility"
                       />
                     </div>
                     <input
@@ -7648,7 +7648,7 @@ export default function AdminSettings() {
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
                   <div className="flex-1 pr-3">
                     <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                      কলাম ২ শিরোনাম
+                      Column 2 Title
                     </label>
                     <input
                       type="text"
@@ -7663,12 +7663,12 @@ export default function AdminSettings() {
                     onClick={() => {
                       setFooterQuickLinks([
                         ...footerQuickLinks,
-                        { name: "নতুন লিংক", href: "#", icon: "🔗", show: true },
+                        { name: "New Link", href: "#", icon: "🔗", show: true },
                       ]);
                     }}
                     className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
                   >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                    <FaPlus className="text-[9px]" /> <span>Add</span>
                   </button>
                 </div>
 
@@ -7700,7 +7700,7 @@ export default function AdminSettings() {
                         {activeFooterIconPicker === `ql_${idx}` && (
                           <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                              <span>আইকন পছন্দ করুন</span>
+                              <span>Select Icon</span>
                               <button
                                 type="button"
                                 onClick={() => setActiveFooterIconPicker(null)}
@@ -7735,13 +7735,13 @@ export default function AdminSettings() {
                                   updated[idx] = { ...updated[idx], icon: e.target.value };
                                   setFooterQuickLinks(updated);
                                 }}
-                                placeholder="কাস্টম ইমোজি/আইকন..."
+                                placeholder="Custom emoji / text..."
                                 className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                               />
                             </div>
                             <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
                               <FaUpload className="text-[9px]" />
-                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <span>Upload Custom Image</span>
                               <input
                                 type="file"
                                 accept="image/*"
@@ -7763,7 +7763,7 @@ export default function AdminSettings() {
                           updated[idx] = { ...updated[idx], name: e.target.value };
                           setFooterQuickLinks(updated);
                         }}
-                        placeholder="লিংকের নাম"
+                        placeholder="Link Name"
                         className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
                       />
                       <input
@@ -7776,7 +7776,7 @@ export default function AdminSettings() {
                         }}
                         placeholder="#home"
                         className="w-24 px-2 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
-                        title="টার্গেট লিংক"
+                        title="Target Link"
                       />
                       <button
                         type="button"
@@ -7784,7 +7784,7 @@ export default function AdminSettings() {
                           setFooterQuickLinks(footerQuickLinks.filter((_, i) => i !== idx));
                         }}
                         className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
-                        title="মুছুন"
+                        title="Delete"
                       >
                         <FaTrash className="text-xs" />
                       </button>
@@ -7798,7 +7798,7 @@ export default function AdminSettings() {
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
                   <div className="flex-1 pr-3">
                     <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                      কলাম ৩ শিরোনাম
+                      Column 3 Title
                     </label>
                     <input
                       type="text"
@@ -7813,12 +7813,12 @@ export default function AdminSettings() {
                     onClick={() => {
                       setFooterMangoList([
                         ...footerMangoList,
-                        { name: "নতুন জাত", href: "#varieties", icon: "🥭", show: true },
+                        { name: "New Variety", href: "#varieties", icon: "🥭", show: true },
                       ]);
                     }}
                     className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
                   >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                    <FaPlus className="text-[9px]" /> <span>Add</span>
                   </button>
                 </div>
 
@@ -7850,7 +7850,7 @@ export default function AdminSettings() {
                         {activeFooterIconPicker === `ml_${idx}` && (
                           <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                              <span>আইকন পছন্দ করুন</span>
+                              <span>Select Icon</span>
                               <button
                                 type="button"
                                 onClick={() => setActiveFooterIconPicker(null)}
@@ -7885,13 +7885,13 @@ export default function AdminSettings() {
                                   updated[idx] = { ...updated[idx], icon: e.target.value };
                                   setFooterMangoList(updated);
                                 }}
-                                placeholder="কাস্টম ইমোজি/আইকন..."
+                                placeholder="Custom emoji / text..."
                                 className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                               />
                             </div>
                             <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
                               <FaUpload className="text-[9px]" />
-                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <span>Upload Custom Image</span>
                               <input
                                 type="file"
                                 accept="image/*"
@@ -7913,7 +7913,7 @@ export default function AdminSettings() {
                           updated[idx] = { ...updated[idx], name: e.target.value };
                           setFooterMangoList(updated);
                         }}
-                        placeholder="জাতের নাম"
+                        placeholder="Variety Name"
                         className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
                       />
                       <input
@@ -7926,7 +7926,7 @@ export default function AdminSettings() {
                         }}
                         placeholder="#varieties"
                         className="w-24 px-2 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
-                        title="টার্গেট লিংক"
+                        title="Target Link"
                       />
                       <button
                         type="button"
@@ -7934,7 +7934,7 @@ export default function AdminSettings() {
                           setFooterMangoList(footerMangoList.filter((_, i) => i !== idx));
                         }}
                         className="w-7 h-7 text-red-500 hover:bg-red-50 rounded-lg flex items-center justify-center transition cursor-pointer"
-                        title="মুছুন"
+                        title="Delete"
                       >
                         <FaTrash className="text-xs" />
                       </button>
@@ -7951,7 +7951,7 @@ export default function AdminSettings() {
                 <div className="flex items-center justify-between border-b border-gray-200 pb-2.5">
                   <div className="flex-1 pr-3">
                     <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                      যোগাযোগ শিরোনাম
+                      Column 4 Title (Contact)
                     </label>
                     <input
                       type="text"
@@ -7966,12 +7966,12 @@ export default function AdminSettings() {
                     onClick={() => {
                       setFooterContactItems([
                         ...footerContactItems,
-                        { text: "নতুন তথ্য", link: "#", icon: "phone", show: true },
+                        { text: "New Info", link: "#", icon: "phone", show: true },
                       ]);
                     }}
                     className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
                   >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                    <FaPlus className="text-[9px]" /> <span>Add</span>
                   </button>
                 </div>
 
@@ -8006,7 +8006,7 @@ export default function AdminSettings() {
                         {activeFooterIconPicker === `ct_${idx}` && (
                           <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-64 space-y-2">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                              <span>যোগাযোগ আইকন পছন্দ করুন</span>
+                              <span>যোগাযোগ Select Icon</span>
                               <button
                                 type="button"
                                 onClick={() => setActiveFooterIconPicker(null)}
@@ -8071,7 +8071,7 @@ export default function AdminSettings() {
                             </div>
                             <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
                               <FaUpload className="text-[9px]" />
-                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <span>Upload Custom Image</span>
                               <input
                                 type="file"
                                 accept="image/*"
@@ -8139,7 +8139,7 @@ export default function AdminSettings() {
                       {activeFooterIconPicker === "hours" && (
                         <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-56 space-y-2">
                           <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                            <span>সময়সূচি আইকন</span>
+                            <span>Opening Hours Icon</span>
                             <button
                               type="button"
                               onClick={() => setActiveFooterIconPicker(null)}
@@ -8188,12 +8188,12 @@ export default function AdminSettings() {
                     onClick={() => {
                       setFooterHoursItems([
                         ...footerHoursItems,
-                        { text: "নতুন সময়সূচি", show: true },
+                        { text: "New Schedule", show: true },
                       ]);
                     }}
                     className="px-2.5 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-[11px] font-bold transition flex items-center gap-1 shadow-xs cursor-pointer"
                   >
-                    <FaPlus className="text-[9px]" /> <span>যোগ করুন</span>
+                    <FaPlus className="text-[9px]" /> <span>Add</span>
                   </button>
                 </div>
 
@@ -8240,7 +8240,7 @@ export default function AdminSettings() {
                         type="button"
                         onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "payment" ? null : "payment")}
                         className="w-8 h-8 rounded-lg bg-white hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer shadow-2xs font-bold shrink-0"
-                        title="পেমেন্ট আইকন পরিবর্তন করুন"
+                        title="Payment Icon পরিবর্তন করুন"
                       >
                         {footerPaymentIcon || "💳"}
                       </button>
@@ -8248,7 +8248,7 @@ export default function AdminSettings() {
                       {activeFooterIconPicker === "payment" && (
                         <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-56 space-y-2">
                           <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                            <span>পেমেন্ট আইকন</span>
+                            <span>Payment Icon</span>
                             <button
                               type="button"
                               onClick={() => setActiveFooterIconPicker(null)}
@@ -8297,12 +8297,12 @@ export default function AdminSettings() {
                     onClick={() => {
                       setFooterPaymentMethods([
                         ...footerPaymentMethods,
-                        { name: "নতুন মেথড", bgColor: "bg-blue-600", icon: "", show: true },
+                        { name: "New Method", bgColor: "bg-blue-600", icon: "", show: true },
                       ]);
                     }}
                     className="px-3 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer self-start sm:self-auto"
                   >
-                    <FaPlus className="text-[10px]" /> <span>নতুন মেথড যোগ করুন</span>
+                    <FaPlus className="text-[10px]" /> <span>New Method Add</span>
                   </button>
                 </div>
 
@@ -8322,7 +8322,7 @@ export default function AdminSettings() {
                             setFooterPaymentMethods(footerPaymentMethods.filter((_, i) => i !== idx));
                           }}
                           className="text-red-500 hover:text-red-700 text-xs"
-                          title="মুছুন"
+                          title="Delete"
                         >
                           <FaTrash />
                         </button>
@@ -8376,12 +8376,12 @@ export default function AdminSettings() {
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-green-600" />
                     <h5 className="text-xs font-black text-green-950 uppercase">
-                      রিটার্ন পলিসি ব্যাজ (Return Policy Banner)
+                      Return Policy Banner
                     </h5>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-xs font-bold text-gray-500">
-                      {footerReturnPolicyShow ? "প্রদর্শন সক্রিয়" : "লুকানো"}
+                      {footerReturnPolicyShow ? "Visible" : "Hidden"}
                     </span>
                     <input
                       type="checkbox"
@@ -8412,7 +8412,7 @@ export default function AdminSettings() {
                         {activeFooterIconPicker === "return" && (
                           <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                              <span>রিটার্ন পলিসি আইকন</span>
+                              <span>Return Policy Icon</span>
                               <button
                                 type="button"
                                 onClick={() => setActiveFooterIconPicker(null)}
@@ -8441,7 +8441,7 @@ export default function AdminSettings() {
                                 type="text"
                                 value={footerReturnPolicyIcon}
                                 onChange={(e) => setFooterReturnPolicyIcon(e.target.value)}
-                                placeholder="কাস্টম ইমোজি/আইকন লিখুন..."
+                                placeholder="Custom emoji / text..."
                                 className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                               />
                             </div>
@@ -8451,7 +8451,7 @@ export default function AdminSettings() {
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        পলিসি টেক্সট
+                        Policy Text
                       </label>
                       <input
                         type="text"
@@ -8463,7 +8463,7 @@ export default function AdminSettings() {
                     </div>
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        পলিসি লিংক (ঐচ্ছিক)
+                        Policy Link (Optional)
                       </label>
                       <input
                         type="text"
@@ -8486,10 +8486,10 @@ export default function AdminSettings() {
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-amber-200/60 pb-2.5">
                 <div>
                   <h4 className="text-xs font-black text-green-950 uppercase flex items-center gap-1.5">
-                    <FaMedal className="text-yellow-600" /> ফিচার হাইলাইটস বার (Feature Highlights Bar)
+                    <FaMedal className="text-yellow-600" /> Feature Highlights Bar
                   </h4>
                   <p className="text-[11px] text-gray-500">
-                    ফুটারের ৪টি প্রধান সুবিধা (যেমন: সারাদেশ ডেলিভারি, গুনগত মান, সাপোর্ট ইত্যাদি) টাইটেল, বিবরণ ও আইকন কাস্টমাইজ করুন।
+                    Customize the 4 key service highlights (e.g. Nationwide Delivery, Premium Quality, 24/7 Support).
                   </p>
                 </div>
                 <button
@@ -8497,12 +8497,12 @@ export default function AdminSettings() {
                   onClick={() => {
                     setFooterFeatures([
                       ...footerFeatures,
-                      { icon: "star", title: "নতুন সুবিধা", desc: "বিবরণ লিখুন", show: true },
+                      { icon: "star", title: "New Feature", desc: "বিবরণ লিখুন", show: true },
                     ]);
                   }}
                   className="px-3 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer self-start sm:self-auto"
                 >
-                  <FaPlus className="text-[10px]" /> <span>নতুন ফিচার যোগ করুন</span>
+                  <FaPlus className="text-[10px]" /> <span>Add New Feature</span>
                 </button>
               </div>
 
@@ -8524,7 +8524,7 @@ export default function AdminSettings() {
                             setFooterFeatures(updated);
                           }}
                           className="toggle toggle-xs toggle-success"
-                          title="প্রদর্শন চালু/বন্ধ"
+                          title="Toggle Visibility"
                         />
                         {footerFeatures.length > 1 && (
                           <button
@@ -8533,7 +8533,7 @@ export default function AdminSettings() {
                               setFooterFeatures(footerFeatures.filter((_, i) => i !== idx));
                             }}
                             className="text-red-500 hover:text-red-700 text-xs cursor-pointer"
-                            title="মুছুন"
+                            title="Delete"
                           >
                             <FaTrash />
                           </button>
@@ -8568,7 +8568,7 @@ export default function AdminSettings() {
                         {activeFooterIconPicker === `feat_${idx}` && (
                           <div className="absolute top-11 left-0 z-50 p-3 bg-white rounded-2xl shadow-2xl border border-gray-200 w-64 space-y-2.5">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                              <span>ফিচার আইকন নির্বাচন</span>
+                              <span>Select Feature Icon</span>
                               <button
                                 type="button"
                                 onClick={() => setActiveFooterIconPicker(null)}
@@ -8635,7 +8635,7 @@ export default function AdminSettings() {
                             </div>
                             <label className="flex items-center justify-center gap-1.5 w-full py-1.5 bg-green-50 hover:bg-green-100 text-green-800 border border-green-300 rounded-xl text-[10px] font-bold transition cursor-pointer">
                               <FaUpload className="text-[9px]" />
-                              <span>কাস্টম ইমেজ আপলোড</span>
+                              <span>Upload Custom Image</span>
                               <input
                                 type="file"
                                 accept="image/*"
@@ -8652,7 +8652,7 @@ export default function AdminSettings() {
 
                       <div className="flex-1 min-w-0">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase">
-                          ফিচার শিরোনাম
+                          Feature Title
                         </label>
                         <input
                           type="text"
@@ -8670,7 +8670,7 @@ export default function AdminSettings() {
 
                     <div>
                       <label className="block text-[10px] font-bold text-gray-500 uppercase mb-0.5">
-                        সাবটাইটেল / বিবরণ
+                        Subtitle / Description
                       </label>
                       <input
                         type="text"
@@ -8695,7 +8695,7 @@ export default function AdminSettings() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
                 <h4 className="text-sm font-extrabold text-green-950">
-                  কপিরাইট, পলিসি ও ডেভেলপার ক্রেডিট সেটিংস
+                  Copyright & Policy Links Settings
                 </h4>
               </div>
 
@@ -8704,7 +8704,7 @@ export default function AdminSettings() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    কপিরাইট টেক্সট
+                    Copyright Text
                   </label>
                   <input
                     type="text"
@@ -8714,13 +8714,13 @@ export default function AdminSettings() {
                     className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
                   />
                   <p className="text-[10px] text-gray-400 mt-1">
-                    ওয়েবসাইটে স্বয়ংক্রিয়ভাবে © {new Date().getFullYear()} এর সাথে যুক্ত হয়ে প্রদর্শিত হবে।
+                    Automatically rendered on the website with © {new Date().getFullYear()}.
                   </p>
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-xs font-bold text-gray-700">
-                    পলিসি লিংকসমূহ (Privacy Policy & Terms)
+                    Policy Links (Privacy Policy & Terms of Service)
                   </label>
                   <div className="grid grid-cols-2 gap-2">
                     <input
@@ -8761,7 +8761,7 @@ export default function AdminSettings() {
             </div>
 
             {/* ========================================================================= */}
-            {/* Live Footer Section Preview (লাইভ ফুটার প্রিভিউ - Desktop & Mobile) */}
+            {/* Live Footer Section Preview (Desktop & Mobile) */}
             {/* ========================================================================= */}
             <div className="p-5 sm:p-6 rounded-3xl bg-gray-950 text-white space-y-4 shadow-xl border border-gray-800">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-gray-800 pb-3">
@@ -8769,13 +8769,13 @@ export default function AdminSettings() {
                   <span className="w-3 h-3 rounded-full bg-emerald-400 animate-pulse" />
                   <div>
                     <h4 className="text-sm font-black text-white flex items-center gap-2">
-                      Live Footer Section Preview (লাইভ ফুটার প্রিভিউ)
+                      Live Footer Section Preview
                       <span className="px-2 py-0.5 rounded text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                         {footerPreviewDevice === "desktop" ? "Desktop 1200px" : "Mobile 360px"}
                       </span>
                     </h4>
                     <p className="text-xs text-gray-400">
-                      ওয়েবসাইটের ফুটার গ্রাহকদের সামনে ঠিক কেমন দেখাবে তা রিয়েল-টাইমে দেখুন
+                      Real-time interactive rendering of customer storefront footer
                     </p>
                   </div>
                 </div>
