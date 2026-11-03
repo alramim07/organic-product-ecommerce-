@@ -576,8 +576,9 @@ export default function AdminSettings() {
   const [newRevName, setNewRevName] = useState("");
   const [newRevLocation, setNewRevLocation] = useState("");
   const [newRevRating, setNewRevRating] = useState(5);
-  const [newRevAvatar, setNewRevAvatar] = useState("😊");
+  const [newRevAvatar, setNewRevAvatar] = useState("");
   const [newRevComment, setNewRevComment] = useState("");
+  const [newRevProductId, setNewRevProductId] = useState("");
 
   // Footer Section Settings state
   const [footerBrandMode, setFooterBrandMode] = useState(
@@ -1080,7 +1081,7 @@ export default function AdminSettings() {
     setCurrentReviewIndex((prev) => Math.max(0, Math.min(prev, updated.length - 1)));
     Swal.fire({
       icon: "success",
-      title: "রিভিউ ডিলিট হয়েছে",
+      title: "Review Deleted",
       timer: 1500,
       showConfirmButton: false,
     });
@@ -1091,17 +1092,23 @@ export default function AdminSettings() {
     if (!newRevName.trim() || !newRevComment.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "নাম ও বক্তব্য আবশ্যক",
-        text: "দয়া করে গ্রাহকের নাম ও রিভিউ বক্তব্য পূরণ করুন।",
+        title: "Required Fields Missing",
+        text: "Please provide both customer name and review statement.",
       });
       return;
     }
+    const selectedProd = (products || []).find(
+      (p) => String(p._id || p.id || p.slug) === String(newRevProductId)
+    );
     const newReview = {
       name: newRevName.trim(),
-      location: newRevLocation.trim() || "বাংলাদেশ",
+      location: newRevLocation.trim() || "Bangladesh",
       comment: newRevComment.trim(),
       rating: Number(newRevRating) || 5,
-      avatar: newRevAvatar || "😊",
+      avatar: selectedProd?.image || newRevAvatar || "",
+      productId: newRevProductId || "",
+      productName: selectedProd ? (selectedProd.name_bn || selectedProd.name) : "",
+      productImage: selectedProd?.image || "",
     };
     const updated = [...testimonialItems, newReview];
     setTestimonialItems(updated);
@@ -1110,12 +1117,13 @@ export default function AdminSettings() {
     setNewRevName("");
     setNewRevLocation("");
     setNewRevRating(5);
-    setNewRevAvatar("😊");
+    setNewRevAvatar("");
     setNewRevComment("");
+    setNewRevProductId("");
     Swal.fire({
       icon: "success",
-      title: "নতুন রিভিউ যুক্ত হয়েছে!",
-      text: `রিভিউ #${updated.length} সফলভাবে তালিকায় যোগ করা হয়েছে।`,
+      title: "Review Added Successfully!",
+      text: `Review #${updated.length} added to the list.`,
       timer: 1800,
       showConfirmButton: false,
     });
@@ -6542,7 +6550,7 @@ export default function AdminSettings() {
 
         
           {/* ========================================================================= */}
-          {/* Section 5: Testimonials & Reviews Settings (গ্রাহকদের মতামত) */}
+          {/* Section 5: Testimonials & Reviews Settings */}
           {/* ========================================================================= */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-8">
             {/* Header Title Bar */}
@@ -6551,9 +6559,6 @@ export default function AdminSettings() {
                 <h3 className="text-base font-extrabold text-green-950 flex items-center gap-2">
                   <FaStar className="text-amber-500" /> 5. Testimonials & Reviews Settings
                 </h3>
-                <p className="text-xs text-gray-500 mt-0.5">
-                  হোমপেজের রিভিউ ক্যারোসেল নিয়ন্ত্রণ করুন। স্লাইডার অ্যারো দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, Add New Review এবং রিয়েল রিভিউ অপশন বেছে নিন।
-                </p>
               </div>
 
               <span className="px-3 py-1 bg-amber-50 text-amber-800 text-xs font-black rounded-xl border border-amber-200 self-start sm:self-auto">
@@ -6576,7 +6581,7 @@ export default function AdminSettings() {
                   {/* Icon Selector Button with Popover */}
                   <div className="sm:col-span-5 relative">
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                      সেকশন আইকন (Icon / Image)
+                      Section Icon (Icon / Image)
                     </label>
                     <button
                       type="button"
@@ -6595,7 +6600,7 @@ export default function AdminSettings() {
                         ) : (
                           <span className="text-base">{testimonialSectionIcon || "🍃"}</span>
                         )}
-                        <span className="text-gray-700 font-bold text-[11px]">আইকন সিলেক্ট</span>
+                        <span className="text-gray-700 font-bold text-[11px]">Select Icon</span>
                       </span>
                       <FaSlidersH className="text-gray-400 text-xs shrink-0" />
                     </button>
@@ -6641,7 +6646,7 @@ export default function AdminSettings() {
                             type="text"
                             value={testimonialSectionIcon}
                             onChange={(e) => setTestimonialSectionIcon(e.target.value)}
-                            placeholder="যেমন: 🍃"
+                            placeholder="e.g. 🍃"
                             className="w-full px-2.5 py-1.5 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-green-500 text-center font-bold"
                           />
                         </div>
@@ -6649,7 +6654,7 @@ export default function AdminSettings() {
                         {/* Upload Custom Icon */}
                         <div className="pt-1 border-t border-gray-100">
                           <label className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-yellow-100 text-gray-700 text-[11px] font-bold rounded-lg cursor-pointer transition">
-                            <FaUpload className="text-[10px]" /> <span>ছবি আপলোড করুন (Icon)</span>
+                            <FaUpload className="text-[10px]" /> <span>Upload Icon</span>
                             <input
                               type="file"
                               accept="image/*"
@@ -6667,13 +6672,13 @@ export default function AdminSettings() {
                   {/* Section Title Input */}
                   <div className="sm:col-span-7">
                     <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                      সেকশন শিরোনাম (Title)
+                      Section Title
                     </label>
                     <input
                       type="text"
                       value={testimonialSectionTitle}
                       onChange={(e) => setTestimonialSectionTitle(e.target.value)}
-                      placeholder="গ্রাহকদের মতামত"
+                      placeholder="Customer Testimonials"
                       className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                     />
                   </div>
@@ -6699,8 +6704,8 @@ export default function AdminSettings() {
                         : "text-gray-700 hover:text-green-900"
                     }`}
                   >
-                    <span>⚡ কাস্টম রিভিউ</span>
-                    <span className="text-[10px] font-normal opacity-90">অটো ক্যারোসেল মোড</span>
+                    <span>⚡ Custom Reviews</span>
+                    <span className="text-[10px] font-normal opacity-90">Auto Carousel Mode</span>
                   </button>
 
                   <button
@@ -6712,18 +6717,18 @@ export default function AdminSettings() {
                         : "text-gray-700 hover:text-green-900"
                     }`}
                   >
-                    <span>🌟 রিয়েল রিভিউ</span>
-                    <span className="text-[10px] font-normal opacity-90">ভেরিফাইড কাস্টমার</span>
+                    <span>🌟 Real Reviews</span>
+                    <span className="text-[10px] font-normal opacity-90">Verified Customers</span>
                   </button>
                 </div>
 
                 {testimonialDisplayMode === "real" ? (
                   <div className="p-2.5 rounded-xl bg-blue-50 border border-blue-200 text-[11px] text-blue-900 leading-relaxed">
-                    <span className="font-bold">ℹ️ তথ্য:</span> রিয়েল রিভিউ সাবমিশন ফিচারটি পরবর্তীতে চালু করা হবে। বর্তমানে অপশনটি সিলেক্টেড রাখলে কাস্টমার ভেরিফাইড রিভিউ মোড ও ব্যাজ প্রদর্শিত হবে।
+                    <span className="font-bold">ℹ️ Info:</span> Real reviews are loaded dynamically from verified customer reviews for each product.
                   </div>
                 ) : (
                   <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-[11px] text-green-900 leading-relaxed">
-                    <span className="font-bold">✅ সক্রিয় মোড:</span> নিচের তীর বাটন দিয়ে প্রতিটি রিভিউ দেখুন ও এডিট করুন, আর নতুন রিভিউ যোগ করতে "+ Add New Review" বাটনে ক্লিক করুন।
+                    <span className="font-bold">✅ Active Mode:</span> Use the arrow buttons below to view and edit each review, or click "+ Add New Review" to add a new review.
                   </div>
                 )}
               </div>
@@ -6735,19 +6740,19 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-xs font-black text-green-950 uppercase">
-                    অটো ক্যারোসেল সেটিংস (Auto Carousel Controls)
+                    Auto Carousel Controls
                   </h4>
                 </div>
                 <span className="text-xs font-bold text-gray-500">
-                  {testimonialAutoPlay ? "ক্যারোসেল সক্রিয়" : "ক্যারোসেল নিষ্ক্রিয়"}
+                  {testimonialAutoPlay ? "Carousel Enabled" : "Carousel Disabled"}
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200">
                   <div>
-                    <span className="text-xs font-bold text-gray-800 block">অটো-প্লে (Auto Play)</span>
-                    <span className="text-[11px] text-gray-400">নির্ধারিত সময় পর পর রিভিউ পরিবর্তন হবে</span>
+                    <span className="text-xs font-bold text-gray-800 block">Auto Play</span>
+                    <span className="text-[11px] text-gray-400">Reviews automatically rotate after set interval</span>
                   </div>
                   <input
                     type="checkbox"
@@ -6759,8 +6764,8 @@ export default function AdminSettings() {
 
                 <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-gray-200">
                   <div>
-                    <span className="text-xs font-bold text-gray-800 block">পরিবর্তনের গতি (Speed)</span>
-                    <span className="text-[11px] text-gray-400">প্রতিটি রিভিউ প্রদর্শনের সময়কাল</span>
+                    <span className="text-xs font-bold text-gray-800 block">Rotation Speed (s)</span>
+                    <span className="text-[11px] text-gray-400">Display duration per review</span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     {[3, 4, 5, 6].map((sec) => (
@@ -6789,10 +6794,10 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2.5">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-sm font-extrabold text-green-950">
-                    Custom Reviews List (Custom Reviews - মোট {testimonialItems.length}টি)
+                    Custom Reviews List (Total: {testimonialItems.length})
                   </h4>
                   <span className="px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 font-black text-xs border border-green-200">
-                    রিভিউ {currentReviewIndex + 1} / {testimonialItems.length}
+                    Review {currentReviewIndex + 1} / {testimonialItems.length}
                   </span>
                 </div>
 
@@ -6809,7 +6814,7 @@ export default function AdminSettings() {
                     type="button"
                     onClick={handleDeleteCurrentReview}
                     disabled={testimonialItems.length <= 1}
-                    title="এই রিভিউটি ডিলিট করুন"
+                    title="Delete this review"
                     className={`px-3 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1 border cursor-pointer ${
                       testimonialItems.length <= 1
                         ? "border-gray-200 text-gray-300 bg-gray-50 cursor-not-allowed"
@@ -6817,7 +6822,7 @@ export default function AdminSettings() {
                     }`}
                   >
                     <FaTrash className="text-[11px]" />
-                    <span>ডিলিট</span>
+                    <span>Delete</span>
                   </button>
                 </div>
               </div>
@@ -6852,11 +6857,18 @@ export default function AdminSettings() {
                 {(() => {
                   const activeRev =
                     testimonialItems[currentReviewIndex] || testimonialItems[0] || {};
-                  const isImage =
-                    activeRev.avatar &&
+                  const selectedProduct = (products || []).find(
+                    (p) => String(p._id || p.id || p.slug) === String(activeRev.productId)
+                  );
+                  const productThumb =
+                    selectedProduct?.image ||
+                    activeRev.productImage ||
+                    (activeRev.avatar &&
                     (activeRev.avatar.startsWith("data:") ||
                       activeRev.avatar.startsWith("http") ||
-                      activeRev.avatar.startsWith("/"));
+                      activeRev.avatar.startsWith("/"))
+                      ? activeRev.avatar
+                      : "");
 
                   return (
                     <div className="p-5 sm:p-6 rounded-3xl bg-yellow-50/70 border-2 border-yellow-300 shadow-sm space-y-4">
@@ -6867,7 +6879,7 @@ export default function AdminSettings() {
                             {currentReviewIndex + 1}
                           </span>
                           <span className="text-xs font-black text-green-950">
-                            রিভিউ #{currentReviewIndex + 1} এডিট করছেন — {activeRev.name || "গ্রাহক"}
+                            Editing Review #{currentReviewIndex + 1} — {activeRev.name || "Customer"}
                           </span>
                         </div>
 
@@ -6883,7 +6895,7 @@ export default function AdminSettings() {
                                   ? "w-6 bg-green-700 shadow"
                                   : "w-2 bg-gray-300 hover:bg-gray-400"
                               }`}
-                              title={`রিভিউ #${dotIdx + 1}`}
+                              title={`Review #${dotIdx + 1}`}
                             />
                           ))}
                         </div>
@@ -6891,69 +6903,80 @@ export default function AdminSettings() {
 
                       {/* Fields Grid */}
                       <div className="grid grid-cols-1 sm:grid-cols-12 gap-5 items-start">
-                        {/* Avatar Column */}
-                        <div className="sm:col-span-3 space-y-2.5 text-center sm:text-left">
+                        {/* Selected Product Thumbnail Column */}
+                        <div className="sm:col-span-3 space-y-2.5 text-center sm:text-left flex flex-col items-center sm:items-start">
                           <label className="block text-[11px] font-bold text-gray-700">
-                            অবতার / ছবি
+                            Product Thumbnail
                           </label>
-                          <div className="flex items-center gap-2 justify-center sm:justify-start">
-                            <div className="w-14 h-14 rounded-full bg-emerald-200 flex items-center justify-center text-2xl shadow-inner shrink-0 overflow-hidden border-2 border-emerald-300">
-                              {isImage ? (
-                                <img
-                                  src={activeRev.avatar}
-                                  alt={activeRev.name}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <span>{activeRev.avatar || "😊"}</span>
-                              )}
-                            </div>
-
-                            <label className="px-3 py-1.5 bg-white border border-gray-300 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-bold cursor-pointer transition flex items-center gap-1.5 shadow-xs">
-                              <FaUpload className="text-[10px]" />
-                              <span>ছবি আপলোড</span>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) =>
-                                  handleTestimonialAvatarUpload(
-                                    currentReviewIndex,
-                                    e.target.files?.[0]
-                                  )
-                                }
-                                className="hidden"
+                          <div className="w-20 h-20 rounded-2xl bg-white border-2 border-amber-300 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
+                            {productThumb ? (
+                              <img
+                                src={productThumb}
+                                alt={activeRev.productName || "Product"}
+                                className="w-full h-full object-cover"
                               />
-                            </label>
-                          </div>
-
-                          <div className="flex items-center gap-1.5 flex-wrap justify-center sm:justify-start pt-1">
-                            {["😊", "🥭", "🌿", "🌟", "👑", "💚", "🍃", "👍", "❤️", "🏆"].map(
-                              (em) => (
-                                <button
-                                  key={em}
-                                  type="button"
-                                  onClick={() =>
-                                    handleUpdateTestimonial(currentReviewIndex, "avatar", em)
-                                  }
-                                  className={`w-7 h-7 rounded-lg text-sm transition cursor-pointer flex items-center justify-center ${
-                                    activeRev.avatar === em
-                                      ? "bg-green-600 text-white shadow"
-                                      : "bg-white border border-gray-200 hover:bg-green-50"
-                                  }`}
-                                >
-                                  {em}
-                                </button>
-                              )
+                            ) : (
+                              <div className="text-center p-2">
+                                <span className="text-2xl block">🥭</span>
+                                <span className="text-[10px] text-gray-400 font-bold block mt-0.5">No Product</span>
+                              </div>
                             )}
                           </div>
+                          {selectedProduct && (
+                            <span className="text-[10px] font-extrabold text-green-800 bg-green-100 border border-green-200 px-2 py-0.5 rounded-lg line-clamp-1 max-w-[140px] text-center">
+                              {selectedProduct.name_bn || selectedProduct.name}
+                            </span>
+                          )}
                         </div>
 
-                        {/* Name, Location, Rating, Comment Column */}
+                        {/* Product Selector, Name, Location, Rating, Comment Column */}
                         <div className="sm:col-span-9 space-y-3.5">
+                          {/* Target Product Selector Dropdown */}
+                          <div>
+                            <label className="block text-[11px] font-bold text-gray-700 mb-1">
+                              Target Product (পণ্য নির্বাচন করুন) <span className="text-red-500">*</span>
+                            </label>
+                            <select
+                              value={activeRev.productId || ""}
+                              onChange={(e) => {
+                                const pId = e.target.value;
+                                const sel = (products || []).find(
+                                  (p) => String(p._id || p.id || p.slug) === String(pId)
+                                );
+                                handleUpdateTestimonial(currentReviewIndex, "productId", pId);
+                                if (sel) {
+                                  handleUpdateTestimonial(
+                                    currentReviewIndex,
+                                    "productName",
+                                    sel.name_bn || sel.name
+                                  );
+                                  handleUpdateTestimonial(
+                                    currentReviewIndex,
+                                    "productImage",
+                                    sel.image || ""
+                                  );
+                                  handleUpdateTestimonial(
+                                    currentReviewIndex,
+                                    "avatar",
+                                    sel.image || ""
+                                  );
+                                }
+                              }}
+                              className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-800 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
+                            >
+                              <option value="">-- Choose a Product --</option>
+                              {(products || []).map((p) => (
+                                <option key={p._id || p.id} value={p._id || p.id || p.slug}>
+                                  {p.name_bn || p.name} {p.name_en ? `(${p.name_en})` : ""}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div>
                               <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                                গ্রাহকের নাম <span className="text-red-500">*</span>
+                                Customer Name <span className="text-red-500">*</span>
                               </label>
                               <input
                                 type="text"
@@ -6965,14 +6988,14 @@ export default function AdminSettings() {
                                     e.target.value
                                   )
                                 }
-                                placeholder="যেমন: মিজানুর রহমান"
+                                placeholder="e.g. Mizanur Rahman"
                                 className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                               />
                             </div>
 
                             <div>
                               <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                                ঠিকানা / শহর
+                                Address / City
                               </label>
                               <input
                                 type="text"
@@ -6984,14 +7007,14 @@ export default function AdminSettings() {
                                     e.target.value
                                   )
                                 }
-                                placeholder="যেমন: ঢাকা"
+                                placeholder="e.g. Dhaka"
                                 className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                               />
                             </div>
 
                             <div>
                               <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                                স্টার রেটিং
+                                Star Rating
                               </label>
                               <div className="flex items-center gap-1 py-1.5">
                                 {[1, 2, 3, 4, 5].map((st) => (
@@ -7021,7 +7044,7 @@ export default function AdminSettings() {
 
                           <div>
                             <label className="block text-[11px] font-bold text-gray-700 mb-1">
-                              মতামত / রিভিউ বক্তব্য <span className="text-red-500">*</span>
+                              Review / Feedback Statement <span className="text-red-500">*</span>
                             </label>
                             <textarea
                               rows={3}
@@ -7033,7 +7056,7 @@ export default function AdminSettings() {
                                   e.target.value
                                 )
                               }
-                              placeholder="গ্রাহকের প্রশংসামূলক বক্তব্য লিখুন..."
+                              placeholder="Write customer review statement..."
                               className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500 shadow-2xs"
                             />
                           </div>
@@ -9489,8 +9512,8 @@ export default function AdminSettings() {
                   <FaStar />
                 </div>
                 <div>
-                  <h3 className="text-lg font-black text-gray-900">নতুন গ্রাহক রিভিউ যোগ করুন</h3>
-                  <p className="text-xs text-gray-400">গ্রাহকের প্রশংসামূলক বক্তব্য ও রেটিং প্রদান করুন</p>
+                  <h3 className="text-lg font-black text-gray-900">Add New Custom Review</h3>
+                  <p className="text-xs text-gray-400">Add customer feedback, rating, and select target product</p>
                 </div>
               </div>
               <button
@@ -9504,17 +9527,43 @@ export default function AdminSettings() {
 
             {/* Modal Form */}
             <form onSubmit={handleCreateReviewSubmit} className="mt-5 space-y-4">
+              {/* Field 0: Target Product Selection */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Target Product (পণ্য নির্বাচন করুন) <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={newRevProductId}
+                  onChange={(e) => {
+                    const pId = e.target.value;
+                    const sel = (products || []).find((p) => String(p._id || p.id || p.slug) === String(pId));
+                    setNewRevProductId(pId);
+                    if (sel?.image) {
+                      setNewRevAvatar(sel.image);
+                    }
+                  }}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
+                >
+                  <option value="">-- Choose a Product --</option>
+                  {(products || []).map((p) => (
+                    <option key={p._id || p.id} value={p._id || p.id || p.slug}>
+                      {p.name_bn || p.name} {p.name_en ? `(${p.name_en})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               {/* Field 1: Name & Location */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    গ্রাহকের নাম <span className="text-red-500">*</span>
+                    Customer Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={newRevName}
                     onChange={(e) => setNewRevName(e.target.value)}
-                    placeholder="যেমন: তানভীর আহমেদ"
+                    placeholder="e.g. Tanvir Ahmed"
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-green-500"
                     required
                   />
@@ -9522,13 +9571,13 @@ export default function AdminSettings() {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    ঠিকানা / শহর
+                    Address / City
                   </label>
                   <input
                     type="text"
                     value={newRevLocation}
                     onChange={(e) => setNewRevLocation(e.target.value)}
-                    placeholder="যেমন: ধানমন্ডি, ঢাকা"
+                    placeholder="e.g. Dhanmondi, Dhaka"
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -9537,7 +9586,7 @@ export default function AdminSettings() {
               {/* Field 2: Rating Stars */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  রেটিং (স্টার)
+                  Star Rating
                 </label>
                 <div className="flex items-center gap-2 p-2.5 bg-gray-50 border border-gray-200 rounded-xl">
                   {[1, 2, 3, 4, 5].map((st) => (
@@ -9555,72 +9604,55 @@ export default function AdminSettings() {
                     </button>
                   ))}
                   <span className="text-xs font-bold text-gray-700 ml-2">
-                    ({newRevRating} স্টার)
+                    ({newRevRating} Stars)
                   </span>
                 </div>
               </div>
 
-              {/* Field 3: Avatar / Emoji / Image */}
+              {/* Field 3: Product Thumbnail Display */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  অবতার / ছবি
+                  Product Thumbnail
                 </label>
-                <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
-                  <div className="w-12 h-12 rounded-full bg-emerald-200 flex items-center justify-center text-2xl shadow-inner shrink-0 overflow-hidden border border-emerald-300">
-                    {newRevAvatar &&
-                    (newRevAvatar.startsWith("data:") ||
-                      newRevAvatar.startsWith("http") ||
-                      newRevAvatar.startsWith("/")) ? (
-                      <img
-                        src={newRevAvatar}
-                        alt="Avatar"
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span>{newRevAvatar || "😊"}</span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {["😊", "🥭", "🌿", "🌟", "👑", "💚", "🍃", "👍", "❤️", "🏆"].map((em) => (
-                      <button
-                        key={em}
-                        type="button"
-                        onClick={() => setNewRevAvatar(em)}
-                        className={`w-7 h-7 rounded-lg text-sm transition cursor-pointer flex items-center justify-center ${
-                          newRevAvatar === em
-                            ? "bg-green-600 text-white shadow"
-                            : "bg-white border border-gray-200 hover:bg-green-50"
-                        }`}
-                      >
-                        {em}
-                      </button>
-                    ))}
-
-                    <label className="px-2.5 py-1.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 rounded-lg text-[10px] font-bold cursor-pointer transition flex items-center gap-1 shadow-2xs">
-                      <FaUpload />
-                      <span>ছবি</span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleModalAvatarUpload(e.target.files?.[0])}
-                        className="hidden"
-                      />
-                    </label>
-                  </div>
-                </div>
+                {(() => {
+                  const selProd = (products || []).find((p) => String(p._id || p.id || p.slug) === String(newRevProductId));
+                  const thumb = selProd?.image || newRevAvatar;
+                  return (
+                    <div className="flex items-center gap-3 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                      <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-xs shrink-0 overflow-hidden border-2 border-amber-300">
+                        {thumb ? (
+                          <img
+                            src={thumb}
+                            alt="Product"
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <span className="text-2xl">🥭</span>
+                        )}
+                      </div>
+                      <div className="text-xs">
+                        <span className="font-bold text-gray-800 block">
+                          {selProd ? (selProd.name_bn || selProd.name) : "No Product Selected"}
+                        </span>
+                        <span className="text-[11px] text-gray-500">
+                          {selProd ? "Product thumbnail automatically linked" : "Please choose a product from the list above"}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Field 4: Comment Quote */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  মতামত / বক্তব্য <span className="text-red-500">*</span>
+                  Review / Feedback Statement <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   rows={3}
                   value={newRevComment}
                   onChange={(e) => setNewRevComment(e.target.value)}
-                  placeholder="গ্রাহকের সন্তুষ্টিমূলক মতামত লিখুন..."
+                  placeholder="Write customer review statement..."
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
                   required
                 />
@@ -9633,13 +9665,13 @@ export default function AdminSettings() {
                   onClick={() => setIsAddReviewModalOpen(false)}
                   className="px-4 py-2.5 rounded-xl border border-gray-300 text-gray-700 text-xs font-bold hover:bg-gray-100 transition cursor-pointer"
                 >
-                  বাতিল
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-green-700 to-green-600 text-white text-xs font-extrabold hover:from-green-800 hover:to-green-700 shadow-lg transition flex items-center gap-1.5 cursor-pointer"
                 >
-                  <FaPlus /> <span>রিভিউ যোগ করুন</span>
+                  <FaPlus /> <span>Add Review</span>
                 </button>
               </div>
             </form>
