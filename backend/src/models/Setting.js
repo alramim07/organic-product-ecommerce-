@@ -24,6 +24,7 @@ const settingSchema = new mongoose.Schema(
     // Frontend Website Header Settings
     websiteFavicon: { type: String, default: "" },
     websiteLogo: { type: String, default: "" },
+    websitePageTitle: { type: String, default: "" },
     headerBrandDisplay: {
       type: String,
       enum: ["logo_only", "logo_and_text"],

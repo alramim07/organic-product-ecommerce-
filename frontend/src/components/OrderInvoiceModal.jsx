@@ -50,7 +50,7 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
   const brandName =
     settings?.siteName ||
     settings?.businessName ||
-    "আমওয়ালা ভাইয়া";
+    "অনলাইন স্টোর";
 
   const hotlinePhone =
     settings?.hotlinePhone ||

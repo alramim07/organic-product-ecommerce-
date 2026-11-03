@@ -78,6 +78,7 @@ export function AppProvider({ children }) {
             // Frontend Website Header Settings
             websiteFavicon: "",
             websiteLogo: "",
+            websitePageTitle: "",
             headerBrandDisplay: "logo_only",
             headerTitleColorType: "gradient", // "gradient" | "solid"
             headerTitleColorVal: "linear-gradient(to right, #15803d, #ca8a04)",
@@ -94,7 +95,7 @@ export function AppProvider({ children }) {
             headerWhatsappNumber: "8801749775030",
             headerWhatsappShow: true,
             headerCartShow: true,
-            siteName: "আমওয়ালা ভাইয়া",
+            siteName: "অর্গানিক স্টোর",
             tagline: "প্রিমিয়াম মানের দেশি আম ও খাঁটি প্রাকৃতিক খাদ্যপণ্য",
             hotlinePhone: "০১৭৪৯-৭৭৫০৩০",
             rawHotlinePhone: "01749775030",
@@ -182,9 +183,9 @@ export function AppProvider({ children }) {
             // About Section Settings
             aboutFounderImg:
               "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop",
-            aboutTitle: "আমওয়ালা ভাইয়ার গল্প",
+            aboutTitle: "আমাদের গল্প",
             aboutDescription:
-              "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি কেমিক্যাল-মুক্ত এবং পাকুতে দেওয়া প্রাকৃতিক আম। আমাদের লক্ষ্য বিদেশি আমের সাথে দেশি আমের জয়গান করা। প্রতিটি অর্ডারে থাকে তাজা গন্ধ ও সতেজতা।",
+              "আমাদের যাত্রা শুরু প্রিমিয়াম মানের তাজা ও পুষ্টিকর খাদ্যপণ্য উৎপাদন ও বিতরণে বিশ্বস্ত নাম হিসেবে। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি সম্পূর্ণ কেমিক্যাল-মুক্ত এবং প্রাকৃতিক পণ্য। প্রতিটি অর্ডারে থাকে সতেজতা ও সেরা মানের নিশ্চয়তা।",
             aboutStat1Title: "মোট অর্ডার",
             aboutStat1ValueMode: "custom",
             aboutStat1CustomValue: "৫০০+",
@@ -208,7 +209,7 @@ export function AppProvider({ children }) {
                 name: "মিজানুর রহমান",
                 location: "ঢাকা",
                 comment:
-                  "আমওয়ালা ভাইয়ার আমের গুণগত মান অসাধারণ। হিমসাগর আমের স্বাদ সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
+                  "পণ্যের গুণগত মান অসাধারণ। মিষ্টি স্বাদ ও সতেজতা সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
                 rating: 5,
                 avatar: "😊",
               },
@@ -216,7 +217,7 @@ export function AppProvider({ children }) {
                 name: "নুসরাত জাহান",
                 location: "চট্টগ্রাম",
                 comment:
-                  "প্রি-অর্ডার করেছিলাম ল্যাংড়া আম। ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
+                  "প্রি-অর্ডার করেছিলাম। ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
                 rating: 5,
                 avatar: "😊",
               },
@@ -224,7 +225,7 @@ export function AppProvider({ children }) {
                 name: "রফিকুল ইসলাম",
                 location: "রাজশাহী",
                 comment:
-                  "আম্রপালি ও ফজলি দুটোই চমৎকার। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ আমওয়ালা ভাইয়াকে।",
+                  "অর্ডার করা পণ্য খুব চমৎকার ছিল। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ সবাইকে।",
                 rating: 4,
                 avatar: "😊",
               },
@@ -233,7 +234,7 @@ export function AppProvider({ children }) {
             footerBrandMode: "use_header", // "use_header" | "custom"
             footerBrandDisplay: "logo_and_text", // "logo_only" | "logo_and_text"
             footerLogo: "",
-            footerBrandTitle: "আমওয়ালা ভাইয়া",
+            footerBrandTitle: "অর্গানিক স্টোর",
             footerBrandTagline: "প্রিমিয়াম মানের দেশি আম",
             footerTitleColorType: "gradient", // "gradient" | "solid"
             footerTitleColorVal: "linear-gradient(to right, #facc15, #4ade80)",
@@ -296,7 +297,7 @@ export function AppProvider({ children }) {
             footerReturnPolicyIcon: "🛡️",
             footerReturnPolicyText: "৭ দিনের রিটার্ন পলিসি",
             footerReturnPolicyLink: "#",
-            footerCopyrightText: "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত",
+            footerCopyrightText: "সর্বস্বত্ব সংরক্ষিত",
             footerPrivacyPolicyText: "গোপনীয়তা নীতি",
             footerPrivacyPolicyLink: "#",
             footerTermsText: "সেবার শর্তাবলী",

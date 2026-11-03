@@ -88,6 +88,30 @@ export default function App() {
     }
   }, [isAdminRoute, settings?.favicon, settings?.websiteFavicon]);
 
+  // Dynamic Document Title for Public Storefront:
+  useEffect(() => {
+    if (!isAdminRoute) {
+      // If user is on a product details page, SingleProductPage handles its own title
+      if (!location.pathname.startsWith("/product")) {
+        const publicTitle =
+          settings?.websitePageTitle?.trim() ||
+          (settings?.siteName
+            ? `${settings.siteName}${settings?.tagline ? ` - ${settings.tagline}` : ""}`
+            : (settings?.businessName || "Online Store"));
+        if (publicTitle) {
+          document.title = publicTitle;
+        }
+      }
+    }
+  }, [
+    isAdminRoute,
+    location.pathname,
+    settings?.websitePageTitle,
+    settings?.siteName,
+    settings?.tagline,
+    settings?.businessName,
+  ]);
+
   return (
     <div className="min-h-screen flex flex-col bg-white text-gray-800 font-sans selection:bg-yellow-300 selection:text-green-900 max-w-full overflow-x-hidden">
       <ScrollToTop />

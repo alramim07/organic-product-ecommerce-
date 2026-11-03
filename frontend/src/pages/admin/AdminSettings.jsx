@@ -299,6 +299,7 @@ export default function AdminSettings() {
   // Frontend Website Header Settings state
   const [websiteFavicon, setWebsiteFavicon] = useState(settings.websiteFavicon || "");
   const [websiteLogo, setWebsiteLogo] = useState(settings.websiteLogo || "");
+  const [websitePageTitle, setWebsitePageTitle] = useState(settings.websitePageTitle || "");
   const [headerTitleColorType, setHeaderTitleColorType] = useState(
     settings.headerTitleColorType || "gradient"
   );
@@ -332,7 +333,7 @@ export default function AdminSettings() {
   const [activeIconPickerIndex, setActiveIconPickerIndex] = useState(null);
 
   // Website Settings state
-  const [siteName, setSiteName] = useState(settings.siteName || "আমওয়ালা ভাইয়া");
+  const [siteName, setSiteName] = useState(settings.siteName || "");
   const [tagline, setTagline] = useState(settings.tagline || "প্রিমিয়াম মানের দেশি আম ও খাঁটি প্রাকৃতিক খাদ্যপণ্য");
   const [noticeText, setNoticeText] = useState(settings.noticeText || "");
   const [hotlinePhone, setHotlinePhone] = useState(settings.hotlinePhone || "০১৭৪৯-৭৭৫০৩০");
@@ -470,11 +471,11 @@ export default function AdminSettings() {
       "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop"
   );
   const [aboutTitle, setAboutTitle] = useState(
-    settings.aboutTitle || "আমওয়ালা ভাইয়ার গল্প"
+    settings.aboutTitle || "আমাদের গল্প"
   );
   const [aboutDescription, setAboutDescription] = useState(
     settings.aboutDescription ||
-      "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি কেমিক্যাল-মুক্ত এবং পাকুতে দেওয়া প্রাকৃতিক আম। আমাদের লক্ষ্য বিদেশি আমের সাথে দেশি আমের জয়গান করা। প্রতিটি অর্ডারে থাকে তাজা গন্ধ ও সতেজতা।"
+      "আমাদের যাত্রা শুরু প্রিমিয়াম মানের তাজা ও পুষ্টিকর খাদ্যপণ্য উৎপাদন ও বিতরণে বিশ্বস্ত নাম হিসেবে। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি সম্পূর্ণ কেমিক্যাল-মুক্ত এবং প্রাকৃতিক পণ্য। প্রতিটি অর্ডারে থাকে সতেজতা ও সেরা মানের নিশ্চয়তা।"
   );
 
   // Stat 1 (Total Orders)
@@ -545,7 +546,7 @@ export default function AdminSettings() {
             name: "মিজানুর রহমান",
             location: "ঢাকা",
             comment:
-              "আমওয়ালা ভাইয়ার আমের গুণগত মান অসাধারণ। হিমসাগর আমের স্বাদ সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
+              "পণ্যের গুণগত মান অসাধারণ। মিষ্টি স্বাদ ও সতেজতা সত্যিই অতুলনীয়। ডেলিভারি সময়মত পেয়েছি।",
             rating: 5,
             avatar: "😊",
           },
@@ -553,7 +554,7 @@ export default function AdminSettings() {
             name: "নুসরাত জাহান",
             location: "চট্টগ্রাম",
             comment:
-              "প্রি-অর্ডার করেছিলাম ল্যাংড়া আম। ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
+              "প্রি-অর্ডার করেছিলাম। একদম ফ্রেশ এবং কেমিক্যাল ফ্রি। সবার কাছে সুপারিশ করব।",
             rating: 5,
             avatar: "😊",
           },
@@ -561,7 +562,7 @@ export default function AdminSettings() {
             name: "রফিকুল ইসলাম",
             location: "রাজশাহী",
             comment:
-              "আম্রপালি ও ফজলি দুটোই চমৎকার। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ আমওয়ালা ভাইয়াকে।",
+              "অর্ডার করা পণ্য খুব চমৎকার ছিল। প্যাকেজিং খুব ভালো ছিল। ধন্যবাদ সবাইকে।",
             rating: 4,
             avatar: "😊",
           },
@@ -589,7 +590,7 @@ export default function AdminSettings() {
   );
   const [footerLogo, setFooterLogo] = useState(settings.footerLogo || "");
   const [footerBrandTitle, setFooterBrandTitle] = useState(
-    settings.footerBrandTitle || "আমওয়ালা ভাইয়া"
+    settings.footerBrandTitle || ""
   );
   const [footerBrandTagline, setFooterBrandTagline] = useState(
     settings.footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"
@@ -712,7 +713,7 @@ export default function AdminSettings() {
     settings.footerReturnPolicyLink || "#"
   );
   const [footerCopyrightText, setFooterCopyrightText] = useState(
-    settings.footerCopyrightText || "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
+    settings.footerCopyrightText || "All Rights Reserved"
   );
   const [footerPrivacyPolicyShow, setFooterPrivacyPolicyShow] = useState(
     settings.footerPrivacyPolicyShow !== undefined ? Boolean(settings.footerPrivacyPolicyShow) : true
@@ -758,6 +759,7 @@ export default function AdminSettings() {
       if (settings.themeSecondaryBtn !== undefined) setThemeSecondaryBtn(settings.themeSecondaryBtn);
       if (settings.websiteFavicon !== undefined) setWebsiteFavicon(settings.websiteFavicon);
       if (settings.websiteLogo !== undefined) setWebsiteLogo(settings.websiteLogo);
+      if (settings.websitePageTitle !== undefined) setWebsitePageTitle(settings.websitePageTitle);
       if (settings.headerBrandDisplay !== undefined) setHeaderBrandDisplay(settings.headerBrandDisplay);
       if (settings.headerTitleColorType !== undefined) setHeaderTitleColorType(settings.headerTitleColorType);
       if (settings.headerTitleColorVal !== undefined) setHeaderTitleColorVal(settings.headerTitleColorVal);
@@ -1191,7 +1193,7 @@ export default function AdminSettings() {
       {
         name: "নতুন ক্রেতা",
         location: "ঢাকা",
-        comment: "আমের মিষ্টি স্বাদ ও কোয়ালিটি অত্যন্ত চমৎকার। ধন্যবাদ আমওয়ালা ভাইয়া।",
+        comment: "আমের মিষ্টি স্বাদ ও কোয়ালিটি অত্যন্ত চমৎকার। ধন্যবাদ সবাইকে।",
         rating: 5,
         avatar: "😊",
       },
@@ -1664,6 +1666,7 @@ export default function AdminSettings() {
       themeSecondaryBtn,
       websiteFavicon,
       websiteLogo,
+      websitePageTitle,
       headerBrandDisplay,
       headerTitleColorType,
       headerTitleColorVal,
@@ -3199,6 +3202,67 @@ export default function AdminSettings() {
               </div>
             </div>
 
+            {/* Website Browser Tab Title (Page Title) */}
+            <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-200/60 pb-3">
+                <div>
+                  <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
+                    <FaGlobe className="text-green-600" /> Website Browser Tab Title (Page Title)
+                  </h4>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Customize the browser tab title displayed to customers visiting your storefront.
+                  </p>
+                </div>
+                {websitePageTitle && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setWebsitePageTitle("");
+                      updateSettings({ websitePageTitle: "" });
+                    }}
+                    className="text-xs text-red-500 hover:text-red-700 font-bold flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+                  >
+                    <FaTrash className="text-[10px]" /> Reset to Default
+                  </button>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-xs font-extrabold text-gray-700 block">
+                  Browser Tab Title
+                </label>
+                <input
+                  type="text"
+                  value={websitePageTitle}
+                  onChange={(e) => {
+                    setWebsitePageTitle(e.target.value);
+                    updateSettings({ websitePageTitle: e.target.value });
+                  }}
+                  placeholder="e.g. Organic Agro & Food Store - Premium Quality"
+                  className="w-full px-4 py-2.5 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500 transition shadow-xs"
+                />
+                <div className="flex items-center gap-2 pt-1">
+                  <span className="text-[11px] font-bold text-gray-400">Live Browser Preview:</span>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-gray-200 rounded-lg text-xs text-gray-700 shadow-xs max-w-full overflow-hidden">
+                    <span className="text-xs">
+                      {websiteFavicon ? (
+                        <img src={websiteFavicon} alt="" className="w-3.5 h-3.5 object-contain inline-block" />
+                      ) : (
+                        "🌐"
+                      )}
+                    </span>
+                    <span className="font-semibold truncate">
+                      {websitePageTitle?.trim() ||
+                        (siteName ? `${siteName}${tagline ? ` - ${tagline}` : ""}` : (businessName || "Online Store"))}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-[11px] text-gray-400">
+                  When left blank, the browser tab title defaults automatically to your Store Name and Tagline.
+                </p>
+              </div>
+            </div>
+
             {/* Part 1B: Header Brand Display Style & Editable Brand Text */}
             <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
               <div className="border-b border-gray-200/60 pb-3">
@@ -3314,7 +3378,7 @@ export default function AdminSettings() {
                         setSiteName(e.target.value);
                         updateSettings({ siteName: e.target.value });
                       }}
-                      placeholder="e.g. আমওয়ালা ভাইয়া"
+                      placeholder="e.g. Organic Food Store"
                       className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs font-bold text-gray-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-green-500 transition"
                     />
                     <p className="text-[11px] text-gray-400 mt-1">
@@ -3510,7 +3574,7 @@ export default function AdminSettings() {
                           : { color: headerTitleColorVal }
                       }
                     >
-                      {siteName || "আমওয়ালা ভাইয়া"}
+                      {siteName || businessName || "Store Name"}
                     </span>
                   </div>
                 </div>
@@ -3959,7 +4023,7 @@ export default function AdminSettings() {
                       {headerBrandDisplay === "logo_and_text" && (
                         <div>
                           <h5 className="text-sm font-black text-green-900 leading-tight">
-                            {siteName || "আমওয়ালা ভাইয়া"}
+                            {siteName || businessName || "Store Name"}
                           </h5>
                           {tagline && (
                             <p className="text-[10px] text-amber-700 font-semibold truncate max-w-[160px]">
@@ -4033,7 +4097,7 @@ export default function AdminSettings() {
                         )}
                         {headerBrandDisplay === "logo_and_text" && (
                           <span className="text-xs font-black text-green-950 truncate">
-                            {siteName || "আমওয়ালা ভাইয়া"}
+                            {siteName || businessName || "Store Name"}
                           </span>
                         )}
                       </div>
@@ -4726,7 +4790,7 @@ export default function AdminSettings() {
                         {headerBrandDisplay === "logo_and_text" && (
                           <div>
                             <h5 className="text-sm font-black text-green-950 leading-tight">
-                              {siteName || "আমওয়ালা ভাইয়া"}
+                              {siteName || businessName || "Store Name"}
                             </h5>
                             {tagline && (
                               <p className="text-[10px] text-amber-800 font-semibold truncate max-w-[170px]">
@@ -4914,7 +4978,7 @@ export default function AdminSettings() {
                           )}
                           {headerBrandDisplay === "logo_and_text" && (
                             <span className="text-[11px] font-black text-green-950 truncate">
-                              {siteName || "আমওয়ালা ভাইয়া"}
+                              {siteName || businessName || "Store Name"}
                             </span>
                           )}
                         </div>
@@ -6422,7 +6486,7 @@ export default function AdminSettings() {
 
                   {/* Title */}
                   <h3 className="text-2xl sm:text-3xl font-extrabold text-green-900">
-                    {aboutTitle || "আমওয়ালা ভাইয়ার গল্প"}
+                    {aboutTitle || "আমাদের গল্প"}
                   </h3>
 
                   <div className="w-20 mx-auto my-3 border-t-4 border-yellow-500 rounded-full" />
@@ -6430,7 +6494,7 @@ export default function AdminSettings() {
                   {/* Description */}
                   <p className="text-xs sm:text-sm text-gray-700 leading-relaxed max-w-2xl mx-auto">
                     {aboutDescription ||
-                      "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম।"}
+                      "আমাদের যাত্রা শুরু প্রিমিয়াম মানের তাজা ও পুষ্টিকর খাদ্যপণ্য উৎপাদন ও বিতরণে বিশ্বস্ত নাম হিসেবে।"}
                   </p>
 
                   {/* Stats Bar */}
@@ -6494,7 +6558,7 @@ export default function AdminSettings() {
 
                       {/* Title */}
                       <h3 className="text-lg font-black text-green-900">
-                        {aboutTitle || "আমওয়ালা ভাইয়ার গল্প"}
+                        {aboutTitle || "আমাদের গল্প"}
                       </h3>
 
                       <div className="w-16 mx-auto my-1 border-t-2 border-yellow-500 rounded-full" />
@@ -6502,7 +6566,7 @@ export default function AdminSettings() {
                       {/* Description */}
                       <p className="text-[11px] text-gray-700 leading-relaxed px-1">
                         {aboutDescription ||
-                          "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম।"}
+                          "আমাদের যাত্রা শুরু প্রিমিয়াম মানের তাজা ও পুষ্টিকর খাদ্যপণ্য উৎপাদন ও বিতরণে বিশ্বস্ত নাম হিসেবে।"}
                       </p>
 
                       {/* Mobile Stats (Stacked cards) */}
@@ -7466,7 +7530,7 @@ export default function AdminSettings() {
                           type="text"
                           value={footerBrandTitle}
                           onChange={(e) => setFooterBrandTitle(e.target.value)}
-                          placeholder="আমওয়ালা ভাইয়া"
+                          placeholder="Store Brand Name"
                           className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-black text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-500"
                         />
                       </div>
@@ -7632,7 +7696,7 @@ export default function AdminSettings() {
                         : { color: footerTitleColorVal }
                     }
                   >
-                    {footerBrandTitle || "আমওয়ালা ভাইয়া"}
+                    {footerBrandTitle || siteName || businessName || "Store Name"}
                   </span>
                 </div>
               </div>
@@ -9005,7 +9069,7 @@ export default function AdminSettings() {
                                   : { color: footerTitleColorVal }
                               }
                             >
-                              {footerBrandTitle || "আমওয়ালা ভাইয়া"}
+                              {footerBrandTitle || siteName || businessName || "Store Name"}
                             </h4>
                             <p className="text-[10px] text-yellow-300">
                               {footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"}
@@ -9213,7 +9277,7 @@ export default function AdminSettings() {
                               : { color: footerTitleColorVal }
                           }
                         >
-                          {footerBrandTitle || "আমওয়ালা ভাইয়া"}
+                          {footerBrandTitle || siteName || businessName || "Store Name"}
                         </h4>
                         <p className="text-[10px] text-yellow-300">
                           {footerBrandTagline || "প্রিমিয়াম মানের দেশি আম"}

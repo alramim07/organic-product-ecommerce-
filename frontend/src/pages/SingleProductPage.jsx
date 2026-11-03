@@ -142,9 +142,10 @@ export default function SingleProductPage() {
       setQuantity(1);
 
       // Dynamic SEO Title & Description
+      const storeName = settings?.siteName || settings?.businessName || "Store";
       const pageTitle = product.meta_title
-        ? `${product.meta_title} | ${settings?.siteName || "আমওয়ালা"}`
-        : `${product.name_bn || "প্রিমিয়াম কোয়ালিটি আম"} | ${settings?.siteName || "আমওয়ালা"}`;
+        ? `${product.meta_title} | ${storeName}`
+        : `${product.name_bn || "পণ্য"} | ${storeName}`;
       document.title = pageTitle;
 
       let metaDesc = document.querySelector('meta[name="description"]');
@@ -345,7 +346,8 @@ export default function SingleProductPage() {
     const deliveryText = isFreeDelivery
       ? "ফ্রি ডেলিভারি (৳০)"
       : `৳${deliveryCharge} (${deliveryArea === "dhaka" ? "ঢাকা শহর" : "ঢাকার বাইরে"})`;
-    const message = `হ্যালো আমওয়ালা ভাইয়া! আমি "${product.name_bn}" এর (${selectedPackage?.label || "৫ কেজি"} x ${quantity} টি) অর্ডার করতে চাই। ডেলিভারি: ${deliveryText}। মোট আনুমানিক মূল্য: ৳${totalAmount}। বিস্তারিত জানাবেন প্লিজ।`;
+    const storeName = settings?.siteName || settings?.businessName || "অনলাইন স্টোর";
+    const message = `হ্যালো ${storeName}! আমি "${product.name_bn}" এর (${selectedPackage?.label || "৫ কেজি"} x ${quantity} টি) অর্ডার করতে চাই। ডেলিভারি: ${deliveryText}। মোট আনুমানিক মূল্য: ৳${totalAmount}। বিস্তারিত জানাবেন প্লিজ।`;
     const waNum = settings?.whatsappNumber || "8801749775030";
     const url = `https://wa.me/${waNum}?text=${encodeURIComponent(message)}`;
     window.open(url, "_blank");

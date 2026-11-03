@@ -16,11 +16,11 @@ export default function About() {
     settings?.aboutFounderImg ||
     "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=300&h=300&fit=crop";
 
-  const title = settings?.aboutTitle || "আমওয়ালা ভাইয়ার গল্প";
+  const title = settings?.aboutTitle || (settings?.siteName ? `${settings.siteName}-এর গল্প` : "আমাদের গল্প");
 
   const description =
     settings?.aboutDescription ||
-    "প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু “আমওয়ালা ভাইয়া” — রাজশাহী অঞ্চলের প্রিমিয়াম মানের আম উৎপাদন ও বিতরণে বিশ্বস্ত নাম। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি কেমিক্যাল-মুক্ত এবং পাকুতে দেওয়া প্রাকৃতিক আম। আমাদের লক্ষ্য বিদেশি আমের সাথে দেশি আমের জয়গান করা। প্রতিটি অর্ডারে থাকে তাজা গন্ধ ও সতেজতা।";
+    "আমাদের যাত্রা শুরু প্রিমিয়াম মানের তাজা ও পুষ্টিকর খাদ্যপণ্য উৎপাদন ও বিতরণে বিশ্বস্ত নাম হিসেবে। আমরা কৃষকদের সাথে সরাসরি কাজ করি, নিশ্চিত করি সম্পূর্ণ কেমিক্যাল-মুক্ত এবং প্রাকৃতিক পণ্য। প্রতিটি অর্ডারে থাকে সতেজতা ও সেরা মানের নিশ্চয়তা।";
 
   // Stat 1: Total Orders
   const stat1Title = settings?.aboutStat1Title || "মোট অর্ডার";

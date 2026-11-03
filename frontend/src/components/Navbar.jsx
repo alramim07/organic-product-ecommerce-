@@ -157,7 +157,7 @@ export default function Navbar() {
                           }
                     }
                   >
-                    {settings?.siteName || "আমওয়ালা ভাইয়া"}
+                    {settings?.siteName || settings?.businessName || "Store"}
                   </h1>
                   {settings?.tagline && (
                     <p className="text-xs text-amber-600 font-semibold truncate max-w-[220px]">

@@ -1,14 +1,19 @@
 import rateLimit from "express-rate-limit";
 
-// General API Rate Limiter: max 300 requests per 15 minutes
+// General API Rate Limiter: max 1500 requests per 15 minutes, skips local dev
 export const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 300,
+  max: 1500,
   standardHeaders: true,
   legacyHeaders: false,
+  skip: (req) =>
+    req.ip === "127.0.0.1" ||
+    req.ip === "::1" ||
+    req.ip === "::ffff:127.0.0.1" ||
+    (req.method === "GET" && req.path.startsWith("/settings")),
   message: {
     success: false,
-    message: "অতিরিক্ত রিকোয়েস্ট পাঠানো হয়েছে। দয়া করে ১৫ মিনিট পর আবার চেষ্টা করুন।",
+    message: "Too many requests. Please try again after a few minutes.",
   },
 });
 

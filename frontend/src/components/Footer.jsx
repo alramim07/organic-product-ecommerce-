@@ -72,13 +72,13 @@ export default function Footer() {
 
   const brandTitle =
     brandMode === "use_header"
-      ? settings?.siteName || "আমওয়ালা ভাইয়া"
-      : settings?.footerBrandTitle || settings?.siteName || "আমওয়ালা ভাইয়া";
+      ? settings?.siteName || settings?.businessName || "Store"
+      : settings?.footerBrandTitle || settings?.siteName || settings?.businessName || "Store";
 
   const brandTagline =
     brandMode === "use_header"
-      ? settings?.tagline || "প্রিমিয়াম মানের দেশি আম"
-      : settings?.footerBrandTagline || settings?.tagline || "প্রিমিয়াম মানের দেশি আম";
+      ? settings?.tagline || ""
+      : settings?.footerBrandTagline || settings?.tagline || "";
 
   // Color customization for brand title
   const titleColorType = settings?.footerTitleColorType || "gradient";
@@ -195,7 +195,8 @@ export default function Footer() {
   const returnPolicyLink = settings?.footerReturnPolicyLink || "#";
 
   // 10. Copyright & Developer Credits (Auto Dynamic Year)
-  const rawCopyright = settings?.footerCopyrightText || "আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত";
+  const defaultCopyright = `${settings?.businessName || settings?.siteName || "Store"} - All Rights Reserved`;
+  const rawCopyright = settings?.footerCopyrightText || defaultCopyright;
   const processedCopyright = rawCopyright.includes("{year}")
     ? rawCopyright.replace(/{year}/gi, currentYear)
     : rawCopyright;
