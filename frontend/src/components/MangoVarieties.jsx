@@ -124,7 +124,7 @@ export default function MangoVarieties({ onSelectMango }) {
   const collapseBtnText = settings?.productCollapseBtnText || "Collapse Products";
 
   // Base Products List
-  const allAvailable = products && products.length > 0 ? products : mangoVarietiesData;
+  const allAvailable = products || [];
 
   // Filter or arrange products based on displayMode
   let displayList = [];
@@ -132,7 +132,7 @@ export default function MangoVarieties({ onSelectMango }) {
     const selected = customIds
       .map((id) => allAvailable.find((p) => String(p._id || p.id) === String(id)))
       .filter(Boolean);
-    displayList = selected.length > 0 ? selected : allAvailable;
+    displayList = selected;
   } else {
     displayList = allAvailable;
   }
@@ -186,9 +186,20 @@ export default function MangoVarieties({ onSelectMango }) {
           </p>
         </div>
 
-        {/* Products Grid with Identical Uniform Card Sizing */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 items-stretch">
-          {visibleProducts.map((mango, index) => {
+        {/* Products Grid with Identical Uniform Card Sizing or Empty State */}
+        {visibleProducts.length === 0 ? (
+          <div className="text-center py-16 px-6 bg-white/80 backdrop-blur-sm rounded-3xl border-2 border-dashed border-amber-300 max-w-xl mx-auto shadow-sm">
+            <div className="w-16 h-16 bg-amber-100 text-amber-800 rounded-full flex items-center justify-center mx-auto text-3xl mb-4 shadow-sm">
+              🥭
+            </div>
+            <h3 className="text-xl font-black text-gray-900">বর্তমানে কোনো পণ্য উপলব্ধ নেই</h3>
+            <p className="text-gray-600 text-sm mt-2 leading-relaxed">
+              সবগুলো পণ্য বিক্রি হয়ে গেছে অথবা নতুন সিজনের ফ্রেশ আম শীঘ্রই স্টকে যোগ করা হবে। অনুগ্রহ করে আমাদের সাথে থাকুন।
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 items-stretch">
+            {visibleProducts.map((mango, index) => {
             const productId = mango._id || mango.id;
             const priceText =
               mango.price ||
@@ -464,6 +475,7 @@ export default function MangoVarieties({ onSelectMango }) {
             );
           })}
         </div>
+        )}
 
         {/* Dynamic "Show More Products" / "Collapse Products" Button (Positioned as marked in 2nd image) */}
         {displayList.length > 8 && (

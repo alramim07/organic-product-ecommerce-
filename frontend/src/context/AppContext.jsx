@@ -35,7 +35,10 @@ export function AppProvider({ children }) {
   const [products, setProducts] = useState(() => {
     try {
       const saved = localStorage.getItem("ammwala_products");
-      return saved ? JSON.parse(saved) : initialProducts;
+      if (saved !== null) {
+        return JSON.parse(saved);
+      }
+      return initialProducts;
     } catch {
       return initialProducts;
     }
@@ -344,7 +347,7 @@ export function AppProvider({ children }) {
 
       // 2. Fetch Products
       const prodRes = await api.products.getAll();
-      if (prodRes.success && prodRes.data?.length > 0) {
+      if (prodRes.success && Array.isArray(prodRes.data)) {
         // Map backend product structure to match frontend expectations
         const formatted = prodRes.data.map((p, idx) => ({
           ...p,
