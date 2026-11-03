@@ -103,6 +103,23 @@ export default function SingleProductPage() {
   const [showInvoiceModal, setShowInvoiceModal] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
 
+  // Dynamic Review Count & Average Rating Calculated from Actual Approved Reviews
+  const actualReviewCount = Array.isArray(productApprovedReviews)
+    ? productApprovedReviews.length
+    : 0;
+
+  const averageRating =
+    actualReviewCount > 0
+      ? Number(
+          (
+            productApprovedReviews.reduce(
+              (sum, r) => sum + (Number(r.rating) || 5),
+              0
+            ) / actualReviewCount
+          ).toFixed(1)
+        )
+      : Number(product?.rating || 5);
+
   // Scroll to top, set title/meta, and reset state when product changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -647,12 +664,19 @@ export default function SingleProductPage() {
               <div className="flex items-center gap-3 mt-3 pb-4 border-b border-gray-100">
                 <div className="flex items-center text-yellow-400 text-sm">
                   {[...Array(5)].map((_, i) => (
-                    <FaStar key={i} />
+                    <FaStar
+                      key={i}
+                      className={
+                        i < Math.round(averageRating)
+                          ? "text-yellow-400"
+                          : "text-gray-200"
+                      }
+                    />
                   ))}
                 </div>
-                <span className="text-sm font-bold text-gray-800">{product.rating}</span>
+                <span className="text-sm font-bold text-gray-800">{averageRating}</span>
                 <span className="text-xs text-gray-500">
-                  ({product.total_reviews} টি ভেরিফাইড গ্রাহক রিভিউ)
+                  ({actualReviewCount} টি ভেরিফাইড গ্রাহক রিভিউ)
                 </span>
               </div>
 
@@ -900,7 +924,7 @@ export default function SingleProductPage() {
               {
                 id: "reviews",
                 icon: "⭐",
-                title: `গ্রাহক রিভিউ (${product.total_reviews || 25})`,
+                title: `গ্রাহক রিভিউ (${actualReviewCount})`,
               },
             ].map((tab) => {
               const isImg =
@@ -1112,11 +1136,18 @@ export default function SingleProductPage() {
                   </div>
                   <div className="flex flex-col sm:items-end gap-2">
                     <div className="flex items-center gap-3 bg-amber-50 px-4 py-2 rounded-2xl border border-yellow-300">
-                      <span className="text-3xl font-black text-amber-800">{product.rating || 5}</span>
+                      <span className="text-3xl font-black text-amber-800">{averageRating}</span>
                       <div className="text-yellow-400 text-sm">
                         <div className="flex">
                           {[...Array(5)].map((_, i) => (
-                            <FaStar key={i} />
+                            <FaStar
+                              key={i}
+                              className={
+                                i < Math.round(averageRating)
+                                  ? "text-yellow-400"
+                                  : "text-gray-300"
+                              }
+                            />
                           ))}
                         </div>
                         <span className="text-[10px] text-gray-600 block">৫ এর মধ্যে রেটিং</span>
@@ -1136,41 +1167,30 @@ export default function SingleProductPage() {
 
                 {/* Scrollable Reviews List: 3 visible at a time, rest scrollable */}
                 <div className="max-h-[390px] sm:max-h-[430px] overflow-y-auto space-y-3.5 pr-1.5 custom-scrollbar">
-                  {[
-                    ...productApprovedReviews,
-                    {
-                      customerName: "আহমেদ তানভীর",
-                      customerLocation: "উত্তরা, ঢাকা",
-                      rating: 5,
-                      date: "৩ দিন আগে",
-                      comment:
-                        "গত বছরও আমওয়ালা ভাইয়া থেকে হিমসাগর নিয়েছিলাম। এবার গুটি ও গোপালভোগের প্রি-অর্ডার করলাম। তাদের প্যাকিং এক কথায় অসাধারণ, কোনো আম নষ্ট হয়নি!",
-                      images: [],
-                    },
-                    {
-                      customerName: "ফারহানা সুলতানা",
-                      customerLocation: "ধানমন্ডি, ঢাকা",
-                      rating: 5,
-                      date: "১ সপ্তাহ আগে",
-                      comment:
-                        "সত্যিই একদম ফরমালিনমুক্ত মিষ্টি আম। বাচ্চারা খুব পছন্দ করেছে। আমের সুবাসে পুরো ঘর ভরে গিয়েছিল। ধন্যবাদ সবাইকে!",
-                      images: [],
-                    },
-                    {
-                      customerName: "ইঞ্জি. মোস্তফা কামাল",
-                      customerLocation: "জিইসি, চট্টগ্রাম",
-                      rating: 5,
-                      date: "২ সপ্তাহ আগে",
-                      comment:
-                        "চট্টগ্রামে ডেলিভারি খুব দ্রুত পেয়েছি। আমগুলো সাইজে বড় ও একদমি তাজা ছিল। এই সিজনে অন্তত আরও ২০ কেজি নিবো।",
-                      images: [],
-                    },
-                  ].map((rev, i) => {
-                    const cName = rev.customerName || rev.name || "সম্মানিত গ্রাহক";
-                    const cLoc = (rev.customerLocation || rev.location || "").replace(/[()]/g, "").trim();
-                    const rRating = Number(rev.rating) || 5;
-                    const rDate = rev.date || formatReviewDateBangla(rev.createdAt);
-                    const rImages = Array.isArray(rev.images) ? rev.images : [];
+                  {productApprovedReviews.length === 0 ? (
+                    <div className="text-center py-10 bg-gray-50/70 rounded-2xl border border-dashed border-yellow-200">
+                      <div className="w-12 h-12 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center text-xl mx-auto mb-2">
+                        <FaStar />
+                      </div>
+                      <h4 className="font-bold text-gray-800 text-sm">এখনো কোনো রিভিউ যোগ করা হয়নি</h4>
+                      <p className="text-xs text-gray-500 mt-1 mb-4">
+                        আপনিই প্রথম আপনার অভিজ্ঞতা ও মতামত সবার সাথে শেয়ার করুন!
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => setShowReviewModal(true)}
+                        className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-green-950 font-bold text-xs rounded-xl shadow transition cursor-pointer"
+                      >
+                        আপনার মতামত লিখুন
+                      </button>
+                    </div>
+                  ) : (
+                    productApprovedReviews.map((rev, i) => {
+                      const cName = rev.customerName || rev.name || "সম্মানিত গ্রাহক";
+                      const cLoc = (rev.customerLocation || rev.location || "").replace(/[()]/g, "").trim();
+                      const rRating = Number(rev.rating) || 5;
+                      const rDate = rev.date || formatReviewDateBangla(rev.createdAt);
+                      const rImages = Array.isArray(rev.images) ? rev.images : [];
 
                     return (
                       <div
@@ -1237,8 +1257,9 @@ export default function SingleProductPage() {
                         </p>
                       </div>
                     );
-                  })}
-                </div>
+                  })
+                )}
+              </div>
               </div>
             )}
           </div>
