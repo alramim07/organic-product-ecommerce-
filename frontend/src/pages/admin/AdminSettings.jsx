@@ -1140,6 +1140,17 @@ export default function AdminSettings() {
     }
   };
 
+  const handleReturnPolicyIconUpload = async (file) => {
+    if (!file) return;
+    try {
+      const compressed = await compressImage(file, 64, 64, 0.9);
+      setFooterReturnPolicyIcon(compressed);
+      setActiveFooterIconPicker(null);
+    } catch {
+      // fallback
+    }
+  };
+
   const handleFooterLogoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -8461,14 +8472,24 @@ export default function AdminSettings() {
                           type="button"
                           onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "return" ? null : "return")}
                           className="w-full px-3 py-1.5 text-xs bg-gray-50 hover:bg-yellow-50 border border-gray-200 hover:border-gray-300 rounded-lg text-center font-bold flex items-center justify-center gap-1.5 cursor-pointer transition"
-                          title="পলিসি আইকন পরিবর্তন করুন"
+                          title="Change policy icon"
                         >
-                          <span>{footerReturnPolicyIcon || "🛡️"}</span>
+                          {footerReturnPolicyIcon?.startsWith("data:") ||
+                          footerReturnPolicyIcon?.startsWith("http") ||
+                          footerReturnPolicyIcon?.startsWith("/") ? (
+                            <img
+                              src={footerReturnPolicyIcon}
+                              alt="Policy Icon"
+                              className="w-4 h-4 object-contain rounded inline-block"
+                            />
+                          ) : (
+                            <span>{footerReturnPolicyIcon || "🛡️"}</span>
+                          )}
                           <span className="text-[10px] text-gray-500">(আইকন পরিবর্তন)</span>
                         </button>
 
                         {activeFooterIconPicker === "return" && (
-                          <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-60 space-y-2">
+                          <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-64 space-y-2">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
                               <span>Return Policy Icon</span>
                               <button
@@ -8502,6 +8523,18 @@ export default function AdminSettings() {
                                 placeholder="Custom emoji / text..."
                                 className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                               />
+                            </div>
+                            {/* Upload Custom Icon Option */}
+                            <div className="pt-1 border-t border-gray-100">
+                              <label className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-yellow-100 text-gray-700 text-[11px] font-bold rounded-lg cursor-pointer transition">
+                                <FaUpload className="text-[10px]" /> <span>ছবি আপলোড (Custom Icon)</span>
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  onChange={(e) => handleReturnPolicyIconUpload(e.target.files?.[0])}
+                                  className="hidden"
+                                />
+                              </label>
                             </div>
                           </div>
                         )}
@@ -9109,7 +9142,17 @@ export default function AdminSettings() {
 
                     {footerReturnPolicyShow && (
                       <div className="flex items-center gap-1.5 text-green-300 font-bold">
-                        <span>{footerReturnPolicyIcon}</span>
+                        {footerReturnPolicyIcon?.startsWith("data:") ||
+                        footerReturnPolicyIcon?.startsWith("http") ||
+                        footerReturnPolicyIcon?.startsWith("/") ? (
+                          <img
+                            src={footerReturnPolicyIcon}
+                            alt=""
+                            className="w-4 h-4 object-contain inline-block shrink-0"
+                          />
+                        ) : (
+                          <span>{footerReturnPolicyIcon}</span>
+                        )}
                         <span>{footerReturnPolicyText}</span>
                       </div>
                     )}
@@ -9274,8 +9317,19 @@ export default function AdminSettings() {
                           ))}
                         </div>
                         {footerReturnPolicyShow && (
-                          <p className="text-[10px] text-green-300 font-bold">
-                            {footerReturnPolicyIcon} {footerReturnPolicyText}
+                          <p className="text-[10px] text-green-300 font-bold flex items-center justify-center gap-1">
+                            {footerReturnPolicyIcon?.startsWith("data:") ||
+                            footerReturnPolicyIcon?.startsWith("http") ||
+                            footerReturnPolicyIcon?.startsWith("/") ? (
+                              <img
+                                src={footerReturnPolicyIcon}
+                                alt=""
+                                className="w-3.5 h-3.5 object-contain inline-block shrink-0"
+                              />
+                            ) : (
+                              <span>{footerReturnPolicyIcon}</span>
+                            )}
+                            <span>{footerReturnPolicyText}</span>
                           </p>
                         )}
                       </div>
