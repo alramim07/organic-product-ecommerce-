@@ -33,6 +33,48 @@ import IconPicker from "../../components/common/IconPicker";
 import ScheduleDateTimePicker from "../../components/common/ScheduleDateTimePicker";
 import CalendarDropdown from "../../components/common/CalendarDropdown";
 
+const defaultPackagingSteps = [
+  {
+    step: "০১",
+    title: "বাগান থেকে গ্রেডিং",
+    description:
+      "গাছ থেকে পাড়ার পর প্রতিটি আম আলাদাভাবে পরিদর্শন করে দাগহীন ও পুষ্ট আমগুলো বাছাই করা হয়।",
+  },
+  {
+    step: "০২",
+    title: "ফোম ও পেপার কুশনিং",
+    description:
+      "প্রতিটি আমের মাঝে ফুড-গ্রেড নরম কাগজ ও কুশনিং ব্যবহার করা হয় যেন একে অপরের সাথে ঘষা না লাগে।",
+  },
+  {
+    step: "০৩",
+    title: "এক্সপ্রেস হোম ডেলিভারি",
+    description:
+      "প্যাকিং শেষে শীতাতপ নিয়ন্ত্রিত এক্সপ্রেস কুরিয়ারে সরাসরি গ্রাহকের দরজায় পৌঁছে দেওয়া হয়।",
+  },
+];
+
+const defaultStorageSteps = [
+  {
+    step: "১",
+    title: "বক্স খোলার নিয়ম:",
+    description:
+      "বক্স পাওয়ার পর পরই ওপরের টেপ কেটে মুখ খুলে দিন। আমগুলো বের করে মেঝেতে কাগজ বিছিয়ে স্বাভাবিক আলো-বাতাসে ছড়িয়ে রাখুন।",
+  },
+  {
+    step: "২",
+    title: "ফ্রিজে রাখার নিয়ম:",
+    description:
+      "আম পুরোপুরি পাকার আগে কখনই ফ্রিজে রাখবেন না। মিষ্টি সুবাস বের হলে এবং খোসা নরম হলে খাওয়ার ২-৩ ঘণ্টা আগে ফ্রিজে রেখে ঠান্ডা করে খেলে সর্বোচ্চ স্বাদ পাওয়া যায়।",
+  },
+  {
+    step: "৩",
+    title: "রাসায়নিক মুক্ততার লক্ষণ:",
+    description:
+      "প্রাকৃতিক আম বোঁটার দিক থেকে পাকা শুরু করে এবং মুখে দিলে আসল গ্রামীণ মিষ্টি ফ্লেভার পাওয়া যায়। কোনো বিষাক্ত ঝাঁঝালো গন্ধ থাকে না।",
+  },
+];
+
 export default function AdminProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -98,13 +140,15 @@ export default function AdminProductForm() {
   // Tab 2: Packaging & Shipping (Icon + Title separate)
   const [tab2Icon, setTab2Icon] = useState("📦");
   const [tab2Title, setTab2Title] = useState("প্যাকেজিং ও ডেলিভারি");
-  const [packagingDescription, setPackagingDescription] = useState("");
-  const [packagingSteps, setPackagingSteps] = useState([]);
+  const [packagingDescription, setPackagingDescription] = useState(
+    "আম অত্যন্ত সংবেদনশীল ফল। পরিবহনের ঝাঁকুনিতে যেন ফলের কোনো ক্ষতি না হয়, সেজন্য আমরা আন্তর্জাতিক মানের ৫-স্তরবিশিষ্ট (5-ply) ভেন্টিলেটেড হার্ডবোর্ড কার্টন ও ক্রেট ব্যবহার করি।"
+  );
+  const [packagingSteps, setPackagingSteps] = useState(defaultPackagingSteps);
 
   // Tab 3: Storage & Care (Icon + Title separate)
   const [tab3Icon, setTab3Icon] = useState("💡");
   const [tab3Title, setTab3Title] = useState("পাকা ও সংরক্ষণ নিয়ম");
-  const [storageSteps, setStorageSteps] = useState([]);
+  const [storageSteps, setStorageSteps] = useState(defaultStorageSteps);
 
   // Active Tab for preview
   const [activeTab, setActiveTab] = useState("tab1");
@@ -428,12 +472,38 @@ export default function AdminProductForm() {
       prev.map((st, i) => (i === idx ? { ...st, [field]: val } : st))
     );
   };
+  const addPackagingStep = () => {
+    setPackagingSteps((prev) => [
+      ...prev,
+      {
+        step: `০${prev.length + 1}`,
+        title: "",
+        description: "",
+      },
+    ]);
+  };
+  const removePackagingStep = (idx) => {
+    setPackagingSteps((prev) => prev.filter((_, i) => i !== idx));
+  };
 
   // Storage Steps Handlers
   const handleStorageStepChange = (idx, field, val) => {
     setStorageSteps((prev) =>
       prev.map((st, i) => (i === idx ? { ...st, [field]: val } : st))
     );
+  };
+  const addStorageStep = () => {
+    setStorageSteps((prev) => [
+      ...prev,
+      {
+        step: `${prev.length + 1}`,
+        title: "",
+        description: "",
+      },
+    ]);
+  };
+  const removeStorageStep = (idx) => {
+    setStorageSteps((prev) => prev.filter((_, i) => i !== idx));
   };
 
   // Selected Category Object & Available Units
@@ -1700,49 +1770,87 @@ export default function AdminProductForm() {
                 />
               </div>
 
-              {/* 3 Packaging Step Cards */}
+              {/* Packaging Step Cards */}
               <div>
-                <label className="text-xs font-bold text-gray-700 mb-2 block">
-                  প্যাকেজিং প্রক্রিয়া কার্ডসমূহ (Packaging Steps):
-                </label>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {packagingSteps.map((st, idx) => (
-                    <div
-                      key={idx}
-                      className={`p-5 rounded-2xl border space-y-3 ${
-                        idx === 0
-                          ? "bg-amber-50 border-amber-200"
-                          : idx === 1
-                          ? "bg-green-50 border-green-200"
-                          : "bg-yellow-50 border-yellow-200"
-                      }`}
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-xs font-bold text-gray-700">
+                    প্যাকেজিং প্রক্রিয়া কার্ডসমূহ (Packaging Steps):
+                  </label>
+                  <button
+                    type="button"
+                    onClick={addPackagingStep}
+                    className="px-3 py-1 bg-amber-600 hover:bg-amber-700 text-white text-xs font-extrabold rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <FaPlus className="text-[10px]" />
+                    <span>নতুন স্টেপ যোগ করুন</span>
+                  </button>
+                </div>
+
+                {packagingSteps.length === 0 ? (
+                  <div className="p-6 text-center border-2 border-dashed border-amber-300 rounded-2xl bg-amber-50/50">
+                    <p className="text-xs text-amber-800 font-semibold mb-2">
+                      কোনো প্যাকেজিং স্টেপ কার্ড নেই
+                    </p>
+                    <button
+                      type="button"
+                      onClick={addPackagingStep}
+                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold rounded-xl transition cursor-pointer"
                     >
-                      <div className="flex items-center justify-between">
+                      + প্রথম প্যাকেজিং স্টেপ যোগ করুন
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {packagingSteps.map((st, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-5 rounded-2xl border space-y-3 relative group/card shadow-sm ${
+                          idx === 0
+                            ? "bg-amber-50 border-amber-200"
+                            : idx === 1
+                            ? "bg-green-50 border-green-200"
+                            : "bg-yellow-50 border-yellow-200"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <input
+                            type="text"
+                            value={st.step}
+                            onChange={(e) => handlePackagingStepChange(idx, "step", e.target.value)}
+                            className="w-14 text-2xl font-black text-amber-700 bg-transparent border-b border-amber-300 focus:outline-none"
+                            placeholder="০১"
+                            title="স্টেপ নম্বর"
+                          />
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold text-gray-400">Step {idx + 1}</span>
+                            <button
+                              type="button"
+                              onClick={() => removePackagingStep(idx)}
+                              className="p-1 text-red-500 hover:bg-red-50 rounded transition cursor-pointer"
+                              title="স্টেপ মুছুন"
+                            >
+                              <FaTrash className="text-xs" />
+                            </button>
+                          </div>
+                        </div>
                         <input
                           type="text"
-                          value={st.step}
-                          onChange={(e) => handlePackagingStepChange(idx, "step", e.target.value)}
-                          className="w-12 text-2xl font-black text-amber-700 bg-transparent border-b border-amber-300 focus:outline-none"
+                          value={st.title}
+                          onChange={(e) => handlePackagingStepChange(idx, "title", e.target.value)}
+                          placeholder="স্টেপ শিরোনাম (যেমন: বাগান থেকে গ্রেডিং)"
+                          className="w-full bg-white border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-400"
                         />
-                        <span className="text-[10px] font-bold text-gray-400">Step {idx + 1}</span>
+                        <textarea
+                          rows="3"
+                          value={st.description}
+                          onChange={(e) => handlePackagingStepChange(idx, "description", e.target.value)}
+                          placeholder="স্টেপ বিবরণ লিখুন..."
+                          className="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-amber-400"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        value={st.title}
-                        onChange={(e) => handlePackagingStepChange(idx, "title", e.target.value)}
-                        placeholder="স্টেপ শিরোনাম"
-                        className="w-full bg-white border border-gray-200 rounded-lg px-2.5 py-1 text-sm font-bold text-gray-900 focus:outline-none"
-                      />
-                      <textarea
-                        rows="3"
-                        value={st.description}
-                        onChange={(e) => handlePackagingStepChange(idx, "description", e.target.value)}
-                        placeholder="স্টেপ বিবরণ"
-                        className="w-full bg-white border border-gray-200 rounded-lg p-2 text-xs text-gray-600 focus:outline-none"
-                      />
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -1780,38 +1888,82 @@ export default function AdminProductForm() {
 
               {/* Storage Step Cards */}
               <div>
-                <label className="text-xs font-bold text-gray-700 mb-2 block">
-                  সংরক্ষণ ও ব্যবহার নির্দেশিকা (Storage Tip Cards):
-                </label>
-                <div className="space-y-4">
-                  {storageSteps.map((st, idx) => (
-                    <div
-                      key={idx}
-                      className={`p-4 rounded-2xl border-l-4 space-y-2 ${
-                        idx === 0
-                          ? "bg-yellow-50 border-yellow-500"
-                          : idx === 1
-                          ? "bg-green-50 border-green-500"
-                          : "bg-amber-50 border-amber-500"
-                      }`}
-                    >
-                      <input
-                        type="text"
-                        value={st.title}
-                        onChange={(e) => handleStorageStepChange(idx, "title", e.target.value)}
-                        placeholder="যেমন: ১. বক্স খোলার নিয়ম:"
-                        className="w-full bg-white border border-gray-200 rounded-lg px-3 py-1 text-sm font-bold text-gray-900 focus:outline-none"
-                      />
-                      <textarea
-                        rows="2"
-                        value={st.description}
-                        onChange={(e) => handleStorageStepChange(idx, "description", e.target.value)}
-                        placeholder="বিস্তারিত পরামর্শ..."
-                        className="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs text-gray-700 focus:outline-none"
-                      />
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mb-3">
+                  <label className="text-xs font-bold text-gray-700">
+                    সংরক্ষণ ও ব্যবহার নির্দেশিকা (Storage Tip Cards):
+                  </label>
+                  <button
+                    type="button"
+                    onClick={addStorageStep}
+                    className="px-3 py-1 bg-amber-500 hover:bg-amber-600 text-white text-xs font-extrabold rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <FaPlus className="text-[10px]" />
+                    <span>নতুন টিপস যোগ করুন</span>
+                  </button>
                 </div>
+
+                {storageSteps.length === 0 ? (
+                  <div className="p-6 text-center border-2 border-dashed border-yellow-300 rounded-2xl bg-yellow-50/50">
+                    <p className="text-xs text-yellow-800 font-semibold mb-2">
+                      কোনো সংরক্ষণ নির্দেশিকা কার্ড নেই
+                    </p>
+                    <button
+                      type="button"
+                      onClick={addStorageStep}
+                      className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-bold rounded-xl transition cursor-pointer"
+                    >
+                      + প্রথম নির্দেশিকা কার্ড যোগ করুন
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {storageSteps.map((st, idx) => (
+                      <div
+                        key={idx}
+                        className={`p-4 rounded-2xl border-l-4 space-y-2 relative group/card shadow-sm ${
+                          idx % 3 === 0
+                            ? "bg-yellow-50 border-yellow-500 border border-yellow-200"
+                            : idx % 3 === 1
+                            ? "bg-green-50 border-green-500 border border-green-200"
+                            : "bg-amber-50 border-amber-500 border border-amber-200"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={st.step !== undefined ? st.step : `${idx + 1}`}
+                            onChange={(e) => handleStorageStepChange(idx, "step", e.target.value)}
+                            placeholder="ট্যাগ"
+                            className="w-14 bg-white border border-gray-200 rounded-lg px-2 py-1 text-xs font-black text-center text-amber-800 focus:outline-none"
+                            title="স্টেপ নম্বর / ট্যাগ (যেমন: ১, ২, ৩)"
+                          />
+                          <input
+                            type="text"
+                            value={st.title}
+                            onChange={(e) => handleStorageStepChange(idx, "title", e.target.value)}
+                            placeholder="যেমন: ১. বক্স খোলার নিয়ম:"
+                            className="flex-1 bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-bold text-gray-900 focus:outline-none focus:ring-1 focus:ring-yellow-400"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeStorageStep(idx)}
+                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition cursor-pointer"
+                            title="এই কার্ডটি মুছুন"
+                          >
+                            <FaTrash className="text-xs" />
+                          </button>
+                        </div>
+                        <textarea
+                          rows="2"
+                          value={st.description}
+                          onChange={(e) => handleStorageStepChange(idx, "description", e.target.value)}
+                          placeholder="বিস্তারিত পরামর্শ বা নিয়মাবলী লিখুন..."
+                          className="w-full bg-white border border-gray-200 rounded-lg p-2.5 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-yellow-400"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
