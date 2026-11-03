@@ -22,22 +22,46 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import "./App.css";
 
 function ScrollToTop() {
-  const { pathname, hash } = useLocation();
+  const { pathname, hash, state } = useLocation();
 
   useEffect(() => {
-    if (!hash) {
-      window.scrollTo(0, 0);
-    } else {
+    // 1. If navigation arrived with state.scrollTo (from other pages like product page):
+    if (state?.scrollTo) {
+      const targetId = String(state.scrollTo).replace(/^#/, "");
+      const timer = setTimeout(() => {
+        if (targetId === "home" || !targetId) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          const element = document.getElementById(targetId);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+        // Ensure browser URL remains clean without hash
+        if (window.location.hash) {
+          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
+      }, 150);
+      return () => clearTimeout(timer);
+    }
+
+    // 2. If URL directly has a hash (e.g. from an old link or external bookmark):
+    if (hash) {
       const targetId = hash.replace("#", "");
       const timer = setTimeout(() => {
         const element = document.getElementById(targetId);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
+        // Immediately remove hash from address bar so it stays completely clean
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
       }, 150);
       return () => clearTimeout(timer);
     }
-  }, [pathname, hash]);
+
+    // 3. Normal navigation scroll to top
+    window.scrollTo(0, 0);
+  }, [pathname, hash, state]);
 
   return null;
 }

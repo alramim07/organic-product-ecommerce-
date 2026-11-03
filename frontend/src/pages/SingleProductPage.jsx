@@ -30,6 +30,7 @@ import Swal from "sweetalert2";
 import { productsData } from "../data/products";
 import { useApp } from "../context/AppContext";
 import { api } from "../services/api";
+import { getProductSlug, matchesProduct } from "../utils/productUtils";
 import OrderInvoiceModal from "../components/OrderInvoiceModal";
 
 export default function SingleProductPage() {
@@ -66,11 +67,22 @@ export default function SingleProductPage() {
   // Find product by preview data, slug, or ID from dynamic products
   const product =
     previewData ||
+    products.find((p) => matchesProduct(p, id)) ||
     products.find((p) => p.slug && p.slug.trim().toLowerCase() === (id || "").trim().toLowerCase()) ||
     products.find((p) => String(p._id) === String(id) || String(p.id) === String(id)) ||
     products.find((p) => p.id === parseInt(id || "3")) ||
     products[0] ||
     productsData[2];
+
+  // If accessed with raw DB ID or non-clean param, replace address bar with clean slug
+  useEffect(() => {
+    if (product && !isPreview) {
+      const cleanSlug = getProductSlug(product);
+      if (cleanSlug && id !== cleanSlug && !window.location.search.includes("preview=true")) {
+        navigate(`/product/${cleanSlug}`, { replace: true });
+      }
+    }
+  }, [product, id, isPreview, navigate]);
 
   // Stock status helpers
   const isPreOrder = Boolean(
@@ -465,7 +477,7 @@ export default function SingleProductPage() {
             <span>🏠 হোম</span>
           </Link>
           <FaChevronRight className="text-xs text-gray-400" />
-          <Link to="/#varieties" className="hover:text-green-700 transition">
+          <Link to="/" state={{ scrollTo: "varieties" }} className="hover:text-green-700 transition">
             আমের জাত ও তালিকা
           </Link>
           <FaChevronRight className="text-xs text-gray-400" />
@@ -1473,13 +1485,8 @@ export default function SingleProductPage() {
                 </h3>
               </div>
               <Link
-                to="/#varieties"
-                onClick={() => {
-                  setTimeout(() => {
-                    const el = document.getElementById("varieties");
-                    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-                  }, 150);
-                }}
+                to="/"
+                state={{ scrollTo: "varieties" }}
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-600 hover:bg-green-700 text-white font-bold text-sm rounded-xl shadow-md hover:shadow-lg transition cursor-pointer"
               >
                 আরো প্রোডাক্ট দেখুন <FaChevronRight className="text-xs" />
@@ -1490,7 +1497,7 @@ export default function SingleProductPage() {
               {recommendedProducts.map((rel) => {
                 const relPrice = rel.price_per_unit || rel.price_per_kg || rel.price || 0;
                 const relUnit = rel.unit || "কেজি";
-                const relLink = `/product/${rel.slug || rel._id || rel.id}`;
+                const relLink = `/product/${getProductSlug(rel)}`;
 
                 const isRelOut = Boolean(
                   rel.stock_status === "স্টক শেষ" ||

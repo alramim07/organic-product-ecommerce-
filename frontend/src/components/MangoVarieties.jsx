@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { getProductSlug } from "../utils/productUtils";
 import {
   FaCalendarAlt,
   FaEye,
@@ -419,7 +420,8 @@ export default function MangoVarieties({ onSelectMango }) {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 sm:gap-7 items-stretch">
             {visibleProducts.map((mango, index) => {
-            const productId = mango.slug || mango._id || mango.id;
+            const productSlug = getProductSlug(mango);
+            const productId = productSlug;
             const priceText =
               mango.price ||
               (mango.price_per_unit ? `৳ ${mango.price_per_unit}/${mango.unit || "কেজি"}` : "৳ ১৮০/কেজি");

@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../../context/AppContext";
+import { getProductSlug } from "../../utils/productUtils";
 
 export default function AdminProductList() {
   const { products, deleteProduct } = useApp();
@@ -388,7 +389,7 @@ export default function AdminProductList() {
                       <td className="py-3 px-4 text-right">
                         <div className="flex items-center justify-end gap-2">
                           <Link
-                            to={`/product/${p.slug || prodId}`}
+                            to={`/product/${getProductSlug(p)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="p-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-xl transition text-xs font-bold"

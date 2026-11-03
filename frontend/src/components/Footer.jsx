@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import {
   FaChevronUp,
   FaPhoneAlt,
@@ -214,17 +215,34 @@ export default function Footer() {
   const devName = settings?.footerDeveloperName || "DevHome";
   const devLink = settings?.footerDeveloperLink || "https://devhome.onrender.com/";
 
+  const navigate = useNavigate();
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    if (window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
   };
 
   const handleNavClick = (e, href) => {
     if (!href || href === "#") return;
     if (href.startsWith("#")) {
       e.preventDefault();
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      const sectionId = href.replace(/^#/, "");
+      if (window.location.pathname !== "/") {
+        navigate("/", { state: { scrollTo: sectionId } });
+      } else {
+        if (sectionId === "home" || !sectionId) {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        } else {
+          const target = document.getElementById(sectionId) || document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }
+        if (window.location.hash) {
+          window.history.replaceState(null, "", window.location.pathname + window.location.search);
+        }
       }
     }
   };

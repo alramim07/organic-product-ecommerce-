@@ -53,18 +53,21 @@ export default function Navbar() {
 
   const handleNavClick = (e, href) => {
     e.preventDefault();
+    const sectionId = (href || "").replace(/^#/, "").replace(/^\//, "").replace(/^#/, "");
+
     if (location.pathname !== "/") {
-      navigate("/" + href);
-      setTimeout(() => {
-        const target = document.querySelector(href);
+      navigate("/", { state: { scrollTo: sectionId } });
+    } else {
+      if (sectionId === "home" || !sectionId) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const target = document.getElementById(sectionId) || document.querySelector(href);
         if (target) {
           target.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-      }, 150);
-    } else {
-      const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
       }
     }
     setMobileMenuOpen(false);
@@ -75,6 +78,9 @@ export default function Navbar() {
       navigate("/");
     } else {
       window.scrollTo({ top: 0, behavior: "smooth" });
+      if (window.location.hash) {
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
     }
   };
 

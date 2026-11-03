@@ -50,8 +50,38 @@ export const getProductById = async (req, res) => {
   let product;
   if (id.match(/^[0-9a-fA-F]{24}$/)) {
     product = await Product.findById(id).lean();
-  } else {
-    product = await Product.findOne({ slug: id }).lean();
+  }
+
+  if (!product) {
+    const cleanId = id.trim().toLowerCase();
+    product = await Product.findOne({
+      $or: [
+        { slug: cleanId },
+        { slug: id },
+        { name_en: { $regex: new RegExp(`^${cleanId}$`, "i") } },
+      ],
+    }).lean();
+  }
+
+  if (!product) {
+    const varietyMap = {
+      himshagar: "হিমসাগর",
+      himsagar: "হিমসাগর",
+      amrapali: "আম্রপালি",
+      gopalbhog: "গোপালভোগ",
+      langra: "ল্যাংড়া",
+      fazli: "ফজলি",
+      katimon: "কাটিমন",
+      gourmati: "গৌরমতি",
+      guti: "গুটি",
+      haribhanga: "হাড়িভাঙ্গা",
+    };
+    const bnKeyword = varietyMap[id.toLowerCase()];
+    if (bnKeyword) {
+      product = await Product.findOne({
+        name_bn: { $regex: bnKeyword, $options: "i" },
+      }).lean();
+    }
   }
 
   if (!product) {
