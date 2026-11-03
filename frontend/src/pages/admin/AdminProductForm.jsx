@@ -762,6 +762,24 @@ export default function AdminProductForm() {
               <h2 className="text-lg sm:text-xl font-black text-gray-900">
                 {isEdit ? `Edit Product: ${nameBn || nameEn}` : "Add New Product"}
               </h2>
+
+              {/* Status Badge */}
+              {publicationStatus === "draft" && (
+                <span className="px-2.5 py-0.5 bg-gray-100 text-gray-700 text-xs font-black rounded-full border border-gray-300">
+                  📁 Draft
+                </span>
+              )}
+              {publicationStatus === "published" && (
+                <span className="px-2.5 py-0.5 bg-green-50 text-green-800 text-xs font-black rounded-full border border-green-300">
+                  🟢 Live / Published
+                </span>
+              )}
+              {publicationStatus === "scheduled" && (
+                <span className="px-2.5 py-0.5 bg-amber-50 text-amber-900 text-xs font-black rounded-full border border-amber-300">
+                  ⏰ Scheduled
+                </span>
+              )}
+
               {/* Auto-Save Status Badge */}
               {autoSaveStatus === "saving" && (
                 <span className="flex items-center gap-1.5 text-[11px] text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-300 font-bold animate-pulse">
@@ -841,15 +859,45 @@ export default function AdminProductForm() {
             <FaLayerGroup /> <span className="hidden sm:inline">Categories</span>
           </Link>
 
-          {/* Save as Draft Button */}
+          {/* Publication Status Selector Dropdown */}
+          <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold">
+            <span className="text-gray-500">Status:</span>
+            <select
+              value={publicationStatus}
+              onChange={(e) => {
+                const val = e.target.value;
+                setPublicationStatus(val);
+                if (val === "scheduled") {
+                  setShowSchedulePopover(true);
+                }
+              }}
+              className={`bg-transparent font-extrabold focus:outline-none cursor-pointer ${
+                publicationStatus === "published"
+                  ? "text-green-700"
+                  : publicationStatus === "draft"
+                  ? "text-gray-700"
+                  : "text-amber-700"
+              }`}
+            >
+              <option value="published">🟢 Published</option>
+              <option value="draft">📁 Draft</option>
+              <option value="scheduled">⏰ Scheduled</option>
+            </select>
+          </div>
+
+          {/* Save / Update as Draft Button */}
           <button
             type="button"
             onClick={(e) => handleSaveProduct(e, "draft")}
-            className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl border border-gray-300 transition flex items-center gap-1.5 cursor-pointer shadow-sm"
+            className={`px-3 py-1.5 font-bold text-xs rounded-xl border transition flex items-center gap-1.5 cursor-pointer shadow-sm ${
+              publicationStatus === "draft"
+                ? "bg-gray-200 border-gray-400 text-gray-900"
+                : "bg-gray-100 hover:bg-gray-200 border-gray-300 text-gray-700"
+            }`}
             title="Save as Draft (will not show on live shop)"
           >
             <FaFileAlt className="text-gray-500 text-xs" />
-            <span>Save as Draft</span>
+            <span>{publicationStatus === "draft" ? "Update Draft" : "Save as Draft"}</span>
           </button>
 
           {/* Schedule Button with Popover */}
@@ -891,14 +939,17 @@ export default function AdminProductForm() {
             )}
           </div>
 
-          {/* Compact Publish Product Button */}
+          {/* Publish / Update Button */}
           <button
             type="button"
             onClick={(e) => handleSaveProduct(e, "published")}
             className="px-4 py-1.5 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-extrabold text-xs rounded-xl shadow hover:shadow-md transition flex items-center gap-1.5 cursor-pointer"
+            title={publicationStatus === "draft" ? "Publish this draft to public shop" : "Save & update public product"}
           >
-            <FaSave className="text-xs" />
-            <span>{isEdit ? "Update Product" : "Publish Product"}</span>
+            <FaCheckCircle className="text-xs" />
+            <span>
+              {publicationStatus === "draft" ? "Publish Product" : isEdit ? "Update Product" : "Publish Product"}
+            </span>
           </button>
         </div>
       </div>
@@ -2163,7 +2214,7 @@ export default function AdminProductForm() {
             title="Save as Draft"
           >
             <FaFileAlt className="text-gray-500 text-xs" />
-            <span>Draft</span>
+            <span>{publicationStatus === "draft" ? "Update Draft" : "Draft"}</span>
             {autoSaveStatus === "saved" && (
               <span className="w-2 h-2 rounded-full bg-green-500 inline-block shadow-sm" title="Auto-saved" />
             )}
@@ -2192,7 +2243,10 @@ export default function AdminProductForm() {
             onClick={(e) => handleSaveProduct(e, "published")}
             className="px-4 py-1.5 admin-btn-primary text-white font-extrabold text-xs rounded-xl shadow-lg transition flex items-center gap-1.5 cursor-pointer"
           >
-            <FaSave className="text-xs" /> <span>{isEdit ? "Update" : "Publish"}</span>
+            <FaCheckCircle className="text-xs" />
+            <span>
+              {publicationStatus === "draft" ? "Publish Product" : isEdit ? "Update Product" : "Publish Product"}
+            </span>
           </button>
         </div>
       </div>
