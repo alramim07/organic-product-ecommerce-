@@ -164,6 +164,52 @@ export const api = {
     },
   },
 
+  // Reviews APIs
+  reviews: {
+    getByProduct: async (productId) => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/reviews/product/${productId}`);
+        return await res.json();
+      } catch (e) {
+        return { success: false, data: [] };
+      }
+    },
+    getAll: async (status = "", token) => {
+      try {
+        const url = status ? `${API_BASE_URL}/reviews?status=${status}` : `${API_BASE_URL}/reviews`;
+        const res = await fetch(url, {
+          headers: getHeaders(token),
+        });
+        return await res.json();
+      } catch (e) {
+        return { success: false, data: [], stats: {} };
+      }
+    },
+    create: async (data) => {
+      const res = await fetch(`${API_BASE_URL}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      return await res.json();
+    },
+    updateStatus: async (id, status, token) => {
+      const res = await fetch(`${API_BASE_URL}/reviews/${id}/status`, {
+        method: "PUT",
+        headers: getHeaders(token),
+        body: JSON.stringify({ status }),
+      });
+      return await res.json();
+    },
+    delete: async (id, token) => {
+      const res = await fetch(`${API_BASE_URL}/reviews/${id}`, {
+        method: "DELETE",
+        headers: getHeaders(token),
+      });
+      return await res.json();
+    },
+  },
+
   // Settings APIs
   settings: {
     get: async () => {

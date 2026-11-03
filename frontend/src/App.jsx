@@ -16,6 +16,7 @@ import AdminProductList from "./pages/admin/AdminProductList";
 import AdminProductForm from "./pages/admin/AdminProductForm";
 import AdminCategories from "./pages/admin/AdminCategories";
 import AdminBookingsList from "./pages/admin/AdminBookingsList";
+import AdminReviewsList from "./pages/admin/AdminReviewsList";
 import AdminSettings from "./pages/admin/AdminSettings";
 
 import "./App.css";
@@ -87,6 +88,7 @@ export default function App() {
               <Route path="products/edit/:id" element={<AdminProductForm />} />
               <Route path="categories" element={<AdminCategories />} />
               <Route path="bookings" element={<AdminBookingsList />} />
+              <Route path="reviews" element={<AdminReviewsList />} />
               <Route path="settings" element={<AdminSettings />} />
             </Route>
           </Route>

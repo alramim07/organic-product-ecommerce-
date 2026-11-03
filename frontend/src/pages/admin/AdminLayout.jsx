@@ -14,6 +14,7 @@ import {
   FaBell,
   FaUserShield,
   FaLayerGroup,
+  FaStar,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../../context/AppContext";
@@ -21,7 +22,7 @@ import { useApp } from "../../context/AppContext";
 export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { adminUser, logoutAdmin, bookings, products, settings } = useApp();
+  const { adminUser, logoutAdmin, bookings, products, settings, reviewsStats } = useApp();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // By default sidebar starts collapsed on page load/reload
@@ -102,6 +103,13 @@ export default function AdminLayout() {
       label: "Orders",
       badge: pendingCount > 0 ? `${pendingCount} New` : null,
       badgeColor: "bg-red-500",
+    },
+    {
+      to: "/admin/reviews",
+      icon: <FaStar className="text-lg" />,
+      label: "Reviews",
+      badge: reviewsStats?.pending > 0 ? `${reviewsStats.pending} New` : null,
+      badgeColor: "bg-amber-500",
     },
     {
       to: "/admin/settings",
@@ -320,6 +328,8 @@ export default function AdminLayout() {
                   ? "Categories & Units"
                   : location.pathname.includes("/bookings")
                   ? "Orders"
+                  : location.pathname.includes("/reviews")
+                  ? "Customer Reviews"
                   : location.pathname.includes("/settings")
                   ? "Settings"
                   : "Admin Panel"}

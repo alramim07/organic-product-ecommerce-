@@ -57,6 +57,9 @@ export function AppProvider({ children }) {
     }
   });
 
+  const [reviews, setReviews] = useState([]);
+  const [reviewsStats, setReviewsStats] = useState({ total: 0, pending: 0, approved: 0, rejected: 0 });
+
   const [settings, setSettings] = useState(() => {
     try {
       const saved = localStorage.getItem("ammwala_settings");
@@ -378,6 +381,16 @@ export function AppProvider({ children }) {
           setBookings(mappedOrders);
           safeSetLocalStorage("ammwala_bookings", mappedOrders);
         }
+
+        try {
+          const revRes = await api.reviews.getAll("", adminToken);
+          if (revRes.success && revRes.data) {
+            setReviews(revRes.data);
+            if (revRes.stats) setReviewsStats(revRes.stats);
+          }
+        } catch (e) {
+          console.warn("Reviews fetch error:", e);
+        }
       }
 
       // 5. Visitor Tracking
@@ -662,6 +675,62 @@ export function AppProvider({ children }) {
     localStorage.removeItem("ammwala_admin_session");
   };
 
+  // Reviews Actions
+  const fetchAdminReviews = async (status = "") => {
+    if (!adminToken) return;
+    try {
+      const res = await api.reviews.getAll(status, adminToken);
+      if (res.success && res.data) {
+        setReviews(res.data);
+        if (res.stats) setReviewsStats(res.stats);
+      }
+    } catch (e) {
+      console.warn("Could not fetch admin reviews:", e);
+    }
+  };
+
+  const submitReview = async (reviewData) => {
+    try {
+      const res = await api.reviews.create(reviewData);
+      return res;
+    } catch (e) {
+      console.error("Submit review error:", e);
+      return { success: false, message: "সার্ভারের সাথে সংযোগ স্থাপন করা সম্ভব হয়নি" };
+    }
+  };
+
+  const updateReviewStatus = async (id, status) => {
+    try {
+      const res = await api.reviews.updateStatus(id, status, adminToken);
+      if (res.success) {
+        setReviews((prev) =>
+          prev.map((r) => (r._id === id ? { ...r, status } : r))
+        );
+        fetchAdminReviews();
+        return { success: true, message: res.message };
+      }
+      return { success: false, message: res.message };
+    } catch (e) {
+      console.error("Update review status error:", e);
+      return { success: false, message: "স্ট্যাটাস পরিবর্তন ব্যর্থ হয়েছে" };
+    }
+  };
+
+  const deleteReview = async (id) => {
+    try {
+      const res = await api.reviews.delete(id, adminToken);
+      if (res.success) {
+        setReviews((prev) => prev.filter((r) => r._id !== id));
+        fetchAdminReviews();
+        return { success: true };
+      }
+      return { success: false, message: res.message };
+    } catch (e) {
+      console.error("Delete review error:", e);
+      return { success: false, message: "মুছে ফেলা সম্ভব হয়নি" };
+    }
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -680,6 +749,12 @@ export function AppProvider({ children }) {
         updateBookingStatus,
         updateBookingPaymentStatus,
         deleteBooking,
+        reviews,
+        reviewsStats,
+        fetchAdminReviews,
+        submitReview,
+        updateReviewStatus,
+        deleteReview,
         settings,
         updateSettings,
         adminUser,
