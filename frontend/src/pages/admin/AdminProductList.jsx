@@ -8,6 +8,7 @@ import {
   FaEye,
   FaBoxes,
   FaMapMarkerAlt,
+  FaCheckSquare,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
 import { useApp } from "../../context/AppContext";
@@ -16,6 +17,7 @@ export default function AdminProductList() {
   const { products, deleteProduct } = useApp();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
 
   const handleDelete = (id, name) => {
     Swal.fire({
@@ -27,9 +29,10 @@ export default function AdminProductList() {
       cancelButtonColor: "#6b7280",
       confirmButtonText: "Yes, Delete",
       cancelButtonText: "Cancel",
-    }).then((res) => {
+    }).then(async (res) => {
       if (res.isConfirmed) {
-        deleteProduct(id);
+        await deleteProduct(id);
+        setSelectedProductIds((prev) => prev.filter((item) => item !== id));
         Swal.fire({
           icon: "success",
           title: "Deleted!",
@@ -59,6 +62,75 @@ export default function AdminProductList() {
 
     return matchesSearch && matchesStatus;
   });
+
+  // Bulk Selection Handlers
+  const visibleIds = filteredProducts.map((p) => p.id || p._id);
+  const isAllVisibleSelected =
+    visibleIds.length > 0 && visibleIds.every((id) => selectedProductIds.includes(id));
+  const isSomeVisibleSelected =
+    visibleIds.some((id) => selectedProductIds.includes(id)) && !isAllVisibleSelected;
+
+  const handleToggleSelect = (id) => {
+    setSelectedProductIds((prev) =>
+      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
+    );
+  };
+
+  const handleSelectAllVisible = () => {
+    if (isAllVisibleSelected) {
+      // Deselect all visible
+      setSelectedProductIds((prev) => prev.filter((id) => !visibleIds.includes(id)));
+    } else {
+      // Select all visible
+      setSelectedProductIds((prev) => Array.from(new Set([...prev, ...visibleIds])));
+    }
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedProductIds.length === 0) return;
+
+    Swal.fire({
+      title: "Bulk Delete Products?",
+      html: `Are you sure you want to permanently delete <b>${selectedProductIds.length}</b> selected products?<br/><span class="text-xs text-red-500 font-semibold mt-1 inline-block">This action cannot be undone.</span>`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: `Yes, Delete (${selectedProductIds.length})`,
+      cancelButtonText: "Cancel",
+    }).then(async (res) => {
+      if (res.isConfirmed) {
+        Swal.fire({
+          title: "Deleting Products...",
+          text: `Deleting ${selectedProductIds.length} products. Please wait...`,
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        try {
+          const deletePromises = selectedProductIds.map((id) => deleteProduct(id));
+          await Promise.all(deletePromises);
+          const count = selectedProductIds.length;
+          setSelectedProductIds([]);
+          Swal.fire({
+            icon: "success",
+            title: "Deleted!",
+            text: `Successfully deleted ${count} products.`,
+            timer: 1800,
+            showConfirmButton: false,
+          });
+        } catch {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Failed to delete some products. Please try again.",
+          });
+        }
+      }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -110,12 +182,63 @@ export default function AdminProductList() {
         </div>
       </div>
 
+      {/* Bulk Action Banner */}
+      {selectedProductIds.length > 0 && (
+        <div className="bg-red-50/90 border-2 border-red-200 p-4 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm transition-all duration-300">
+          <div className="flex items-center gap-3">
+            <span className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center font-black text-sm shadow">
+              {selectedProductIds.length}
+            </span>
+            <div>
+              <h4 className="text-sm font-extrabold text-red-950 flex items-center gap-2">
+                <FaCheckSquare className="text-red-600" />
+                {selectedProductIds.length}{" "}
+                {selectedProductIds.length === 1 ? "Product" : "Products"} Selected
+              </h4>
+              <p className="text-xs text-red-700">
+                You can permanently delete all selected items at once.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => setSelectedProductIds([])}
+              className="px-4 py-2 bg-white hover:bg-gray-100 text-gray-700 text-xs font-bold rounded-xl border border-gray-300 transition shadow-sm cursor-pointer"
+            >
+              Deselect All
+            </button>
+            <button
+              type="button"
+              onClick={handleBulkDelete}
+              className="px-5 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-black rounded-xl shadow-md hover:shadow-lg transition flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <FaTrashAlt />
+              <span>Bulk Delete ({selectedProductIds.length})</span>
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Products Table */}
       <div className="bg-white rounded-3xl shadow-sm border border-gray-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-gray-700">
             <thead className="bg-gray-50 text-xs text-gray-500 uppercase border-b border-gray-200">
               <tr>
+                <th className="py-3.5 px-4 w-12 text-center">
+                  <input
+                    type="checkbox"
+                    checked={isAllVisibleSelected}
+                    ref={(el) => {
+                      if (el) el.indeterminate = isSomeVisibleSelected;
+                    }}
+                    onChange={handleSelectAllVisible}
+                    className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer"
+                    title={isAllVisibleSelected ? "Deselect All" : "Select All Visible"}
+                  />
+                </th>
                 <th className="py-3.5 px-4">Image</th>
                 <th className="py-3.5 px-4">Product Name</th>
                 <th className="py-3.5 px-4">Unit Price</th>
@@ -127,15 +250,30 @@ export default function AdminProductList() {
             <tbody className="divide-y divide-gray-100">
               {filteredProducts.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="text-center py-10 text-gray-400">
+                  <td colSpan="7" className="text-center py-10 text-gray-400">
                     No products found matching your search.
                   </td>
                 </tr>
               ) : (
                 filteredProducts.map((p) => {
                   const prodId = p.id || p._id;
+                  const isSelected = selectedProductIds.includes(prodId);
+
                   return (
-                    <tr key={prodId} className="hover:bg-gray-50/80 transition">
+                    <tr
+                      key={prodId}
+                      className={`transition ${
+                        isSelected ? "bg-red-50/40 hover:bg-red-50/70" : "hover:bg-gray-50/80"
+                      }`}
+                    >
+                      <td className="py-3 px-4 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleSelect(prodId)}
+                          className="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500 cursor-pointer"
+                        />
+                      </td>
                       <td className="py-3 px-4">
                         <img
                           src={p.image}

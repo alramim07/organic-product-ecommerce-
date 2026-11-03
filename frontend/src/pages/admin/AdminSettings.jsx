@@ -3872,9 +3872,7 @@ export default function AdminSettings() {
                       <span className="w-3 h-3 rounded-full bg-yellow-500 inline-block" />
                       <span className="w-3 h-3 rounded-full bg-green-500 inline-block" />
                     </div>
-                    <div className="flex-1 bg-gray-900 px-4 py-1 rounded-lg text-center font-mono text-[11px] text-gray-300 truncate">
-                      🔒 https://ammwala.com
-                    </div>
+                    <div className="flex-1 bg-gray-900/60 h-3 rounded-full max-w-xs mx-auto border border-gray-700/40"></div>
                   </div>
 
                   {/* Rendered Live Desktop Navbar */}
