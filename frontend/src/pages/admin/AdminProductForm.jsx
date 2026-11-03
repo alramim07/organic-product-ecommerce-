@@ -2456,7 +2456,7 @@ export default function AdminProductForm() {
                   <IconPicker
                     value={tab1Icon}
                     onChange={setTab1Icon}
-                    label="আইকন"
+                    label="Icon"
                     colorScheme="green"
                   />
 
@@ -2647,7 +2647,7 @@ export default function AdminProductForm() {
                   <IconPicker
                     value={tab2Icon}
                     onChange={setTab2Icon}
-                    label="আইকন"
+                    label="Icon"
                     colorScheme="amber"
                   />
 
@@ -2775,7 +2775,7 @@ export default function AdminProductForm() {
                   <IconPicker
                     value={tab3Icon}
                     onChange={setTab3Icon}
-                    label="আইকন"
+                    label="Icon"
                     colorScheme="yellow"
                   />
 

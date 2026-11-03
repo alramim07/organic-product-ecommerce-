@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 export default function IconPicker({
   value,
   onChange,
-  label = "আইকন:",
+  label = "Icon:",
   colorScheme = "green",
 }) {
   const [showPicker, setShowPicker] = useState(false);

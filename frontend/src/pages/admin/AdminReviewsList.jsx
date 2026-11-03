@@ -722,7 +722,7 @@ export default function AdminReviewsList() {
               {/* Photo Upload Section */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Upload Product Photos (পণ্যের ছবি আপলোড, ঐচ্ছিক সর্বোচ্চ ৪টি)
+                  Upload Product Photos (Optional, max 4)
                 </label>
                 <div className="flex items-center gap-2 flex-wrap">
                   {customForm.images.map((img, i) => (

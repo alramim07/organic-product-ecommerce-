@@ -264,7 +264,7 @@ export default function AdminCategories() {
                 <IconPicker
                   value={icon}
                   onChange={setIcon}
-                  label="আইকন"
+                  label="Icon"
                   colorScheme="green"
                 />
               </div>
@@ -508,7 +508,7 @@ export default function AdminCategories() {
                       onChange={(newIcon) =>
                         setEditingCategory({ ...editingCategory, icon: newIcon })
                       }
-                      label="আইকন"
+                      label="Icon"
                       colorScheme="green"
                     />
                   </div>

@@ -101,7 +101,15 @@ export default function OrderInvoiceModal({ isOpen, onClose, order }) {
                       src={brandLogo}
                       alt={brandName}
                       className="w-full h-full object-contain p-1"
+                      onError={(e) => {
+                        e.target.style.display = "none";
+                        const fallback = e.target.parentElement?.querySelector(".fallback-invoice-leaf");
+                        if (fallback) fallback.classList.remove("hidden");
+                      }}
                     />
+                    <div className="fallback-invoice-leaf hidden w-full h-full bg-emerald-600 flex items-center justify-center text-white text-2xl">
+                      <FaLeaf />
+                    </div>
                   </div>
                 ) : (
                   <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-green-600 rounded-2xl flex items-center justify-center text-white text-2xl shadow-md shrink-0 print:bg-emerald-600">
