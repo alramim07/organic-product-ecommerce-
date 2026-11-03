@@ -299,6 +299,12 @@ export default function AdminSettings() {
   // Frontend Website Header Settings state
   const [websiteFavicon, setWebsiteFavicon] = useState(settings.websiteFavicon || "");
   const [websiteLogo, setWebsiteLogo] = useState(settings.websiteLogo || "");
+  const [headerTitleColorType, setHeaderTitleColorType] = useState(
+    settings.headerTitleColorType || "gradient"
+  );
+  const [headerTitleColorVal, setHeaderTitleColorVal] = useState(
+    settings.headerTitleColorVal || "linear-gradient(to right, #15803d, #ca8a04)"
+  );
   const [headerBrandDisplay, setHeaderBrandDisplay] = useState(
     settings.headerBrandDisplay || "logo_only"
   );
