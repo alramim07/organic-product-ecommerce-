@@ -5130,7 +5130,7 @@ export default function AdminSettings() {
                       setProductSectionTitle(e.target.value);
                       updateSettings({ productSectionTitle: e.target.value });
                     }}
-                    placeholder="আমের জাত ও মূল্য"
+                    placeholder="Mango Varieties & Prices"
                     className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
@@ -5139,7 +5139,7 @@ export default function AdminSettings() {
               {/* Section Subtitle */}
               <div>
                 <label className="text-[11px] font-bold text-gray-600 block mb-1">
-                  Section Subheading Text (সাব-হেডিং)
+                  Section Subheading Text
                 </label>
                 <textarea
                   rows="2"
@@ -5148,11 +5148,11 @@ export default function AdminSettings() {
                     setProductSectionSubtitle(e.target.value);
                     updateSettings({ productSectionSubtitle: e.target.value });
                   }}
-                  placeholder="রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"
+                  placeholder="Best seasonal mangoes from Rajshahi, Chuadanga, and Naogaon. Choose your favorite variety from below."
                   className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
                 <p className="text-[11px] text-gray-400 mt-1">
-                  এই টেক্সটটি হোমপেজে রেসপন্সিভভাবে ব্যালেন্সড হয়ে দেখাবে, কোনো একক শব্দ নিচে ভেঙে পড়বে না।
+                  This text will render balanced and responsively on the storefront without awkward word wraps.
                 </p>
               </div>
             </div>
@@ -5164,7 +5164,7 @@ export default function AdminSettings() {
                   <FaPalette className="text-green-600" /> Product Card Design Presets
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  নিচের ৪টি ভিন্নধর্মী ডিজাইন থেকে আপনার পছন্দের স্টাইল বেছে নিন। প্রতিটি কার্ড স্বকীয় রঙ, বর্ডার, ব্যাজ ও বাটন ডিজাইনে তৈরি।
+                  Choose from 4 distinct card presets. Each features unique colors, borders, badges, and button styling.
                 </p>
               </div>
 
@@ -5200,22 +5200,22 @@ export default function AdminSettings() {
                       <div className="h-12 bg-amber-200/70 rounded-xl relative flex items-center justify-center text-amber-900 font-bold overflow-hidden">
                         <span className="text-[9px]">Inset Image</span>
                         <span className="absolute top-1 left-1 bg-yellow-400 text-green-950 font-black text-[8px] px-1.5 py-0.2 rounded-full">
-                          🥭 ফ্রেশ
+                          🥭 Fresh
                         </span>
                       </div>
-                      <div className="font-bold text-green-950 truncate">আমের নাম...</div>
+                      <div className="font-bold text-green-950 truncate">Product Name...</div>
                       <div>
                         <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 font-black text-[9px] border border-amber-200">
-                          ৳ ১৮০/কেজি
+                          ৳ 180/kg
                         </span>
                       </div>
                       <div className="h-5 bg-gradient-to-r from-amber-500 to-green-600 rounded-full text-white text-[9px] font-black flex items-center justify-center shadow">
-                        প্রি-অর্ডার
+                        Pre-Order
                       </div>
                     </div>
                   </div>
                   <p className="text-[11px] text-amber-900 font-medium mt-2.5">
-                    ওয়ার্ম অ্যাম্বার কার্ড, ইনসেট ইমেজ ও গোল্ডেন পিল বাটন
+                    Warm amber card, inset image, and golden pill button
                   </p>
                 </div>
 
@@ -5250,18 +5250,18 @@ export default function AdminSettings() {
                       <div className="h-12 bg-slate-100 -mx-2 -mt-2 relative flex items-center justify-center text-slate-500 font-bold">
                         <span className="text-[9px]">Flush Image</span>
                         <span className="absolute top-1 right-1 bg-slate-900/80 text-white font-bold text-[8px] px-1 rounded">
-                          ইন স্টক
+                          In Stock
                         </span>
                       </div>
-                      <div className="font-bold text-slate-900 truncate pt-1">আমের নাম...</div>
-                      <div className="text-slate-950 font-black text-[11px]">৳ ১৮০/কেজি</div>
+                      <div className="font-bold text-slate-900 truncate pt-1">Product Name...</div>
+                      <div className="text-slate-950 font-black text-[11px]">৳ 180/kg</div>
                       <div className="h-5 bg-emerald-600 rounded-md text-white text-[9px] font-bold flex items-center justify-center">
-                        প্রি-অর্ডার
+                        Pre-Order
                       </div>
                     </div>
                   </div>
                   <p className="text-[11px] text-slate-600 font-medium mt-2.5">
-                    স্টুডিও হোয়াইট রিটেল কার্ড, ফ্ল্যাশ ইমেজ ও স্লিক বাটন
+                    Studio white retail card, flush image, and sleek button
                   </p>
                 </div>
 
@@ -5296,18 +5296,18 @@ export default function AdminSettings() {
                       <div className="h-12 bg-gray-800 rounded-lg relative flex items-center justify-center text-amber-300 font-bold border border-amber-500/30">
                         <span className="text-[9px]">Dark Image</span>
                         <span className="absolute top-1 left-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 font-black text-[8px] px-1.5 py-0.2 rounded-full">
-                          👑 প্রিমিয়াম
+                          👑 Premium
                         </span>
                       </div>
-                      <div className="font-bold text-white truncate">আমের নাম...</div>
-                      <div className="text-yellow-400 font-black text-[11px]">৳ ১৮০/কেজি</div>
+                      <div className="font-bold text-white truncate">Product Name...</div>
+                      <div className="text-yellow-400 font-black text-[11px]">৳ 180/kg</div>
                       <div className="h-5 bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 text-gray-950 font-black rounded-lg text-[9px] flex items-center justify-center shadow">
-                        প্রি-অর্ডার
+                        Pre-Order
                       </div>
                     </div>
                   </div>
                   <p className="text-[11px] text-amber-300/80 font-medium mt-2.5">
-                    রয়্যাল ব্ল্যাক ও গ্লিটারিং গোল্ডেন এক্সক্লুসিভ লাক্সারি
+                    Royal black with glittering gold exclusive luxury aesthetic
                   </p>
                 </div>
 
@@ -5342,22 +5342,22 @@ export default function AdminSettings() {
                       <div className="h-12 bg-emerald-200/60 rounded-xl relative flex items-center justify-center text-emerald-900 font-bold">
                         <span className="text-[9px]">Eco Frame</span>
                         <span className="absolute top-1 left-1 bg-emerald-700 text-white font-bold text-[8px] px-1.5 py-0.2 rounded-full">
-                          🌿 অর্গানিক
+                          🌿 Organic
                         </span>
                       </div>
-                      <div className="font-bold text-emerald-950 truncate">আমের নাম...</div>
+                      <div className="font-bold text-emerald-950 truncate">Product Name...</div>
                       <div>
                         <span className="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-900 font-bold text-[9px] border border-emerald-300">
-                          ৳ ১৮০/কেজি
+                          ৳ 180/kg
                         </span>
                       </div>
                       <div className="h-5 bg-emerald-700 rounded-xl text-white text-[9px] font-black border-b-2 border-emerald-950 flex items-center justify-center shadow">
-                        প্রি-অর্ডার
+                        Pre-Order
                       </div>
                     </div>
                   </div>
                   <p className="text-[11px] text-emerald-900 font-medium mt-2.5">
-                    ন্যাচারাল সেজ গ্রিন, ড্যাশড বর্ডার ও ৩D লিফ বাটন
+                    Natural sage green, dashed borders, and 3D leaf button
                   </p>
                 </div>
               </div>
@@ -5367,10 +5367,10 @@ export default function AdminSettings() {
             <div className="p-5 rounded-2xl bg-gray-50/70 border border-gray-200 space-y-4">
               <div className="border-b border-gray-200/60 pb-2.5">
                 <h4 className="text-sm font-black text-gray-900 flex items-center gap-2">
-                  <FaThLarge className="text-emerald-600" /> Products Display Mode (প্রদর্শন পদ্ধতি)
+                  <FaThLarge className="text-emerald-600" /> Products Display Mode
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  ইউজার স্বয়ংক্রিয়ভাবে সর্বশেষ যুক্ত হওয়া ৮টি প্রোডাক্ট দেখতে পারবে, অথবা আপনি নিজের ইচ্ছামতো নির্দিষ্ট প্রোডাক্ট সিলেক্ট করে দিতে পারবেন।
+                  Display the latest 8 products automatically, or select specific featured products manually.
                 </p>
               </div>
 
@@ -5400,10 +5400,10 @@ export default function AdminSettings() {
                   />
                   <div>
                     <span className="text-sm font-black text-gray-900 block">
-                      Automatic (সর্বশেষ যুক্ত হওয়া ৮টি প্রোডাক্ট)
+                      Automatic (Latest 8 Products)
                     </span>
                     <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                      ডাটাবেসের সর্বশেষ প্রোডাক্টগুলো স্বয়ংক্রিয়ভাবে প্রথমে ৮টি দেখাবে এবং 'Show More' বাটনে ক্লিক করলে পরবর্তী ৮টি ক্রমান্বয়ে লোড হবে।
+                      Automatically shows the latest 8 products first; clicking 'Show More' progressively reveals more.
                     </p>
                   </div>
                 </div>
@@ -5432,10 +5432,10 @@ export default function AdminSettings() {
                   />
                   <div>
                     <span className="text-sm font-black text-gray-900 block">
-                      Custom Selection (নিজের ইচ্ছামতো প্রোডাক্ট নির্বাচন)
+                      Custom Selection (Manually Select Products)
                     </span>
                     <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">
-                      নিচের তালিকা থেকে আপনার পছন্দের নির্দিষ্ট প্রোডাক্টগুলো সিলেক্ট করে দিন। সেই প্রোডাক্টগুলোই এখানে প্রাধান্য পাবে।
+                      Select specific products from the checklist below to prioritize them in the catalog.
                     </p>
                   </div>
                 </div>
@@ -5506,7 +5506,7 @@ export default function AdminSettings() {
                                 {product.name_bn || product.name_en}
                               </h5>
                               <p className="text-[10px] text-amber-700 font-semibold">
-                                ৳ {product.price_per_unit || product.price || 0}/{product.unit || "কেজি"}
+                                ৳ {product.price_per_unit || product.price || 0}/{product.unit || "kg"}
                               </p>
                             </div>
                           </div>
@@ -5524,14 +5524,14 @@ export default function AdminSettings() {
                   <FaSlidersH className="text-amber-600" /> "Show More" & "Collapse" Button Texts
                 </h4>
                 <p className="text-xs text-gray-500 mt-0.5">
-                  প্রোডাক্ট গ্রিডের নিচের বাটনের লেখা কাস্টমাইজ করুন। ডিফল্টভাবে "Show More Products" থাকবে এবং ইউজার চাইলে বাংলায় বা অন্য যেকোনো টেক্সট (যেমন: "Aro Product Dekhun") দিতে পারবে।
+                  Customize the pagination button text beneath the product catalog grid.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-[11px] font-bold text-gray-600 block mb-1">
-                    "Show More" Button Text (আরও প্রোডাক্ট দেখতে)
+                    "Show More" Button Text
                   </label>
                   <input
                     type="text"
@@ -5540,17 +5540,17 @@ export default function AdminSettings() {
                       setProductShowMoreBtnText(e.target.value);
                       updateSettings({ productShowMoreBtnText: e.target.value });
                     }}
-                    placeholder="Show More Products / আরও প্রোডাক্ট দেখুন"
+                    placeholder="Show More Products"
                     className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                   <p className="text-[11px] text-gray-400 mt-1">
-                    ক্লিক করলে পরবর্তী ৮টি প্রোডাক্ট লোড হবে।
+                    Clicking will load the next batch of products.
                   </p>
                 </div>
 
                 <div>
                   <label className="text-[11px] font-bold text-gray-600 block mb-1">
-                    "Collapse" Button Text (সব প্রোডাক্ট দেখানো শেষে ফোল্ড করতে)
+                    "Collapse" Button Text
                   </label>
                   <input
                     type="text"
@@ -5559,11 +5559,11 @@ export default function AdminSettings() {
                       setProductCollapseBtnText(e.target.value);
                       updateSettings({ productCollapseBtnText: e.target.value });
                     }}
-                    placeholder="Collapse Products / কমিয়ে আনুন"
+                    placeholder="Collapse Products"
                     className="w-full px-3.5 py-2.5 bg-white border border-gray-300 rounded-xl text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                   <p className="text-[11px] text-gray-400 mt-1">
-                    সব প্রোডাক্ট শেষ হলে এই বাটনটি দেখাবে এবং ক্লিক করলে পুনরায় ৮টিতে সংকুচিত হবে।
+                    Displays after all products are shown; clicking collapses back to 8 items.
                   </p>
                 </div>
               </div>
@@ -5625,21 +5625,21 @@ export default function AdminSettings() {
                   <div className="text-center space-y-2">
                     <h3 className="text-2xl sm:text-3xl font-black text-white inline-flex items-center justify-center gap-2 border-b-4 border-yellow-400 pb-1 px-3">
                       <span>{productSectionTitleIcon || "🥭"}</span>
-                      <span>{productSectionTitle || "আমের জাত ও মূল্য"}</span>
+                      <span>{productSectionTitle || "Mango Varieties & Prices"}</span>
                     </h3>
                     <p className="text-xs sm:text-sm text-gray-300 max-w-2xl mx-auto leading-relaxed">
                       {productSectionSubtitle ||
-                        "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"}
+                        "Best seasonal mangoes from Rajshahi, Chuadanga, and Naogaon. Choose your favorite variety from below."}
                     </p>
                   </div>
 
                   {/* Sample Card Preview Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                     {[
-                      { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
-                      { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
-                      { name: "ল্যাংড়া", price: "৳ ১৬০/কেজি", dates: "চুয়াডাঙ্গা: ২৮ মে, নওগাঁ: ১০ জুন" },
-                      { name: "আম্রপালি", price: "৳ ১৯০/কেজি", dates: "চুয়াডাঙ্গা: ৫ জুন, রাজশাহী: ১৫ জুন" },
+                      { name: "Gopalbhog", price: "৳ 180/kg", dates: "Chuadanga: 13 May, Naogaon: 30 May" },
+                      { name: "Himsagar / Khirsapat", price: "৳ 220/kg", dates: "Chuadanga: 13 May, Rajshahi: 30 May" },
+                      { name: "Langra", price: "৳ 160/kg", dates: "Chuadanga: 28 May, Naogaon: 10 June" },
+                      { name: "Amrapali", price: "৳ 190/kg", dates: "Chuadanga: 5 June, Rajshahi: 15 June" },
                     ].map((item, idx) => (
                       <div key={idx} className="h-full flex flex-col">
                         {/* Preset 1: Classic Warm */}
@@ -5649,7 +5649,7 @@ export default function AdminSettings() {
                               <div className="h-32 bg-amber-100 rounded-2xl relative flex items-center justify-center text-amber-900 font-bold overflow-hidden shadow-inner">
                                 <span>🥭 Inset Image</span>
                                 <span className="absolute top-2 left-2 bg-yellow-400 text-green-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
-                                  বাগান ফ্রেশ
+                                  Garden Fresh
                                 </span>
                               </div>
                             </div>
@@ -5664,9 +5664,9 @@ export default function AdminSettings() {
                                 <p className="text-[10px] text-gray-500 mt-1 line-clamp-1">{item.dates}</p>
                               </div>
                               <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-xs">
-                                <span className="text-[11px] text-green-800 font-bold">বিস্তারিত</span>
+                                <span className="text-[11px] text-green-800 font-bold">Details</span>
                                 <span className="px-3.5 py-1 text-[11px] text-white font-black rounded-full bg-gradient-to-r from-amber-500 to-green-600 shadow">
-                                  প্রি-অর্ডার
+                                  Pre-Order
                                 </span>
                               </div>
                             </div>
@@ -5679,7 +5679,7 @@ export default function AdminSettings() {
                             <div className="h-32 bg-slate-100 relative flex items-center justify-center text-slate-500 font-bold">
                               <span>Flush Image</span>
                               <span className="absolute top-2 right-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow">
-                                ইন স্টক
+                                In Stock
                               </span>
                             </div>
                             <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
@@ -5689,9 +5689,9 @@ export default function AdminSettings() {
                                 <p className="text-[10px] text-slate-400 mt-1 line-clamp-1">{item.dates}</p>
                               </div>
                               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                                <span className="text-[11px] text-slate-600 font-semibold">দেখুন</span>
+                                <span className="text-[11px] text-slate-600 font-semibold">View</span>
                                 <span className="px-3.5 py-1 text-[11px] text-white font-bold rounded-lg bg-emerald-600">
-                                  প্রি-অর্ডার
+                                  Pre-Order
                                 </span>
                               </div>
                             </div>
@@ -5705,7 +5705,7 @@ export default function AdminSettings() {
                             <div className="h-32 bg-gray-900 relative flex items-center justify-center text-amber-300 font-bold">
                               <span>Dark Image</span>
                               <span className="absolute top-2 left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
-                                👑 প্রিমিয়াম
+                                👑 Premium
                               </span>
                             </div>
                             <div className="p-3.5 flex flex-col justify-between flex-1 space-y-2">
@@ -5715,9 +5715,9 @@ export default function AdminSettings() {
                                 <p className="text-[10px] text-gray-400 mt-1 line-clamp-1">{item.dates}</p>
                               </div>
                               <div className="pt-2 border-t border-gray-800 flex items-center justify-between text-xs">
-                                <span className="text-[11px] text-yellow-400 font-bold">বিস্তারিত</span>
+                                <span className="text-[11px] text-yellow-400 font-bold">Details</span>
                                 <span className="px-3.5 py-1 text-[11px] text-gray-950 font-black rounded-lg bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 shadow">
-                                  প্রি-অর্ডার
+                                  Pre-Order
                                 </span>
                               </div>
                             </div>
@@ -5731,7 +5731,7 @@ export default function AdminSettings() {
                               <div className="h-32 bg-emerald-100/70 rounded-xl relative flex items-center justify-center text-emerald-900 font-bold">
                                 <span>🌿 Eco Frame</span>
                                 <span className="absolute top-2 left-2 bg-emerald-700 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">
-                                  ১০০% অর্গানিক
+                                  100% Organic
                                 </span>
                               </div>
                             </div>
@@ -5746,9 +5746,9 @@ export default function AdminSettings() {
                                 <p className="text-[10px] text-emerald-800 mt-1 line-clamp-1">{item.dates}</p>
                               </div>
                               <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between text-xs">
-                                <span className="text-[11px] text-emerald-700 font-bold">বিস্তারিত</span>
+                                <span className="text-[11px] text-emerald-700 font-bold">Details</span>
                                 <span className="px-3.5 py-1 text-[11px] text-white font-black rounded-xl bg-emerald-700 border-b-2 border-emerald-950 shadow">
-                                  প্রি-অর্ডার
+                                  Pre-Order
                                 </span>
                               </div>
                             </div>
@@ -5783,19 +5783,19 @@ export default function AdminSettings() {
                       <div className="text-center space-y-1.5 pt-1">
                         <h3 className="text-lg font-black text-white inline-flex items-center justify-center gap-1.5 border-b-2 border-yellow-400 pb-0.5 px-2">
                           <span>{productSectionTitleIcon || "🥭"}</span>
-                          <span>{productSectionTitle || "আমের জাত ও মূল্য"}</span>
+                          <span>{productSectionTitle || "Mango Varieties & Prices"}</span>
                         </h3>
                         <p className="text-[11px] text-gray-300 leading-relaxed px-1">
                           {productSectionSubtitle ||
-                            "রাজশাহী, চুয়াডাঙ্গা, নওগাঁর মৌসুমি সেরা আম। নিচের কার্ড থেকে বেছে নিন আপনার পছন্দের জাত।"}
+                            "Best seasonal mangoes from Rajshahi, Chuadanga, and Naogaon. Choose your favorite variety from below."}
                         </p>
                       </div>
 
                       {/* Mobile Cards (Vertical Stack of 2 items in mobile screen) */}
                       <div className="space-y-3.5">
                         {[
-                          { name: "গোপালভোগ", price: "৳ ১৮০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, নওগাঁ: ৩০ মে" },
-                          { name: "ক্ষীরসাপাতি / হিমসাগর", price: "৳ ২২০/কেজি", dates: "চুয়াডাঙ্গা: ১৩ মে, রাজশাহী: ৩০ মে" },
+                          { name: "Gopalbhog", price: "৳ 180/kg", dates: "Chuadanga: 13 May, Naogaon: 30 May" },
+                          { name: "Himsagar / Khirsapat", price: "৳ 220/kg", dates: "Chuadanga: 13 May, Rajshahi: 30 May" },
                         ].map((item, idx) => (
                           <div key={idx} className="flex flex-col">
                             {/* Preset 1: Classic Warm */}
@@ -5805,7 +5805,7 @@ export default function AdminSettings() {
                                   <div className="h-28 bg-amber-100 rounded-2xl relative flex items-center justify-center text-amber-900 font-bold overflow-hidden shadow-inner">
                                     <span className="text-xs">🥭 Inset Image</span>
                                     <span className="absolute top-2 left-2 bg-yellow-400 text-green-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
-                                      বাগান ফ্রেশ
+                                      Garden Fresh
                                     </span>
                                   </div>
                                 </div>
@@ -5820,9 +5820,9 @@ export default function AdminSettings() {
                                     <p className="text-[10px] text-gray-500 mt-1 truncate">{item.dates}</p>
                                   </div>
                                   <div className="pt-2 border-t border-amber-200/60 flex items-center justify-between text-xs">
-                                    <span className="text-[10px] text-green-800 font-bold">বিস্তারিত</span>
+                                    <span className="text-[10px] text-green-800 font-bold">Details</span>
                                     <span className="px-3 py-1 text-[10px] text-white font-black rounded-full bg-gradient-to-r from-amber-500 to-green-600 shadow">
-                                      প্রি-অর্ডার
+                                      Pre-Order
                                     </span>
                                   </div>
                                 </div>
@@ -5835,7 +5835,7 @@ export default function AdminSettings() {
                                 <div className="h-28 bg-slate-100 relative flex items-center justify-center text-slate-500 font-bold">
                                   <span className="text-xs">Flush Image</span>
                                   <span className="absolute top-2 right-2 bg-slate-900/80 text-white text-[9px] font-bold px-2 py-0.5 rounded shadow">
-                                    ইন স্টক
+                                    In Stock
                                   </span>
                                 </div>
                                 <div className="p-3 flex flex-col justify-between space-y-2">
@@ -5845,9 +5845,9 @@ export default function AdminSettings() {
                                     <p className="text-[10px] text-slate-400 mt-1 truncate">{item.dates}</p>
                                   </div>
                                   <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
-                                    <span className="text-[10px] text-slate-600 font-semibold">দেখুন</span>
+                                    <span className="text-[10px] text-slate-600 font-semibold">View</span>
                                     <span className="px-3 py-1 text-[10px] text-white font-bold rounded-lg bg-emerald-600">
-                                      প্রি-অর্ডার
+                                      Pre-Order
                                     </span>
                                   </div>
                                 </div>
@@ -5861,7 +5861,7 @@ export default function AdminSettings() {
                                 <div className="h-28 bg-gray-900 relative flex items-center justify-center text-amber-300 font-bold">
                                   <span className="text-xs">Dark Image</span>
                                   <span className="absolute top-2 left-2 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-950 text-[9px] font-black px-2 py-0.5 rounded-full shadow">
-                                    👑 প্রিমিয়াম
+                                    👑 Premium
                                   </span>
                                 </div>
                                 <div className="p-3 flex flex-col justify-between space-y-2">
@@ -5871,9 +5871,9 @@ export default function AdminSettings() {
                                     <p className="text-[10px] text-gray-400 mt-1 truncate">{item.dates}</p>
                                   </div>
                                   <div className="pt-2 border-t border-gray-800 flex items-center justify-between text-xs">
-                                    <span className="text-[10px] text-yellow-400 font-bold">বিস্তারিত</span>
+                                    <span className="text-[10px] text-yellow-400 font-bold">Details</span>
                                     <span className="px-3 py-1 text-[10px] text-gray-950 font-black rounded-lg bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 shadow">
-                                      প্রি-অর্ডার
+                                      Pre-Order
                                     </span>
                                   </div>
                                 </div>
@@ -5887,7 +5887,7 @@ export default function AdminSettings() {
                                   <div className="h-28 bg-emerald-100/70 rounded-xl relative flex items-center justify-center text-emerald-900 font-bold">
                                     <span className="text-xs">🌿 Eco Frame</span>
                                     <span className="absolute top-2 left-2 bg-emerald-700 text-white text-[9px] font-bold px-2 py-0.5 rounded-full shadow">
-                                      ১০০% অর্গানিক
+                                      100% Organic
                                     </span>
                                   </div>
                                 </div>
@@ -5902,9 +5902,9 @@ export default function AdminSettings() {
                                     <p className="text-[10px] text-emerald-800 mt-1 truncate">{item.dates}</p>
                                   </div>
                                   <div className="pt-2 border-t border-emerald-200/80 flex items-center justify-between text-xs">
-                                    <span className="text-[10px] text-emerald-700 font-bold">বিস্তারিত</span>
+                                    <span className="text-[10px] text-emerald-700 font-bold">Details</span>
                                     <span className="px-3 py-1 text-[10px] text-white font-black rounded-xl bg-emerald-700 border-b-2 border-emerald-950 shadow">
-                                      প্রি-অর্ডার
+                                      Pre-Order
                                     </span>
                                   </div>
                                 </div>
@@ -5930,7 +5930,7 @@ export default function AdminSettings() {
 
         
           {/* ========================================================================= */}
-          {/* Section 4: About Section Settings (আমওয়ালা ভাইয়ার গল্প ও পরিচিতি) */}
+          {/* Section 4: About Section Settings (About Founder & Brand Story) */}
           {/* ========================================================================= */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-8">
             {/* Header Title Bar */}
@@ -6003,14 +6003,14 @@ export default function AdminSettings() {
                         className="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1 cursor-pointer"
                       >
                         <FaUndoAlt className="text-xs" />
-                        <span>Reset Default রাখুন</span>
+                        <span>Reset to Default</span>
                       </button>
                     )}
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold text-gray-600 mb-1">
-                      অথবা সরাসরি ছবির লিংক দিন (Image URL):
+                      Or enter direct Image URL:
                     </label>
                     <input
                       type="text"
@@ -6021,7 +6021,7 @@ export default function AdminSettings() {
                     />
                   </div>
                   <p className="text-[11px] text-gray-400">
-                    সুপারিশ: স্কয়ার (1:1) সাইজের ছবি (যেমন 400x400 px) ব্যবহার করলে সবথেকে ভালো দেখাবে।
+                    Recommended: Square (1:1) photo (e.g. 400x400 px) looks best.
                   </p>
                 </div>
               </div>
@@ -6032,7 +6032,7 @@ export default function AdminSettings() {
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-green-600" />
                 <h4 className="text-sm font-extrabold text-green-950">
-                  শিরোনাম ও বিস্তারিত বিবরণ (Title & Story Narrative)
+                  Title & Story Narrative
                 </h4>
               </div>
 
@@ -6045,24 +6045,24 @@ export default function AdminSettings() {
                     type="text"
                     value={aboutTitle}
                     onChange={(e) => setAboutTitle(e.target.value)}
-                    placeholder="আমওয়ালা ভাইয়ার গল্প"
+                    placeholder="Founder's Story / Brand Story"
                     className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-sm font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-extrabold text-green-950 mb-1">
-                    প্রতিষ্ঠাতার গল্প ও বায়ো (Founder Story / Description Text)
+                    Founder Story & Bio (Story Narrative)
                   </label>
                   <textarea
                     rows={4}
                     value={aboutDescription}
                     onChange={(e) => setAboutDescription(e.target.value)}
-                    placeholder="প্রতিষ্ঠাতা মোহাম্মদ সাব্বির এর হাত ধরে যাত্রা শুরু..."
+                    placeholder="Our journey began under the vision of founder..."
                     className="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-medium text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
                   />
                   <p className="text-[11px] text-gray-400 mt-1">
-                    ইউজার হোমপেজে এই লিখাটি সুন্দর প্যারাগ্রাফ আকারে দেখতে পাবে।
+                    This narrative will be displayed as a formatted paragraph on the storefront.
                   </p>
                 </div>
               </div>
@@ -6074,35 +6074,35 @@ export default function AdminSettings() {
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-green-600" />
                   <h4 className="text-sm font-extrabold text-green-950">
-                    ৩টি কাউন্টার ও পরিসংখ্যান কার্ড (3 Dynamic Stats Cards)
+                    3 Dynamic Stats & Counter Cards
                   </h4>
                 </div>
                 <span className="text-xs font-bold text-gray-400 hidden sm:inline">
-                  রিয়েল ডেটাবেজ সংখ্যা অথবা Custom Input Values
+                  Live Database Metrics or Custom Input Values
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {/* Stat 1: মোট অর্ডার */}
+                {/* Stat 1: Order Counter */}
                 <div className="p-4 rounded-2xl border-2 border-amber-200 bg-amber-50/30 space-y-3.5">
                   <div className="flex items-center justify-between border-b border-amber-200/80 pb-2">
                     <span className="text-xs font-black text-green-950 flex items-center gap-1.5">
-                      <span>📦 কার্ড ১: অর্ডার কাউন্টার</span>
+                      <span>📦 Card 1: Order Counter</span>
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900">
-                      {aboutStat1ValueMode === "real" ? "রিয়েল ডেটা" : "কাস্টম"}
+                      {aboutStat1ValueMode === "real" ? "Live Data" : "Custom"}
                     </span>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      কার্ডের শিরোনাম (Title)
+                      Card Title
                     </label>
                     <input
                       type="text"
                       value={aboutStat1Title}
                       onChange={(e) => setAboutStat1Title(e.target.value)}
-                      placeholder="মোট অর্ডার"
+                      placeholder="Total Orders"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -6110,7 +6110,7 @@ export default function AdminSettings() {
                   {/* Mode Switcher */}
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      মান প্রদর্শন মোড (Value Mode)
+                      Value Display Mode
                     </label>
                     <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
                       <button
@@ -6122,7 +6122,7 @@ export default function AdminSettings() {
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
-                        ⚡ রিয়েল ডেটা
+                        ⚡ Live Data
                       </button>
                       <button
                         type="button"
@@ -6133,7 +6133,7 @@ export default function AdminSettings() {
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
-                        ✍️ কাস্টম সংখ্যা
+                        ✍️ Custom Value
                       </button>
                     </div>
                   </div>
@@ -6141,7 +6141,7 @@ export default function AdminSettings() {
                   {aboutStat1ValueMode === "real" ? (
                     <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
                       <span className="text-[11px] text-green-700 font-bold block">
-                        ডেটাবেজের মোট অর্ডার থেকে অটোমেটিক আসবে:
+                        Auto-calculated from total orders in database:
                       </span>
                       <span className="text-xl font-black text-green-900">
                         {toBengaliNumber(settings?.realStats?.totalOrders ?? 0)}+
@@ -6150,13 +6150,13 @@ export default function AdminSettings() {
                   ) : (
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        কাস্টম মান (Custom Value)
+                        Custom Value
                       </label>
                       <input
                         type="text"
                         value={aboutStat1CustomValue}
                         onChange={(e) => setAboutStat1CustomValue(e.target.value)}
-                        placeholder="৫০০+"
+                        placeholder="500+"
                         className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-black text-amber-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
@@ -6164,38 +6164,38 @@ export default function AdminSettings() {
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      নিচের সাবটাইটেল (Subtitle)
+                      Card Subtitle
                     </label>
                     <input
                       type="text"
                       value={aboutStat1Subtitle}
                       onChange={(e) => setAboutStat1Subtitle(e.target.value)}
-                      placeholder="গত সিজন"
+                      placeholder="Last Season"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                 </div>
 
-                {/* Stat 2: আমের জাত */}
+                {/* Stat 2: Varieties Counter */}
                 <div className="p-4 rounded-2xl border-2 border-emerald-200 bg-emerald-50/30 space-y-3.5">
                   <div className="flex items-center justify-between border-b border-emerald-200/80 pb-2">
                     <span className="text-xs font-black text-green-950 flex items-center gap-1.5">
-                      <span>🥭 কার্ড ২: জাত কাউন্টার</span>
+                      <span>🥭 Card 2: Varieties Counter</span>
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-200 text-emerald-900">
-                      {aboutStat2ValueMode === "real" ? "রিয়েল ডেটা" : "কাস্টম"}
+                      {aboutStat2ValueMode === "real" ? "Live Data" : "Custom"}
                     </span>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      কার্ডের শিরোনাম (Title)
+                      Card Title
                     </label>
                     <input
                       type="text"
                       value={aboutStat2Title}
                       onChange={(e) => setAboutStat2Title(e.target.value)}
-                      placeholder="আমের জাত"
+                      placeholder="Mango Varieties"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -6203,7 +6203,7 @@ export default function AdminSettings() {
                   {/* Mode Switcher */}
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      মান প্রদর্শন মোড (Value Mode)
+                      Value Display Mode
                     </label>
                     <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
                       <button
@@ -6215,7 +6215,7 @@ export default function AdminSettings() {
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
-                        ⚡ রিয়েল ডেটা
+                        ⚡ Live Data
                       </button>
                       <button
                         type="button"
@@ -6226,7 +6226,7 @@ export default function AdminSettings() {
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
-                        ✍️ কাস্টম সংখ্যা
+                        ✍️ Custom Value
                       </button>
                     </div>
                   </div>
@@ -6234,7 +6234,7 @@ export default function AdminSettings() {
                   {aboutStat2ValueMode === "real" ? (
                     <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
                       <span className="text-[11px] text-green-700 font-bold block">
-                        স্টোরের অ্যাক্টিভ জাতের সংখ্যা থেকে আসবে:
+                        Auto-calculated from active products count in store:
                       </span>
                       <span className="text-xl font-black text-green-900">
                         {toBengaliNumber(settings?.realStats?.totalProducts ?? 11)}+
@@ -6243,13 +6243,13 @@ export default function AdminSettings() {
                   ) : (
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        কাস্টম মান (Custom Value)
+                        Custom Value
                       </label>
                       <input
                         type="text"
                         value={aboutStat2CustomValue}
                         onChange={(e) => setAboutStat2CustomValue(e.target.value)}
-                        placeholder="১১+"
+                        placeholder="11+"
                         className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
@@ -6257,38 +6257,38 @@ export default function AdminSettings() {
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      নিচের সাবটাইটেল (Subtitle)
+                      Card Subtitle
                     </label>
                     <input
                       type="text"
                       value={aboutStat2Subtitle}
                       onChange={(e) => setAboutStat2Subtitle(e.target.value)}
-                      placeholder="সরাসরি বাগান থেকে"
+                      placeholder="Direct from Gardens"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
                 </div>
 
-                {/* Stat 3: গ্রাহক সন্তুষ্টি */}
+                {/* Stat 3: Satisfaction Rating */}
                 <div className="p-4 rounded-2xl border-2 border-yellow-200 bg-yellow-50/30 space-y-3.5">
                   <div className="flex items-center justify-between border-b border-yellow-200/80 pb-2">
                     <span className="text-xs font-black text-green-950 flex items-center gap-1.5">
-                      <span>⭐ কার্ড ৩: সন্তুষ্টি রেটিং</span>
+                      <span>⭐ Card 3: Satisfaction Rating</span>
                     </span>
                     <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-yellow-200 text-yellow-900">
-                      {aboutStat3ValueMode === "real" ? "রিয়েল ডেটা" : "কাস্টম"}
+                      {aboutStat3ValueMode === "real" ? "Live Data" : "Custom"}
                     </span>
                   </div>
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      কার্ডের শিরোনাম (Title)
+                      Card Title
                     </label>
                     <input
                       type="text"
                       value={aboutStat3Title}
                       onChange={(e) => setAboutStat3Title(e.target.value)}
-                      placeholder="গ্রাহক সন্তুষ্টি"
+                      placeholder="Customer Satisfaction"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-bold text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -6296,7 +6296,7 @@ export default function AdminSettings() {
                   {/* Mode Switcher */}
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      মান প্রদর্শন মোড (Value Mode)
+                      Value Display Mode
                     </label>
                     <div className="grid grid-cols-2 gap-1.5 p-1 bg-gray-100 rounded-xl">
                       <button
@@ -6308,7 +6308,7 @@ export default function AdminSettings() {
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
-                        ⚡ রিয়েল ডেটা
+                        ⚡ Live Data
                       </button>
                       <button
                         type="button"
@@ -6319,7 +6319,7 @@ export default function AdminSettings() {
                             : "text-gray-600 hover:text-gray-900"
                         }`}
                       >
-                        ✍️ কাস্টম সংখ্যা
+                        ✍️ Custom Value
                       </button>
                     </div>
                   </div>
@@ -6327,7 +6327,7 @@ export default function AdminSettings() {
                   {aboutStat3ValueMode === "real" ? (
                     <div className="p-2.5 rounded-xl bg-green-50 border border-green-200 text-center">
                       <span className="text-[11px] text-green-700 font-bold block">
-                        গড় গ্রাহক রিভিউ ও রেটিং থেকে আসবে:
+                        Auto-calculated from average customer review rating:
                       </span>
                       <span className="text-xl font-black text-yellow-600">
                         {toBengaliNumber(settings?.realStats?.satisfactionRate ?? 98)}%
@@ -6336,13 +6336,13 @@ export default function AdminSettings() {
                   ) : (
                     <div>
                       <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                        কাস্টম মান (Custom Value)
+                        Custom Value
                       </label>
                       <input
                         type="text"
                         value={aboutStat3CustomValue}
                         onChange={(e) => setAboutStat3CustomValue(e.target.value)}
-                        placeholder="৯৮%"
+                        placeholder="98%"
                         className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-black text-yellow-600 focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
@@ -6350,13 +6350,13 @@ export default function AdminSettings() {
 
                   <div>
                     <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                      নিচের সাবটাইটেল (Subtitle)
+                      Card Subtitle
                     </label>
                     <input
                       type="text"
                       value={aboutStat3Subtitle}
                       onChange={(e) => setAboutStat3Subtitle(e.target.value)}
-                      placeholder="⭐ রিভিউ এর ভিত্তিতে"
+                      placeholder="⭐ Based on verified reviews"
                       className="w-full px-3 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -7143,7 +7143,7 @@ export default function AdminSettings() {
                     </h3>
                     {testimonialDisplayMode === "real" && (
                       <p className="text-[11px] text-emerald-400 font-bold">
-                        ✓ 100% Verified Customer Experience ও সরাসরি রিভিউ
+                        ✓ 100% Verified Customer Experience & Direct Reviews
                       </p>
                     )}
                   </div>
@@ -7328,7 +7328,7 @@ export default function AdminSettings() {
 
         
           {/* ========================================================================= */}
-          {/* Section 6: Footer Settings (ফুটার ও পলিসি সেটিংস) */}
+          {/* Section 6: Footer Settings (Footer & Policy Settings) */}
           {/* ========================================================================= */}
           <div className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-200 space-y-8">
             {/* Header Title Bar */}
@@ -7597,7 +7597,7 @@ export default function AdminSettings() {
                     <div className="flex items-center gap-3">
                       <div className="flex-1">
                         <label className="block text-[11px] font-bold text-gray-600 mb-1">
-                          কাস্টম Hex Color কোড:
+                          Custom Hex Color Code:
                         </label>
                         <input
                           type="text"
@@ -7641,7 +7641,6 @@ export default function AdminSettings() {
               </div>
             </div>
 
-            
             {/* Part 3: About / Description Text */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
@@ -7654,7 +7653,7 @@ export default function AdminSettings() {
                 rows={3}
                 value={footerAboutText}
                 onChange={(e) => setFooterAboutText(e.target.value)}
-                placeholder="রাজশাহী, চুয়াডাঙ্গা ও নওগাঁর সেরা জাতের আম..."
+                placeholder="Direct fresh garden mangoes delivered safely to your doorsteps..."
                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl text-xs sm:text-sm font-medium text-gray-800 leading-relaxed focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
@@ -7680,7 +7679,7 @@ export default function AdminSettings() {
                         {s.icon === "instagram" && <FaInstagram className="text-pink-600" />}
                         {s.icon === "youtube" && <FaYoutube className="text-red-600" />}
                         {s.icon === "whatsapp" && <FaWhatsapp className="text-green-600" />}
-                        <span>{s.name} লিংক</span>
+                        <span>{s.name} Link</span>
                       </span>
                       <input
                         type="checkbox"
@@ -7723,7 +7722,7 @@ export default function AdminSettings() {
                       type="text"
                       value={footerCol2Title}
                       onChange={(e) => setFooterCol2Title(e.target.value)}
-                      placeholder="দ্রুত লিংক"
+                      placeholder="Quick Links"
                       className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -7752,7 +7751,7 @@ export default function AdminSettings() {
                           type="button"
                           onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `ql_${idx}` ? null : `ql_${idx}`)}
                           className="w-9 h-8 rounded-lg bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer overflow-hidden shadow-2xs shrink-0"
-                          title="আইকন পরিবর্তন করুন (Choose or Upload)"
+                          title="Change Icon (Choose or Upload)"
                         >
                           {item.icon ? (
                             item.icon.startsWith("data:") || item.icon.startsWith("http") || item.icon.startsWith("/") ? (
@@ -7873,7 +7872,7 @@ export default function AdminSettings() {
                       type="text"
                       value={footerCol3Title}
                       onChange={(e) => setFooterCol3Title(e.target.value)}
-                      placeholder="আমের জাত"
+                      placeholder="Mango Varieties"
                       className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -7902,7 +7901,7 @@ export default function AdminSettings() {
                           type="button"
                           onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `ml_${idx}` ? null : `ml_${idx}`)}
                           className="w-9 h-8 rounded-lg bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer overflow-hidden shadow-2xs shrink-0"
-                          title="আইকন পরিবর্তন করুন (Choose or Upload)"
+                          title="Change Icon (Choose or Upload)"
                         >
                           {item.icon ? (
                             item.icon.startsWith("data:") || item.icon.startsWith("http") || item.icon.startsWith("/") ? (
@@ -8013,7 +8012,7 @@ export default function AdminSettings() {
               </div>
             </div>
 
-            {/* Part 6: Column 4 — যোগাযোগ ও খোলার সময় (Contact & Hours) */}
+            {/* Part 6: Column 4 — Contact & Operating Hours */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Contact Info */}
               <div className="p-5 rounded-2xl bg-gray-50 border border-gray-200 space-y-4">
@@ -8026,7 +8025,7 @@ export default function AdminSettings() {
                       type="text"
                       value={footerCol4Title}
                       onChange={(e) => setFooterCol4Title(e.target.value)}
-                      placeholder="যোগাযোগ"
+                      placeholder="Contact Us"
                       className="w-full px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                   </div>
@@ -8056,7 +8055,7 @@ export default function AdminSettings() {
                           type="button"
                           onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `ct_${idx}` ? null : `ct_${idx}`)}
                           className="w-9 h-8 rounded-lg bg-gray-50 hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer overflow-hidden shadow-2xs shrink-0"
-                          title="আইকন পরিবর্তন করুন (Preset or Custom)"
+                          title="Change Icon (Preset or Custom)"
                         >
                           {item.icon === "phone" && <FaPhoneAlt className="text-yellow-600 text-xs" />}
                           {item.icon === "whatsapp" && <FaWhatsapp className="text-green-600 text-xs" />}
@@ -8075,7 +8074,7 @@ export default function AdminSettings() {
                         {activeFooterIconPicker === `ct_${idx}` && (
                           <div className="absolute top-9 left-0 z-50 p-2.5 bg-white rounded-2xl shadow-2xl border border-gray-200 w-64 space-y-2">
                             <div className="flex items-center justify-between text-[11px] font-bold text-gray-700 border-b pb-1">
-                              <span>যোগাযোগ Select Icon</span>
+                              <span>Select Contact Icon</span>
                               <button
                                 type="button"
                                 onClick={() => setActiveFooterIconPicker(null)}
@@ -8134,7 +8133,7 @@ export default function AdminSettings() {
                                   updated[idx] = { ...updated[idx], icon: e.target.value };
                                   setFooterContactItems(updated);
                                 }}
-                                placeholder="কাস্টম ইমোজি/কোড..."
+                                placeholder="Custom emoji/code..."
                                 className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                               />
                             </div>
@@ -8162,7 +8161,7 @@ export default function AdminSettings() {
                             updated[idx] = { ...updated[idx], text: e.target.value };
                             setFooterContactItems(updated);
                           }}
-                          placeholder="যোগাযোগ তথ্য (যেমন: ০১৭৪৯-৭৭৫০৩০)"
+                          placeholder="Contact info (e.g. 01749-775030)"
                           className="flex-1 px-2.5 py-1 text-xs font-bold text-gray-800 bg-gray-50 border border-gray-200 rounded-lg"
                         />
                         <button
@@ -8183,7 +8182,7 @@ export default function AdminSettings() {
                           updated[idx] = { ...updated[idx], link: e.target.value };
                           setFooterContactItems(updated);
                         }}
-                        placeholder="লিংক (যেমন: tel:01749775030)"
+                        placeholder="Link (e.g. tel:01749775030)"
                         className="w-full px-2.5 py-1 text-[11px] font-mono text-gray-600 bg-gray-50 border border-gray-200 rounded-lg"
                       />
                     </div>
@@ -8200,7 +8199,7 @@ export default function AdminSettings() {
                         type="button"
                         onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "hours" ? null : "hours")}
                         className="w-8 h-8 rounded-lg bg-white hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer shadow-2xs font-bold shrink-0"
-                        title="আইকন নির্বাচন বা পরিবর্তন করুন"
+                        title="Choose or change icon"
                       >
                         {footerHoursIcon || "🕒"}
                       </button>
@@ -8237,7 +8236,7 @@ export default function AdminSettings() {
                               type="text"
                               value={footerHoursIcon}
                               onChange={(e) => setFooterHoursIcon(e.target.value)}
-                              placeholder="কাস্টম ইমোজি..."
+                              placeholder="Custom emoji..."
                               className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                             />
                           </div>
@@ -8248,7 +8247,7 @@ export default function AdminSettings() {
                       type="text"
                       value={footerHoursTitle}
                       onChange={(e) => setFooterHoursTitle(e.target.value)}
-                      placeholder="খোলার সময়"
+                      placeholder="Operating Hours"
                       className="flex-1 px-2.5 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-green-950 focus:outline-none"
                     />
                   </div>
@@ -8280,7 +8279,7 @@ export default function AdminSettings() {
                           updated[idx] = { ...updated[idx], text: e.target.value };
                           setFooterHoursItems(updated);
                         }}
-                        placeholder="যেমন: সোম-শনি: সকাল ৮টা - রাত ৮টা"
+                        placeholder="e.g. Mon-Sat: 8 AM - 8 PM"
                         className="flex-1 px-2.5 py-1 text-xs font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg"
                       />
                       <button
@@ -8309,7 +8308,7 @@ export default function AdminSettings() {
                         type="button"
                         onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === "payment" ? null : "payment")}
                         className="w-8 h-8 rounded-lg bg-white hover:bg-yellow-50 border border-gray-300 flex items-center justify-center text-sm transition cursor-pointer shadow-2xs font-bold shrink-0"
-                        title="Payment Icon পরিবর্তন করুন"
+                        title="Change Payment Icon"
                       >
                         {footerPaymentIcon || "💳"}
                       </button>
@@ -8346,7 +8345,7 @@ export default function AdminSettings() {
                               type="text"
                               value={footerPaymentIcon}
                               onChange={(e) => setFooterPaymentIcon(e.target.value)}
-                              placeholder="কাস্টম ইমোজি..."
+                              placeholder="Custom emoji..."
                               className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                             />
                           </div>
@@ -8357,7 +8356,7 @@ export default function AdminSettings() {
                       type="text"
                       value={footerPaymentTitle}
                       onChange={(e) => setFooterPaymentTitle(e.target.value)}
-                      placeholder="পেমেন্ট মেথড:"
+                      placeholder="Payment Methods:"
                       className="px-3 py-1 bg-white border border-gray-300 rounded-lg text-xs font-black text-gray-900"
                     />
                   </div>
@@ -8383,7 +8382,7 @@ export default function AdminSettings() {
                     >
                       <div className="flex items-center justify-between">
                         <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold text-white ${m.bgColor}`}>
-                          {m.name || "মেথড"}
+                          {m.name || "Method"}
                         </span>
                         <button
                           type="button"
@@ -8405,19 +8404,19 @@ export default function AdminSettings() {
                           updated[idx] = { ...updated[idx], name: e.target.value };
                           setFooterPaymentMethods(updated);
                         }}
-                        placeholder="মেথড নাম (যেমন: বিকাশ)"
+                        placeholder="Method Name (e.g. bKash)"
                         className="w-full px-2.5 py-1 text-xs font-bold bg-gray-50 border border-gray-200 rounded-lg"
                       />
 
                       {/* Color badge picker */}
                       <div className="flex items-center gap-1.5 pt-1">
                         {[
-                          { cls: "bg-pink-600", name: "বিকাশ" },
-                          { cls: "bg-orange-500", name: "নগদ" },
-                          { cls: "bg-purple-600", name: "রকেট" },
-                          { cls: "bg-green-600", name: "ক্যাশ" },
-                          { cls: "bg-blue-600", name: "ভিসা" },
-                          { cls: "bg-slate-700", name: "মাস্টারকার্ড" },
+                          { cls: "bg-pink-600", name: "bKash" },
+                          { cls: "bg-orange-500", name: "Nagad" },
+                          { cls: "bg-purple-600", name: "Rocket" },
+                          { cls: "bg-green-600", name: "Cash" },
+                          { cls: "bg-blue-600", name: "Visa" },
+                          { cls: "bg-slate-700", name: "Mastercard" },
                         ].map((c) => (
                           <button
                             key={c.cls}
@@ -8571,7 +8570,7 @@ export default function AdminSettings() {
 
             
             {/* ========================================================================= */}
-            {/* Part 7: Feature Highlights Bar (সারাদেশ ডেলিভারি, গুনগত মান, ইত্যাদি) */}
+            {/* Part 7: Feature Highlights Bar */}
             {/* ========================================================================= */}
             <div className="p-5 rounded-2xl bg-gradient-to-r from-amber-50/50 to-green-50/40 border border-amber-200/70 space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 border-b border-amber-200/60 pb-2.5">
@@ -8585,7 +8584,7 @@ export default function AdminSettings() {
                   onClick={() => {
                     setFooterFeatures([
                       ...footerFeatures,
-                      { icon: "star", title: "New Feature", desc: "বিবরণ লিখুন", show: true },
+                      { icon: "star", title: "New Feature", desc: "Feature details", show: true },
                     ]);
                   }}
                   className="px-3 py-1.5 bg-green-700 hover:bg-green-800 text-white rounded-lg text-xs font-bold transition flex items-center gap-1 shadow-xs cursor-pointer self-start sm:self-auto"
@@ -8636,7 +8635,7 @@ export default function AdminSettings() {
                           type="button"
                           onClick={() => setActiveFooterIconPicker(activeFooterIconPicker === `feat_${idx}` ? null : `feat_${idx}`)}
                           className="w-10 h-10 rounded-xl bg-yellow-50 hover:bg-yellow-100 border border-yellow-300 flex items-center justify-center text-lg text-yellow-700 transition cursor-pointer overflow-hidden shadow-inner shrink-0"
-                          title="আইকন পরিবর্তন করুন (Click to Choose or Upload)"
+                          title="Change Icon (Click to Choose or Upload)"
                         >
                           {feat.icon === "truck" && <FaTruck />}
                           {feat.icon === "leaf" && <FaLeaf />}
@@ -8667,12 +8666,12 @@ export default function AdminSettings() {
                             </div>
                             <div className="grid grid-cols-4 gap-1.5 text-xs">
                               {[
-                                { key: "truck", label: "🚚 ট্রাক" },
-                                { key: "leaf", label: "🍃 পাতা" },
-                                { key: "headset", label: "🎧 সাপোর্ট" },
-                                { key: "medal", label: "🏅 মেডেল" },
-                                { key: "star", label: "⭐ স্টার" },
-                                { key: "shield", label: "🛡️ শিল্ড" },
+                                { key: "truck", label: "🚚 Truck" },
+                                { key: "leaf", label: "🍃 Leaf" },
+                                { key: "headset", label: "🎧 Support" },
+                                { key: "medal", label: "🏅 Medal" },
+                                { key: "star", label: "⭐ Star" },
+                                { key: "shield", label: "🛡️ Shield" },
                               ].map((opt) => (
                                 <button
                                   key={opt.key}
@@ -8717,7 +8716,7 @@ export default function AdminSettings() {
                                   updated[idx] = { ...updated[idx], icon: e.target.value };
                                   setFooterFeatures(updated);
                                 }}
-                                placeholder="কাস্টম ইমোজি/কোড..."
+                                placeholder="Custom emoji/code..."
                                 className="w-full px-2 py-1 bg-gray-50 border border-gray-200 rounded-lg text-xs"
                               />
                             </div>
@@ -8750,7 +8749,7 @@ export default function AdminSettings() {
                             updated[idx] = { ...updated[idx], title: e.target.value };
                             setFooterFeatures(updated);
                           }}
-                          placeholder="যেমন: সারাদেশ ডেলিভারি"
+                          placeholder="e.g. Nationwide Delivery"
                           className="w-full px-2.5 py-1 text-xs font-black text-gray-900 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
                         />
                       </div>
@@ -8768,7 +8767,7 @@ export default function AdminSettings() {
                           updated[idx] = { ...updated[idx], desc: e.target.value };
                           setFooterFeatures(updated);
                         }}
-                        placeholder="যেমন: দ্রুত ও নিরাপদ"
+                        placeholder="e.g. Fast & Secure"
                         className="w-full px-2.5 py-1 text-xs font-medium text-gray-700 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none"
                       />
                     </div>
@@ -8798,7 +8797,7 @@ export default function AdminSettings() {
                     type="text"
                     value={footerCopyrightText}
                     onChange={(e) => setFooterCopyrightText(e.target.value)}
-                    placeholder="আমওয়ালা ভাইয়া - সর্বস্বত্ব সংরক্ষিত"
+                    placeholder="Ammwala Bhaiyer - All Rights Reserved"
                     className="w-full px-3.5 py-2 bg-white border border-gray-300 rounded-xl text-xs font-bold text-gray-900"
                   />
                 </div>
@@ -8825,7 +8824,7 @@ export default function AdminSettings() {
                           className="w-3.5 h-3.5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
                         />
                         <span className="text-xs font-bold text-gray-800">
-                          গোপনীয়তা নীতি (Privacy Policy)
+                          Privacy Policy
                         </span>
                       </label>
                       <span
@@ -8835,7 +8834,7 @@ export default function AdminSettings() {
                             : "bg-gray-200 text-gray-600"
                         }`}
                       >
-                        {footerPrivacyPolicyShow ? "দেখাবে / Visible" : "লুকানো / Hidden"}
+                        {footerPrivacyPolicyShow ? "Visible" : "Hidden"}
                       </span>
                     </div>
 
@@ -8845,14 +8844,14 @@ export default function AdminSettings() {
                           type="text"
                           value={footerPrivacyPolicyText}
                           onChange={(e) => setFooterPrivacyPolicyText(e.target.value)}
-                          placeholder="গোপনীয়তা নীতি"
+                          placeholder="Privacy Policy"
                           className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
                         />
                         <input
                           type="text"
                           value={footerPrivacyPolicyLink}
                           onChange={(e) => setFooterPrivacyPolicyLink(e.target.value)}
-                          placeholder="লিংক (#)"
+                          placeholder="Link (#)"
                           className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
                         />
                       </div>
@@ -8876,7 +8875,7 @@ export default function AdminSettings() {
                           className="w-3.5 h-3.5 text-green-600 rounded focus:ring-green-500 cursor-pointer"
                         />
                         <span className="text-xs font-bold text-gray-800">
-                          সেবার শর্তাবলী (Terms of Service)
+                          Terms of Service
                         </span>
                       </label>
                       <span
@@ -8886,7 +8885,7 @@ export default function AdminSettings() {
                             : "bg-gray-200 text-gray-600"
                         }`}
                       >
-                        {footerTermsShow ? "দেখাবে / Visible" : "লুকানো / Hidden"}
+                        {footerTermsShow ? "Visible" : "Hidden"}
                       </span>
                     </div>
 
@@ -8896,14 +8895,14 @@ export default function AdminSettings() {
                           type="text"
                           value={footerTermsText}
                           onChange={(e) => setFooterTermsText(e.target.value)}
-                          placeholder="সেবার শর্তাবলী"
+                          placeholder="Terms of Service"
                           className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs"
                         />
                         <input
                           type="text"
                           value={footerTermsLink}
                           onChange={(e) => setFooterTermsLink(e.target.value)}
-                          placeholder="লিংক (#)"
+                          placeholder="Link (#)"
                           className="px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg text-xs font-mono"
                         />
                       </div>
