@@ -114,6 +114,7 @@ export default function AdminProductForm() {
   const [showPreorderCalendar, setShowPreorderCalendar] = useState(false);
 
   // Pricing & Auto-counted Discount
+  const [hasDiscount, setHasDiscount] = useState(false);
   const [regularPricePerUnit, setRegularPricePerUnit] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
   const [pricePerUnit, setPricePerUnit] = useState("");
@@ -172,6 +173,25 @@ export default function AdminProductForm() {
   const [activeTab, setActiveTab] = useState("tab1");
 
   // Synchronize Discount Calculation Bidirectionally
+  const handleDiscountToggle = (checked) => {
+    setHasDiscount(checked);
+    if (!checked) {
+      setRegularPricePerUnit("");
+      setDiscountPercent(0);
+      setImageBadges((prev) => prev.filter((b) => b.type !== "discount"));
+    } else {
+      const curSell = Number(pricePerUnit) || 0;
+      if (!regularPricePerUnit || Number(regularPricePerUnit) <= curSell) {
+        if (curSell > 0) {
+          const estimatedReg = Math.round(curSell * 1.15);
+          setRegularPricePerUnit(estimatedReg);
+          const disc = Math.round(((estimatedReg - curSell) / estimatedReg) * 100);
+          setDiscountPercent(disc);
+        }
+      }
+    }
+  };
+
   const handleRegularPriceChange = (regPrice) => {
     const reg = Number(regPrice) || 0;
     setRegularPricePerUnit(reg);
@@ -199,9 +219,9 @@ export default function AdminProductForm() {
   const handleSellingPriceChange = (sellPrice) => {
     const selling = Number(sellPrice) || 0;
     setPricePerUnit(selling);
-    if (regularPricePerUnit > 0 && regularPricePerUnit > selling) {
+    if (hasDiscount && regularPricePerUnit > 0 && Number(regularPricePerUnit) > selling) {
       const disc = Math.round(
-        ((regularPricePerUnit - selling) / regularPricePerUnit) * 100
+        ((Number(regularPricePerUnit) - selling) / Number(regularPricePerUnit)) * 100
       );
       setDiscountPercent(disc);
       // Auto update discount badge text
@@ -312,6 +332,7 @@ export default function AdminProductForm() {
     setShowRegionSchedule(false);
     setRegionScheduleTitle("আঞ্চলিক পাকা ও ডেলিভারি শিডিউল:");
     setShowPreorderCalendar(false);
+    setHasDiscount(false);
     setRegularPricePerUnit("");
     setDiscountPercent(0);
     setPricePerUnit("");
@@ -376,23 +397,28 @@ export default function AdminProductForm() {
         );
 
         const regPrice =
-          existingProduct.regular_price_per_unit ||
-          existingProduct.regular_price_per_kg ||
-          210;
+          existingProduct.regular_price_per_unit !== undefined && existingProduct.regular_price_per_unit !== null
+            ? existingProduct.regular_price_per_unit
+            : (existingProduct.regular_price_per_kg || "");
         const sellPrice =
-          existingProduct.price_per_unit ||
-          existingProduct.price_per_kg ||
-          existingProduct.price ||
-          180;
-        setRegularPricePerUnit(regPrice);
-        setPricePerUnit(sellPrice);
+          existingProduct.price_per_unit !== undefined && existingProduct.price_per_unit !== null
+            ? existingProduct.price_per_unit
+            : (existingProduct.price_per_kg !== undefined && existingProduct.price_per_kg !== null
+                ? existingProduct.price_per_kg
+                : (existingProduct.price || ""));
 
-        const disc =
-          existingProduct.discount_percent ||
-          (regPrice > sellPrice
-            ? Math.round(((regPrice - sellPrice) / regPrice) * 100)
-            : 0);
-        setDiscountPercent(disc);
+        const disc = Number(existingProduct.discount_percent) || 0;
+        const hasDisc = Boolean(
+          disc > 0 || (Number(regPrice) > Number(sellPrice) && Number(sellPrice) > 0)
+        );
+        setHasDiscount(hasDisc);
+        setRegularPricePerUnit(hasDisc ? regPrice : "");
+        setPricePerUnit(sellPrice);
+        setDiscountPercent(
+          hasDisc
+            ? (disc || (Number(regPrice) > Number(sellPrice) ? Math.round(((Number(regPrice) - Number(sellPrice)) / Number(regPrice)) * 100) : 0))
+            : 0
+        );
 
         setMinOrder(
           existingProduct.min_order_kg
@@ -684,9 +710,9 @@ export default function AdminProductForm() {
           price: `৳ ${pricePerUnit || 0}/${unit}`,
           price_per_unit: Number(pricePerUnit) || 0,
           price_per_kg: Number(pricePerUnit) || 0,
-          regular_price_per_unit: Number(regularPricePerUnit) || 0,
-          regular_price_per_kg: Number(regularPricePerUnit) || 0,
-          discount_percent: Number(discountPercent) || 0,
+          regular_price_per_unit: hasDiscount ? (Number(regularPricePerUnit) || 0) : 0,
+          regular_price_per_kg: hasDiscount ? (Number(regularPricePerUnit) || 0) : 0,
+          discount_percent: hasDiscount ? (Number(discountPercent) || 0) : 0,
           stock_status: stockStatus,
           stock_quantity:
             stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
@@ -752,6 +778,7 @@ export default function AdminProductForm() {
     isSlugTaken,
     category,
     unit,
+    hasDiscount,
     pricePerUnit,
     regularPricePerUnit,
     discountPercent,
@@ -804,9 +831,9 @@ export default function AdminProductForm() {
       price: `৳ ${pricePerUnit || 0}/${unit}`,
       price_per_unit: Number(pricePerUnit) || 0,
       price_per_kg: Number(pricePerUnit) || 0,
-      regular_price_per_unit: Number(regularPricePerUnit) || 0,
-      regular_price_per_kg: Number(regularPricePerUnit) || 0,
-      discount_percent: Number(discountPercent) || 0,
+      regular_price_per_unit: hasDiscount ? (Number(regularPricePerUnit) || 0) : 0,
+      regular_price_per_kg: hasDiscount ? (Number(regularPricePerUnit) || 0) : 0,
+      discount_percent: hasDiscount ? (Number(discountPercent) || 0) : 0,
       stock_status: stockStatus,
       stock_quantity: stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
       origin: origin,
@@ -902,9 +929,9 @@ export default function AdminProductForm() {
       price: `৳ ${pricePerUnit || 0}/${unit}`,
       price_per_unit: Number(pricePerUnit) || 0,
       price_per_kg: Number(pricePerUnit) || 0,
-      regular_price_per_unit: Number(regularPricePerUnit) || 0,
-      regular_price_per_kg: Number(regularPricePerUnit) || 0,
-      discount_percent: Number(discountPercent) || 0,
+      regular_price_per_unit: hasDiscount ? (Number(regularPricePerUnit) || 0) : 0,
+      regular_price_per_kg: hasDiscount ? (Number(regularPricePerUnit) || 0) : 0,
+      discount_percent: hasDiscount ? (Number(discountPercent) || 0) : 0,
       stock_status: stockStatus,
       stock_quantity: stockStatus === "সীমিত স্টক" ? Number(stockQuantity) || 0 : undefined,
       origin: origin,
@@ -1888,68 +1915,106 @@ export default function AdminProductForm() {
             </div>
 
             {/* Price Block with Linked Auto-counted Discount */}
-            <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl border border-yellow-200 flex items-center justify-between flex-wrap gap-4">
-              <div>
-                <span className="text-xs text-gray-500 font-bold block mb-1">
-                  প্রতি {unit} বিক্রয় ও রেগুলার মূল্য (Discount Auto-counted)
+            <div className="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-3xl border border-yellow-200 flex flex-col gap-3">
+              <div className="flex items-center justify-between flex-wrap gap-2 pb-2 border-b border-yellow-200/70">
+                <span className="text-xs text-gray-600 font-bold">
+                  {hasDiscount
+                    ? `প্রতি ${unit} বিক্রয় ও রেগুলার মূল্য (Discount Auto-counted)`
+                    : `প্রতি ${unit} বিক্রয় মূল্য (মূল দাম)`}
                 </span>
-                <div className="flex items-baseline gap-3 flex-wrap">
-                  {/* Selling Price */}
-                  <div className="flex items-center gap-1">
-                    <span className="text-2xl font-black text-green-800">৳</span>
-                    <input
-                      type="number"
-                      required
-                      value={pricePerUnit}
-                      onChange={(e) => handleSellingPriceChange(e.target.value)}
-                      title="বিক্রয় মূল্য"
-                      className="w-24 text-3xl font-black text-green-800 bg-white border border-green-300 rounded-xl px-2 py-0.5 focus:outline-none focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
 
-                  {/* Regular / Strike Price */}
-                  <div className="flex items-center gap-1 text-gray-400 line-through">
-                    <span className="text-base font-bold">৳</span>
-                    <input
-                      type="number"
-                      value={regularPricePerUnit}
-                      onChange={(e) => handleRegularPriceChange(e.target.value)}
-                      placeholder="রেগুলার দাম"
-                      title="রেগুলার মূল্য"
-                      className="w-20 text-base text-gray-400 line-through bg-white border border-gray-300 rounded-xl px-2 py-0.5 focus:outline-none"
-                    />
-                  </div>
-
-                  {/* Discount Percentage Input (Linked) */}
-                  <div className="flex items-center gap-1 bg-red-50 border border-red-200 px-2.5 py-1 rounded-full text-xs font-bold text-red-700">
-                    <input
-                      type="number"
-                      value={discountPercent}
-                      onChange={(e) => handleDiscountPercentChange(e.target.value)}
-                      className="w-10 bg-transparent text-center font-black focus:outline-none text-red-700"
-                    />
-                    <span>% ছাড়</span>
-                  </div>
-
-                  {regularPricePerUnit > pricePerUnit && (
-                    <span className="text-xs text-green-700 font-bold bg-green-100 px-2.5 py-1 rounded-full">
-                      ৳{regularPricePerUnit - pricePerUnit} সাশ্রয়
-                    </span>
-                  )}
-                </div>
+                {/* Discount Enable/Disable Checkbox */}
+                <label className="flex items-center gap-2 cursor-pointer select-none bg-white px-3 py-1 rounded-full border border-amber-300 shadow-xs hover:bg-amber-50 transition-all">
+                  <input
+                    type="checkbox"
+                    checked={hasDiscount}
+                    onChange={(e) => handleDiscountToggle(e.target.checked)}
+                    className="w-4 h-4 text-green-600 rounded focus:ring-green-500 cursor-pointer"
+                  />
+                  <span className="text-xs font-bold text-gray-700">
+                    ডিসকাউন্ট অফার যুক্ত করুন (Enable Discount)
+                  </span>
+                </label>
               </div>
 
-              <div className="text-right">
-                <span className="text-xs text-gray-500 font-bold block mb-1">
-                  সর্বনিম্ন অর্ডার
-                </span>
-                <input
-                  type="text"
-                  value={minOrder}
-                  onChange={(e) => setMinOrder(e.target.value)}
-                  placeholder="5 কেজি বক্স"
-                  className="w-32 bg-white border border-yellow-300 rounded-xl px-3 py-1 font-bold text-amber-900 text-sm text-right focus:outline-none"
-                />
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                  {hasDiscount ? (
+                    <div className="flex items-baseline gap-3 flex-wrap">
+                      {/* Selling Price */}
+                      <div className="flex items-center gap-1">
+                        <span className="text-2xl font-black text-green-800">৳</span>
+                        <input
+                          type="number"
+                          required
+                          value={pricePerUnit}
+                          onChange={(e) => handleSellingPriceChange(e.target.value)}
+                          placeholder="০"
+                          title="ডিসকাউন্টেড বিক্রয় মূল্য"
+                          className="w-24 text-3xl font-black text-green-800 bg-white border border-green-300 rounded-xl px-2 py-0.5 focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      </div>
+
+                      {/* Regular / Strike Price */}
+                      <div className="flex items-center gap-1 text-gray-400 line-through">
+                        <span className="text-base font-bold">৳</span>
+                        <input
+                          type="number"
+                          value={regularPricePerUnit}
+                          onChange={(e) => handleRegularPriceChange(e.target.value)}
+                          placeholder="রেগুলার দাম"
+                          title="রেগুলার মূল্য"
+                          className="w-24 text-base text-gray-400 line-through bg-white border border-gray-300 rounded-xl px-2 py-0.5 focus:outline-none"
+                        />
+                      </div>
+
+                      {/* Discount Percentage Input (Linked) */}
+                      <div className="flex items-center gap-1 bg-red-50 border border-red-200 px-2.5 py-1 rounded-full text-xs font-bold text-red-700">
+                        <input
+                          type="number"
+                          value={discountPercent}
+                          onChange={(e) => handleDiscountPercentChange(e.target.value)}
+                          className="w-10 bg-transparent text-center font-black focus:outline-none text-red-700"
+                        />
+                        <span>% ছাড়</span>
+                      </div>
+
+                      {Number(regularPricePerUnit) > Number(pricePerUnit) && Number(pricePerUnit) > 0 && (
+                        <span className="text-xs text-green-700 font-bold bg-green-100 px-2.5 py-1 rounded-full">
+                          ৳{Number(regularPricePerUnit) - Number(pricePerUnit)} সাশ্রয়
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    /* Single Price Field when Discount is Disabled */
+                    <div className="flex items-center gap-1.5">
+                      <span className="text-2xl font-black text-green-800">৳</span>
+                      <input
+                        type="number"
+                        required
+                        value={pricePerUnit}
+                        onChange={(e) => handleSellingPriceChange(e.target.value)}
+                        placeholder="০"
+                        title="পণ্যের মূল বিক্রয় মূল্য"
+                        className="w-32 text-3xl font-black text-green-800 bg-white border border-green-300 rounded-xl px-3 py-0.5 focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                      <span className="text-sm font-bold text-gray-600">/ {unit}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="text-right">
+                  <span className="text-xs text-gray-500 font-bold block mb-1">
+                    সর্বনিম্ন অর্ডার
+                  </span>
+                  <input
+                    type="text"
+                    value={minOrder}
+                    onChange={(e) => setMinOrder(e.target.value)}
+                    placeholder={`5 ${unit} বক্স`}
+                    className="w-32 bg-white border border-yellow-300 rounded-xl px-3 py-1 font-bold text-amber-900 text-sm text-right focus:outline-none"
+                  />
+                </div>
               </div>
             </div>
 

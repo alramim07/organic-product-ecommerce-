@@ -657,25 +657,33 @@ export default function SingleProductPage() {
               {/* Price Block */}
               <div className="mt-4 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 rounded-2xl border border-yellow-200 flex items-center justify-between flex-wrap gap-3">
                 <div>
-                  <span className="text-xs text-gray-500 font-medium block">প্রতি কেজি মূল্য</span>
-                  <div className="flex items-baseline gap-3">
+                  <span className="text-xs text-gray-500 font-medium block">
+                    প্রতি {product.unit || "কেজি"} মূল্য
+                  </span>
+                  <div className="flex items-baseline gap-3 flex-wrap">
                     <span className="text-3xl sm:text-4xl font-black text-green-800">
-                      ৳ {product.price_per_kg}
+                      ৳ {product.price_per_unit || product.price_per_kg}
                     </span>
-                    {product.regular_price_per_kg && (
-                      <span className="text-lg text-gray-400 line-through font-semibold">
-                        ৳ {product.regular_price_per_kg}
-                      </span>
+                    {Number(product.regular_price_per_unit || product.regular_price_per_kg) >
+                      Number(product.price_per_unit || product.price_per_kg) && (
+                      <>
+                        <span className="text-lg text-gray-400 line-through font-semibold">
+                          ৳ {product.regular_price_per_unit || product.regular_price_per_kg}
+                        </span>
+                        <span className="text-xs text-green-700 font-bold bg-green-100 px-2.5 py-0.5 rounded-full">
+                          প্রতি {product.unit || "কেজিতে"} ৳
+                          {Number(product.regular_price_per_unit || product.regular_price_per_kg) -
+                            Number(product.price_per_unit || product.price_per_kg)}{" "}
+                          সাশ্রয়
+                        </span>
+                      </>
                     )}
-                    <span className="text-xs text-green-700 font-bold bg-green-100 px-2.5 py-0.5 rounded-full">
-                      প্রতি কেজিতে ৳{product.regular_price_per_kg - product.price_per_kg} সাশ্রয়
-                    </span>
                   </div>
                 </div>
                 <div className="text-right">
                   <span className="text-xs text-gray-500">সর্বনিম্ন অর্ডার</span>
                   <span className="text-sm font-bold text-amber-900 block">
-                    {product.min_order_kg || 5} কেজি বক্স
+                    {product.min_order || (product.min_order_kg ? `${product.min_order_kg} ${product.unit || "কেজি"} বক্স` : `৫ ${product.unit || "কেজি"} বক্স`)}
                   </span>
                 </div>
               </div>
